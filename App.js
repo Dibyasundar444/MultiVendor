@@ -5,6 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/screens/HomeScreen';
 import SignIn from './src/screens/SigninScreen';
 import OtpVerify from './src/screens/OtpScreen';
+import MainApp from './src/screens/mainApp';
+import ProfileScreen from './src/screens/mainApp/ProfileScreen';
 
 
 
@@ -19,6 +21,8 @@ const App = () => {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="OtpVerify" component={OtpVerify} />
+        <Stack.Screen name="MainApp" component={MainApp} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

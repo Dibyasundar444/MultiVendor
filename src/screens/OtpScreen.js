@@ -11,6 +11,7 @@ import {
     StatusBar
 } from "react-native";
 import OTPInputView from '@twotalltotems/react-native-otp-input';
+import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 
 const { height, width } = Dimensions.get("window");
 
@@ -22,9 +23,9 @@ export default function OtpVerify({route,navigation}){
 
 
     const submit=()=>{
-        navigation.navigate("Home");
+        navigation.navigate("MainApp");
     };
-    const resendOTP=()=>{}
+    const resendOTP=()=>{alert("resend")}
 
     return(
         <View style={styles.container}>
@@ -57,6 +58,7 @@ export default function OtpVerify({route,navigation}){
                     </TouchableOpacity>
                     <View style={{flexDirection:"row",alignItems:"center",justifyContent:"center"}}>
                         <Text style={{color:"blue",marginRight:5}} onPress={resendOTP}>Resend</Text>
+                        <SimpleLineIcons name="reload" color="blue" size={18} />
                     </View>
                 </ScrollView>
             </View>
@@ -100,16 +102,13 @@ const styles = StyleSheet.create({
         marginVertical: 20
     },
     underlineStyleBase: {
-        width: 59,
+        width: 57,
         height: 50,
         elevation: 5,
         backgroundColor: "#fff",
         color: "#000",
         borderRadius: 10
 
-    },
-    underlineStyleHighLighted: {
-    // borderColor: "#03DAC6",
     },
     input: {
         width: "80%",

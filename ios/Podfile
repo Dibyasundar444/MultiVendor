@@ -14,6 +14,8 @@ target 'Vendor' do
 
   pod 'RNCClipboard', :path => '../node_modules/@react-native-community/clipboard'
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
   target 'VendorTests' do
     inherit! :complete
     # Pods for testing
