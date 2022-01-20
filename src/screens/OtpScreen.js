@@ -17,13 +17,16 @@ const { height, width } = Dimensions.get("window");
 
 export default function OtpVerify({route,navigation}){
 
-    const number = route.params;
-    const fNumber = number.split("",6);
+    const prevData = route.params;
+    const fNumber = prevData.number.split("",6);
     const [num, setNum] = useState("");
 
 
     const submit=()=>{
-        navigation.navigate("MainApp");
+        if(prevData.user === "user"){
+            navigation.navigate("UserPanel");
+        }
+        else navigation.navigate("VendorPanel");
     };
     const resendOTP=()=>{alert("resend")}
 

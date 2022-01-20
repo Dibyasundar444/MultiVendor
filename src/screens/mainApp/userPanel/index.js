@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    BackHandler
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
@@ -17,7 +18,7 @@ import AlertScreen from "./AlertScreen";
 
 
 
-export default function MainApp({navigation}){
+export default function UserPanel({navigation}){
 
     const [index, setIndex] = useState(0);
 
@@ -25,6 +26,39 @@ export default function MainApp({navigation}){
         setIndex(index);
     };
 
+    const backAction=()=>{
+        return true;
+    };
+
+    useEffect(()=>{
+        BackHandler.addEventListener('hardwareBackPress',backAction);
+        return ()=> {
+            BackHandler.removeEventListener('hardwareBackPress',backAction);
+        }
+    },[]);
+
+    const renderPages=()=>{
+        if(index === 0){
+            return <Menu 
+                        navigate={()=>navigation.navigate("Profile")}
+                    />
+        }
+        else if(index === 1){
+            return <SearchScreen
+                        navigate={()=>navigation.navigate("Profile")}
+                    />
+        }
+        else if(index === 2){
+            return <ChatScreen 
+                        navigate={()=>navigation.navigate("Profile")}
+                    />
+        }
+        else{
+            return <AlertScreen 
+                        navigate={()=>navigation.navigate("Profile")}
+                    />
+        }
+    };
 
     const bottomTab=()=>(
         <View style={styles.bottomTab}>
@@ -66,29 +100,6 @@ export default function MainApp({navigation}){
             </TouchableOpacity>
         </View>
     );
-
-    const renderPages=()=>{
-        if(index === 0){
-            return <Menu 
-                        navigate={()=>navigation.navigate("Profile")}
-                    />
-        }
-        else if(index === 1){
-            return <SearchScreen
-                        navigate={()=>navigation.navigate("Profile")}
-                    />
-        }
-        else if(index === 2){
-            return <ChatScreen 
-                        navigate={()=>navigation.navigate("Profile")}
-                    />
-        }
-        else{
-            return <AlertScreen 
-                        navigate={()=>navigation.navigate("Profile")}
-                    />
-        }
-    };
 
     return(
         <View style={styles.container}>

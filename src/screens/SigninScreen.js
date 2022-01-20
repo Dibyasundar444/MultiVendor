@@ -10,14 +10,19 @@ import {
     TouchableOpacity, 
     StatusBar
 } from "react-native";
+import SelectDropdown from "react-native-select-dropdown";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 
 const { height, width } = Dimensions.get("window");
 
 export default function SignIn({navigation}){
 
+    const UserType = ["user","vendor"];
     const [num, setNum] = useState("");
     const [error, setError] = useState(false);
+    const [error1, setError1] = useState(false);
+    const [user, setUser] = useState("");
 
 
     const inputHandler=()=>{
@@ -29,12 +34,20 @@ export default function SignIn({navigation}){
         }
     };
 
+    let navData = {
+        "number": num,
+        "user": user
+    };
+
     const submit=()=>{
         if(num === "" || num.length !== 10){
             setError(true);
+        }else if(user === ""){
+            setError1(true);
         }
         else{
-            navigation.navigate("OtpVerify",num);
+            setError1(false);
+            navigation.navigate("OtpVerify",navData);
         }
     };
 
@@ -46,7 +59,36 @@ export default function SignIn({navigation}){
             </View>
             <View style={styles.modal}>
                 <ScrollView style={{marginTop: 20, marginHorizontal: 30}}>
-                    <Text style={{color:"#000",fontSize:22,marginBottom:20}}>Sign In</Text>
+                    <View style={{flexDirection:"row",alignItems:"center",marginBottom:20,justifyContent:"space-between"}}>
+                        <Text style={{color:"#000",fontSize:22}}>Sign In</Text>
+                        <SelectDropdown
+                            data={UserType}
+                            defaultButtonText={"User type"}
+                            onSelect={(selectedItem) => {
+                                setUser(selectedItem)
+                            }}
+                            buttonTextAfterSelection={(selectedItem) => {
+                                return selectedItem;
+                            }}
+                            rowTextForSelection={(item, index) => {
+                                return item;
+                            }}
+                            buttonStyle={styles.dropdownBtnStyle}
+                            renderDropdownIcon={(isOpened) => {
+                                return (
+                                    <MaterialIcons
+                                    name={isOpened ? "expand-less" : "expand-more"}
+                                    color={"#000"}
+                                    size={24}
+                                    />
+                                );
+                                }}
+                            dropdownIconPosition={"right"}
+                            dropdownStyle={styles.DropdownStyle}
+                            rowStyle={styles.rowStyle}
+                        />
+                    </View>
+                    {error1 ? <Text style={styles.error1}>please select your user type</Text>:null}
                     <Text style={{color:"#000",fontSize:14,marginBottom:10}}>Enter your phone number</Text>
                     <Text style={{color:"#000",fontSize:12}}>You will receive a 4-digit code for phone</Text>
                     <Text style={{color:"#000",fontSize:12}}>number verification</Text>
@@ -110,5 +152,22 @@ const styles = StyleSheet.create({
         alignItems: "center",
         height: 50,
         marginVertical: 20
+    },
+    dropdownBtnStyle: {
+        backgroundColor: "#fff",
+        borderRadius: 10,
+        elevation: 5,
+        marginHorizontal: 5,
+        width: width/2.5,
+        marginVertical: 2,
+    },
+    rowStyle: {
+        borderRadius: 20,
+    },
+    error1: {
+        color:"red",
+        textAlign:"center",
+        fontSize:12,
+        top: -10
     }
 })
