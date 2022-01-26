@@ -15,8 +15,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
-// import { useNavigation } from "@react-navigation/native";
-import ProductHeader from "./utils/productHeader";
+import Header from "./utils/header";
 
 const data=[
     {
@@ -24,119 +23,101 @@ const data=[
         "name": "Product Name",
         "Deatails": "Details",
         "views": "205",
-        "img": "../../../assets/image1.jpeg"
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"1",
         "name": "Product Name",
         "Deatails": "Details",
         "views": "205",
-        "img": "../../../assets/image1.jpeg"
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"2",
         "name": "Product Name",
         "Deatails": "Details",
         "views": "205",
-        "img": "../../../assets/image1.jpeg"
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"3",
         "name": "Product Name",
         "Deatails": "Details",
         "views": "205",
-        "img": "../../../assets/image1.jpeg"
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"4",
         "name": "Product Name",
         "Deatails": "Details",
         "views": "205",
-        "img": "../../../assets/image1.jpeg"
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"5",
         "name": "Product Name",
         "Deatails": "Details",
-        "views": "205"
+        "views": "205",
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"6",
         "name": "Product Name",
         "Deatails": "Details",
-        "views": "205"
+        "views": "205",
+        "img": require("../../../assets/image1.jpeg")
     },
 ];
-const chatData=[
+const serviceData=[
     {
         "id":"0",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
+        "title":"Beauty Parlours",
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"1",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
+        "title":"DTH",
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"2",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
+        "title":"Landline",
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"3",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
+        "title":"Beauty Parlours",
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"4",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
+        "title":"Beauty Parlours",
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"5",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
+        "title":"Beauty Parlours",
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"6",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
+        "title":"Beauty Parlours",
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"7",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
+        "title":"Beauty Parlours",
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"8",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
+        "title":"Beauty Parlours",
+        "img": require("../../../assets/image1.jpeg")
     },
     {
         "id":"9",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:40pm"
+        "title":"Beauty Parlours",
+        "img": require("../../../assets/image1.jpeg")
     },
 ];
 
@@ -146,19 +127,23 @@ let clickBoxHeight = height/4.5;
 
 export default function HomeScreen({navigation}){
 
-    // const navigation = useNavigation();
 
     return(
         <View style={styles.container}>
-            <ProductHeader />
+            <Header 
+                title="Hi, John Vendor"
+                date="Jan 21, 2022"
+                notify={()=>navigation.navigate("AlertScreen")}
+                bellColor="#000"
+            />
             <View style={styles.body}>
-                <View style={styles.body1}>
-                    <Text style={{color:"#fff",fontSize:16,fontWeight:"600"}}>This Month</Text>
-                    <TouchableOpacity onPress={()=>navigation.navigate("addProductScreen")}>
+                {/* <View style={styles.body1}> */}
+                    <Text style={{color:"#000",fontSize:16,fontWeight:"600"}}>This Month</Text>
+                    {/* <TouchableOpacity onPress={()=>navigation.navigate("addProductScreen")}>
                         <Text style={{color:"#fff",fontSize:12}}>+Add Product</Text>
                         <View style={{width:90,borderWidth:0.5,borderColor:"#fff"}} />
-                    </TouchableOpacity>
-                </View>
+                    </TouchableOpacity> */}
+                {/* </View> */}
                 <View>
                     <FlatList 
                         data={data}
@@ -172,7 +157,7 @@ export default function HomeScreen({navigation}){
                                 style={styles.box}
                             >
                                 <View style={styles.boxSubView}>
-                                    <Image style={styles.img} source={require("../../../assets/image1.jpeg")} />
+                                    <Image style={styles.img} source={item.img} />
                                 </View>
                                 <View style={{marginLeft:5,marginTop:5}}>
                                     <Text style={{fontSize:12,color:"#000"}}>{item.name}</Text>
@@ -187,26 +172,26 @@ export default function HomeScreen({navigation}){
                     />
                 </View>
                 <View style={styles.body2}>
-                    <Text style={{color:"#fff",fontSize:16,fontWeight:"600"}}>Inquire List (3 new)</Text>
+                    <View style={styles.body1}>
+                        <Text style={{color:"#000",fontSize:16,fontWeight:"600"}}>My Services</Text>
+                        <TouchableOpacity onPress={()=>{}}>
+                            <Text style={{color:"#000",fontSize:12}}>+Add Services</Text>
+                            <View style={{width:90,borderWidth:0.5,borderColor:"#000"}} />
+                        </TouchableOpacity>
+                    </View>
                     <FlatList 
-                    style={{marginBottom:height/1.14}}
-                        data={chatData}
+                        style={{marginBottom:height/1.2}}
+                        data={serviceData}
                         keyExtractor={item=>item.id}
                         showsVerticalScrollIndicator={false}
                         renderItem={({item,index})=>(
                             <View key={index} style={{borderBottomWidth:1}}>
                                 <View style={styles.subView}>
-                                    <View style={{alignItems:"center"}}>
-                                        <View style={styles.bgCircle} />
+                                    <View style={{alignItems:"center",flexDirection:"row"}}>
+                                        <Image style={styles.bgCircle} source={item.img} />
+                                        <Text style={{fontSize:12,color:"#000"}}>{item.title}</Text>
                                     </View>
-                                    <View style={styles.texts}>
-                                        <Text style={styles.name}>{item.name}</Text>
-                                        <Text style={styles.msg}>{item.msg}</Text>
-                                        <Text style={styles.msg}>{item.msg}</Text>
-                                    </View>
-                                    <View style={styles.time}>
-                                        <Text style={styles.timeTxt}>{item.time}</Text>
-                                    </View>
+                                    <AntDesign name="right" size={16} color="#000" />
                                 </View>
                             </View>
                         )}
@@ -220,11 +205,11 @@ export default function HomeScreen({navigation}){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#054d36"
+        backgroundColor: "#ffe4e1"
     },
     body: {
         marginLeft:20,
-        marginTop:20,
+        marginTop:40,
         // marginBottom:height/2.5,
     },
     box: {
@@ -262,13 +247,14 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         alignItems:"center",
         marginRight:20,
-        marginVertical:15
+        marginVertical:15,
+        justifyContent:"space-between"
     },
     bgCircle: {
         height: 50,
         width: 50,
         borderRadius: 50/2,
-        backgroundColor: "#aaa",
+        // backgroundColor: "#aaa",
         marginRight: 10
     },
     time: {

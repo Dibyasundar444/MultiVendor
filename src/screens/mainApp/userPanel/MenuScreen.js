@@ -52,37 +52,49 @@ const data=[
 
 const { height, width } = Dimensions.get("window");
 
-export default function Menu({navigate}){
+export default function Menu({navigation}){
     return(
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <MenuHeader 
-                nav={navigate}
+                nav={()=>navigation.navigate("Alert")}
             />
-            <View style={{marginHorizontal:20,marginTop:20,marginBottom:height/2.5}}>
-                <Text style={{color:"#fff",fontWeight:"bold",marginBottom:20,fontSize:16}}>Browse Categories</Text>
+            <View style={{marginLeft:20,marginTop:20}}>
+                <Text style={{color:"#000",fontWeight:"bold",marginBottom:20,fontSize:16}}>Latest Products</Text>
                 <FlatList 
+                    horizontal={true}
                     data={data}
-                    keyExtractor={item=>item.id}
-                    numColumns={3}
-                    showsVerticalScrollIndicator={false}
-                    renderItem={(index,item)=>(
-                        <View style={styles.box} key={index}></View>
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({item})=>(
+                        <View key={item.id} style={styles.box}>
+                            <View style={{height: width/3.5,backgroundColor:"pink",width:"100%",borderRadius:10}} />
+                            <View style={{marginLeft:10,marginTop:5}}>
+                                <Text style={{color:"#000",fontSize:12}}>Product Name</Text>
+                                <Text style={{color:"#000",fontSize:12}}>Details</Text>
+                            </View>
+                            <View style={{flexDirection:"row",justifyContent:"center",marginTop:5}}>
+                                <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
+                                <EvilIcons name="arrow-right" color="#000" size={22} />
+                            </View>
+                        </View>
                     )}
                 />
             </View>
-        </View>
+        </ScrollView>
     )
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#ffe4e1"
     },
     box: {
-        height: width/3.6,
-        width: width/3.6,
-        backgroundColor: "#aaa",
+        height: width/2,
+        width: width/2.5,
+        backgroundColor: "#fff",
         marginRight:10,
-        marginBottom:10
+        marginBottom:10,
+        elevation: 5,
+        borderRadius: 10
     }
 })

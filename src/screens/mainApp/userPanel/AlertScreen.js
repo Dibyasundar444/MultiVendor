@@ -91,7 +91,7 @@ const data=[
 
 const { height, width } = Dimensions.get("window");
 
-export default function AlertScreen({navigate}){
+export default function AlertScreen({navigation}){
 
     const [text, setText] = useState("");
 
@@ -100,8 +100,13 @@ export default function AlertScreen({navigate}){
         <View style={styles.container}>
             <View style={styles.header}>
                 <View style={styles.headerSub}>
-                    <Text style={styles.alert}>Alerts</Text>
-                    <Ionicons name="person-outline" color="#fff" size={24} onPress={navigate} />
+                    <AntDesign name="left" color="#000" size={24} onPress={()=>navigation.goBack()} />
+                    <View style={{flexDirection:"row",alignItems:"center"}}>
+                        <Text style={{color:"#000",fontWeight:"500",fontSize:16}}>Alerts</Text>
+                        <View style={styles.round}>
+                            <Fontisto name="bell" color="#fff" size={22} />
+                        </View>
+                    </View>
                 </View>
             </View>
             <View style={styles.body}>
@@ -137,19 +142,11 @@ export default function AlertScreen({navigate}){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#ffe4e1"
     },
     header: {
-        // height: height/8,
         marginHorizontal: 20,
         marginBottom: 20
-    },
-    textInputDiv: {
-        marginHorizontal: 10,
-        marginVertical: 20,
-        backgroundColor: "#aaa",
-        borderRadius: 10,
-        flexDirection: "row",
-        alignItems: "center",
     },
     textInput: {
         height: 40,
@@ -201,12 +198,12 @@ const styles = StyleSheet.create({
     body: {
         backgroundColor:"#fff",
         flex:1,
-        borderTopRightRadius:10,
-        borderTopLeftRadius:10,
+        borderTopRightRadius:20,
+        borderTopLeftRadius:20,
         bottom:-10
     },
     alert: {
-        color:"#fff",
+        color:"#000",
         fontWeight:"bold",
         fontSize:16
     },
@@ -223,5 +220,14 @@ const styles = StyleSheet.create({
     timeTxt: {
         color:"#000",
         fontSize:12
-    }
+    },
+    round: {
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#ff1493",
+        height: 40,
+        width: 40,
+        borderRadius: 40/2,
+        marginLeft: 10
+    },
 })

@@ -15,53 +15,64 @@ import Fontisto from "react-native-vector-icons/Fontisto";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
 
+const data=[
+    {
+        "id":"0"
+    },
+    {
+        "id":"1"
+    },
+    {
+        "id":"2"
+    },
+    {
+        "id":"3"
+    },
+    {
+        "id":"4"
+    },
+    {
+        "id":"5"
+    },
+    {
+        "id":"6"
+    },
+    {
+        "id":"7"
+    },
+    {
+        "id":"8"
+    },
+    {
+        "id":"9"
+    },
+];
 
 export default function MenuHeader({nav}){
     return(
         <>
             <View style={styles.header}>
                 <View style={{flexDirection:"row",alignItems:"center"}}>
-                    <EvilIcons name="location" color="#fff" size={24} />
-                    <Text style={{color:"#fff",fontSize:12,marginRight:10}}>Gujrat, India</Text>
-                    <Entypo name="chevron-thin-down" color="#fff" size={16} />
+                    <EvilIcons name="location" color="#000" size={24} />
+                    <Text style={{color:"#000",fontSize:12,marginRight:10}}>Gujrat, India</Text>
+                    <Entypo name="chevron-thin-down" color="#000" size={16} />
                 </View>
-                <Ionicons name="person-outline" color="#fff" size={24} onPress={nav} />
+                <Fontisto name="bell" color="#000" size={24} onPress={nav} />
             </View>
-            <View>
+            <View style={{height:120,width:"100%",backgroundColor:"gray"}} />
+            <View style={{marginTop:10,marginLeft:20}}>
                 <Text style={styles.heading}>Top Vendors Near you</Text>
-                <ScrollView style={{marginVertical:20}} 
-                    horizontal={true} s
-                    howsHorizontalScrollIndicator={false}
-                >
-                    <View style={{alignItems:"center",marginLeft:20}}>
-                        <View style={styles.circle} />
-                        <Text style={styles.name}>Akash jai</Text>
-                    </View>
-                    <View style={{alignItems:"center",marginLeft:10}}>
-                        <View style={styles.circle} />
-                        <Text style={styles.name}>Akash jai</Text>
-                    </View>
-                    <View style={{alignItems:"center",marginLeft:10}}>
-                        <View style={styles.circle} />
-                        <Text style={styles.name}>Akash jai</Text>
-                    </View>
-                    <View style={{alignItems:"center",marginLeft:10}}>
-                        <View style={styles.circle} />
-                        <Text style={styles.name}>Akash jai</Text>
-                    </View>
-                    <View style={{alignItems:"center",marginLeft:10}}>
-                        <View style={styles.circle} />
-                        <Text style={styles.name}>Akash jai</Text>
-                    </View>
-                    <View style={{alignItems:"center",marginLeft:10}}>
-                        <View style={styles.circle} />
-                        <Text style={styles.name}>Akash jai</Text>
-                    </View>
-                    <View style={{alignItems:"center",marginLeft:10,marginRight:20}}>
-                        <View style={styles.circle} />
-                        <Text style={styles.name}>Akash jai</Text>
-                    </View>
-                </ScrollView>
+                <FlatList 
+                    horizontal={true}
+                    data={data}
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({item})=>(
+                        <View key={item.id} style={{alignItems:"center",marginRight:10}}>
+                            <View style={styles.circle} />
+                            <Text style={styles.name}>Akash jai</Text>
+                        </View>
+                    )}
+                />
             </View>
         </>
     )
@@ -78,17 +89,18 @@ const styles = StyleSheet.create({
         height:80,
         width:80,
         borderRadius:80/2,
-        backgroundColor:"gray"
+        backgroundColor:"gray",
     },
     name: {
-        color:"#fff",
+        color:"#000",
         fontSize:10,
         marginTop:5
     },
     heading: {
         fontWeight:"bold",
-        color:"#fff",
-        marginLeft:20,
-        fontSize:16
+        color:"#000",
+        // marginLeft:20,
+        fontSize:16,
+        marginBottom:10
     }
 })

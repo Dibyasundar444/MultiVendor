@@ -21,12 +21,12 @@ export default function AddProduct_Header({profile,notify,goBack}){
         <View style={{marginVertical: 30,marginHorizontal: 20,}}>
             <View style={styles.header}>
                 <View style={{flexDirection:"row",alignItems:"center"}}>
-                    <Feather name="chevron-left" color="#fff" size={32} onPress={goBack} />
+                    <Feather name="chevron-left" color="#000" size={32} onPress={goBack} />
                     <Text style={styles.heading}>Add Product</Text>
                 </View>
                 <View style={{flexDirection:"row",alignItems:"center"}}>
-                    <Ionicons name="person-outline" color="#fff" size={24} onPress={profile} />
-                    <Fontisto name="bell" size={24} color="#fff" onPress={notify} style={{marginLeft:25}} />
+                    <Ionicons name="person-outline" color="#000" size={24} onPress={profile} />
+                    <Fontisto name="bell" size={24} color="#000" onPress={notify} style={{marginLeft:25}} />
                 </View>
             </View>
         </View>
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },   
     heading: {
-        color:"#fff",
+        color:"#000",
         fontSize: 16,
         marginLeft:20,
         fontWeight:"500"

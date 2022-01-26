@@ -16,6 +16,7 @@ import Fontisto from "react-native-vector-icons/Fontisto";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Octicons from "react-native-vector-icons/Octicons";
+import ProfileHeader from "./utils/ProfileHeader";
 
 
 
@@ -29,17 +30,9 @@ export default function ProfileScreen({navigation}){
 
     return(
         <View style={styles.container}>
-            <View style={styles.header}>
-                <View style={styles.headerSub}>
-                    <AntDesign name="left" color="#fff" size={24} onPress={()=>navigation.goBack()} />
-                    <View style={{flexDirection:"row",alignItems:"center"}}>
-                        <Text style={{color:"#fff",fontWeight:"500"}}>Profile</Text>
-                        <View style={styles.round}>
-                            <Ionicons name="person-outline" color="#fff" size={22} />
-                        </View>
-                    </View>
-                </View>
-            </View>
+            <ProfileHeader 
+                nav={()=>navigation.navigate("Alert")}
+            />
             <View style={styles.body}>
                 <View style={styles.bgCard}>
                     <View style={styles.img} />
@@ -49,41 +42,55 @@ export default function ProfileScreen({navigation}){
                     </View>
                 </View>
                 <Text style={{marginLeft:25,marginTop:20,color:"#000",marginBottom:5}}>Account</Text>
-                <View style={styles.smCard}>
+                <TouchableOpacity 
+                    style={styles.smCard}
+                    onPress={()=>navigation.navigate("EditProfile")}
+                    activeOpacity={0.8}
+                >
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
                         <Ionicons name="person-outline" color="#000" size={18}/>
                         <Text style={{color:"#000",marginLeft: 20}}>Profile</Text>
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
-                </View>
-                <View style={styles.smCard}>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    style={styles.smCard}
+                    activeOpacity={0.8}
+                >
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
                         <Octicons name="tasklist" color="#000" size={16}/>
                         <Text style={{color:"#000",marginLeft: 20}}>Wishlist</Text>
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
-                </View>
-                <View style={styles.smCard}>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.smCard}>
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
                         <AntDesign name="sharealt" color="#000" size={18}/>
                         <Text style={{color:"#000",marginLeft: 20}}>Share</Text>
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
-                </View>
-                <View style={styles.smCard}>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    style={styles.smCard}
+                    activeOpacity={0.8}
+                    onPress={()=>alert("update")}
+                >
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
                         <AntDesign name="setting" color="#000" size={18}/>
                         <Text style={{color:"#000",marginLeft: 20}}>Setting</Text>
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
-                </View>
-                <View style={styles.smCard}>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    style={styles.smCard}
+                    activeOpacity={0.8}
+                >
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
                         <MaterialIcons name="logout" color="#000" size={20}/>
                         <Text style={{color:"#000",marginLeft: 20}}>Logout</Text>
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
-                </View>
+                </TouchableOpacity>
             </View>
         </View>
     )
@@ -92,7 +99,7 @@ export default function ProfileScreen({navigation}){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#054d36"
+        backgroundColor: "#ffe4e1"
     },
     header: {
         // height: height/8,
@@ -108,7 +115,7 @@ const styles = StyleSheet.create({
     round: {
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#42b349",
+        backgroundColor: "#ff1493",
         height: 40,
         width: 40,
         borderRadius: 40/2,
@@ -117,8 +124,8 @@ const styles = StyleSheet.create({
     body: {
         backgroundColor:"#fff",
         flex:1,
-        borderTopRightRadius:10,
-        borderTopLeftRadius:10,
+        borderTopRightRadius:20,
+        borderTopLeftRadius:20,
     },
     bgCard: {
         marginHorizontal: 20,

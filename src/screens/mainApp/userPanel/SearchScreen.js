@@ -16,7 +16,34 @@ import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
 import SearchHeader from "./utils/searchHeader";
 
-const data=[
+const catData=[
+    {
+        "id":"0",
+        "title":"Grocery"
+    },
+    {
+        "id":"1",
+        "title":"Medicines"
+    },
+    {
+        "id":"2",
+        "title":"Used Cars"
+    },
+    {
+        "id":"3",
+        "title":"Beauty"
+    },
+    {
+        "id":"4",
+        "title":"Computers"
+    },
+    {
+        "id":"5",
+        "title":"Camera"
+    },
+];
+
+const serviceData=[
     {
         "id":"0",
         "title":"Clothing"
@@ -41,56 +68,65 @@ const data=[
         "id":"5",
         "title":"Clothing"
     },
-    {
-        "id":"6",
-        "title":"Clothing"
-    },
-    {
-        "id":"7",
-        "title":"Clothing"
-    },
-    {
-        "id":"8",
-        "title":"Clothing"
-    },
-    {
-        "id":"9",
-        "title":"Clothing"
-    },
 ];
 
 const { height, width } = Dimensions.get("window");
 
-export default function SearchScreen({navigate}){
+export default function SearchScreen({navigation}){
     return(
-        <View style={styles.container}>
+        <ScrollView style={styles.container}showsVerticalScrollIndicator={false} >
             <SearchHeader
-                nav={navigate}
+                nav={()=>navigation.navigate("Alert")}
             />
-            <View style={{marginHorizontal:20,marginTop:10,marginBottom:height/2.5}}>
-                <Text style={{color:"#fff",fontWeight:"bold",marginBottom:20,fontSize:16}}>Quick Search</Text>
+            <View style={{marginHorizontal:20}}>
+                <Text style={{color:"#000",fontWeight:"bold",marginBottom:20,fontSize:16}}>Browse Categories</Text>          
                 <FlatList 
-                    data={data}
-                    keyExtractor={item=>item.id}
+                    numColumns={2}
                     showsVerticalScrollIndicator={false}
-                    renderItem={({index,item})=>(
-                        <View style={styles.mainView} key={index}>
-                            <View style={{flexDirection:"row",alignItems:"center",marginBottom:10}}>
-                                <View style={{height:50,width:50,borderRadius:25,backgroundColor:"#aaa"}} />
-                                <Text style={{marginLeft:20,fontSize:13}}>{item.title}</Text>
+                    data={catData}
+                    columnWrapperStyle={{justifyContent:"space-between"}}
+                    renderItem={({item})=>(
+                        <TouchableOpacity
+                            style={styles.cat} 
+                            key={item.id}
+                            onPress={()=>navigation.navigate("Categories",item.title)}
+                        >
+                            <View style={{flexDirection:"row",alignItems:"center",marginLeft:10}}>
+                                <View style={{height:30,width:30,borderRadius:15,backgroundColor:"pink",marginRight:10}} />
+                                <Text style={{color:"#000",fontSize:12,flexWrap:"wrap"}}>{item.title}</Text>
                             </View>
-                            <AntDesign name="right" color="#fff" size={18} />
-                        </View>
+                        </TouchableOpacity>
                     )}
-                />
+                />             
             </View>
-        </View>
+            <View style={{marginHorizontal:20,marginBottom:height/5,marginTop:10}}>
+                <Text style={{color:"#000",fontWeight:"bold",marginBottom:20,fontSize:16}}>Browse Services</Text>          
+                <FlatList 
+                    numColumns={2}
+                    showsVerticalScrollIndicator={false}
+                    data={serviceData}
+                    columnWrapperStyle={{justifyContent:"space-between"}}
+                    renderItem={({item})=>(
+                        <TouchableOpacity 
+                            style={styles.cat} key={item.id}
+                            onPress={()=>{}}
+                        >
+                            <View style={{flexDirection:"row",alignItems:"center",marginLeft:10}}>
+                                <View style={{height:30,width:30,borderRadius:15,backgroundColor:"pink",marginRight:10}} />
+                                <Text style={{color:"#000",fontSize:12}}>{item.title}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    )}
+                />             
+            </View>
+        </ScrollView>
     )
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#ffe4e1"
     },
     mainView: {
         flexDirection: "row",
@@ -99,5 +135,13 @@ const styles = StyleSheet.create({
         marginBottom:10,
         borderBottomWidth:1,
         borderBottomColor: "#aaa"
+    },
+    cat: {
+        height:40,
+        width:"48%",
+        backgroundColor:"#fff",
+        borderRadius:10,
+        justifyContent:"center",
+        marginBottom:10
     }
 })

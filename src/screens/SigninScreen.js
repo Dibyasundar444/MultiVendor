@@ -8,10 +8,13 @@ import {
     KeyboardAvoidingView, 
     ScrollView, 
     TouchableOpacity, 
-    StatusBar
+    ActivityIndicator,
+    Image
 } from "react-native";
 import SelectDropdown from "react-native-select-dropdown";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import axios from "axios";
+import { API_USER, API_VENDOR } from "../../config";
 
 
 const { height, width } = Dimensions.get("window");
@@ -23,6 +26,7 @@ export default function SignIn({navigation}){
     const [error, setError] = useState(false);
     const [error1, setError1] = useState(false);
     const [user, setUser] = useState("");
+    const [loading, setLoading] = useState(false);
 
 
     const inputHandler=()=>{
@@ -42,12 +46,47 @@ export default function SignIn({navigation}){
     const submit=()=>{
         if(num === "" || num.length !== 10){
             setError(true);
-        }else if(user === ""){
+        }
+        else if(user === ""){
             setError1(true);
         }
         else{
             setError1(false);
-            navigation.navigate("OtpVerify",navData);
+            setLoading(true);
+            if(user === "user"){
+                axios.post(`${API_USER}/register`,{"phoneNo": Number(num)})
+                .then(res=>{
+                    if(res.status === 200){
+                        setLoading(false);
+                        navigation.navigate("OtpVerify",navData);
+                    }
+                    else {
+                        console.log(res.status);
+                        setLoading(false);
+                    }
+                })
+                .catch(err=>{
+                    console.log(err);
+                    setLoading(false);
+                })
+            }
+            else if(user === "vendor"){
+                axios.post(`${API_VENDOR}/register`,{"phoneNo": Number(num)})
+                .then(res=>{
+                    if(res.status === 200){
+                        setLoading(false);
+                        navigation.navigate("OtpVerify",navData);
+                    }
+                    else {
+                        console.log(res.status);
+                        setLoading(false);
+                    }
+                })
+                .catch(err=>{
+                    console.log(err);
+                    setLoading(false);
+                })
+            }
         }
     };
 
@@ -55,7 +94,8 @@ export default function SignIn({navigation}){
         <View style={styles.container}>
             {/* <StatusBar backgroundColor="#0d5434" /> */}
             <View style={styles.heading}>
-                <Text style={{textAlign:"center",color:"#fff",fontSize: 20}}>Joyayog</Text>
+                <Image style={{height:"30%",resizeMode:"contain"}} source={require("../assets/logo.jpg")} />
+                <Text style={{color:"#000",fontSize: 20,fontWeight:"600"}}>Joyayog</Text>
             </View>
             <View style={styles.modal}>
                 <ScrollView style={{marginTop: 20, marginHorizontal: 30}}>
@@ -101,11 +141,20 @@ export default function SignIn({navigation}){
                             keyboardType="number-pad"
                             placeholderTextColor="gray"
                             onBlur={inputHandler}
+                            maxLength={10}
                         />
                     </KeyboardAvoidingView>
                     {error ? <Text style={{fontSize:12,color:"red",textAlign:"center"}}>please enter a valid number</Text>: null}
-                    <TouchableOpacity style={styles.otp} activeOpacity={0.6} onPress={submit}>
-                        <Text style={{color:"#fff",fontWeight:"800"}}>Get OTP</Text>
+                    <TouchableOpacity 
+                        style={styles.otp} 
+                        activeOpacity={0.6} 
+                        onPress={submit}
+                        // onPress={()=>navigation.navigate("OtpVerify",navData)}
+                        disabled={loading ? true : false}
+                    >
+                        {
+                            loading ? <ActivityIndicator /> : <Text style={{color:"#fff",fontWeight:"800"}}>Get OTP</Text>
+                        }
                     </TouchableOpacity>
                 </ScrollView>
             </View>
@@ -116,17 +165,19 @@ export default function SignIn({navigation}){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#054d36"
+        backgroundColor: "#ffe4e1"
     },
     heading: {
-        marginTop: height/5,
-        height: height/4
+        marginTop: height/6,
+        height: height/4,
+        alignItems:"center"
     },
     modal: {
         flex: 1,
         backgroundColor: "#fff",
         borderTopLeftRadius: 20,
-        borderTopRightRadius: 20
+        borderTopRightRadius: 20,
+        elevation: 16
     },
     textInputDiv: {
         marginHorizontal: 20,
@@ -145,7 +196,7 @@ const styles = StyleSheet.create({
     },
     otp: {
         borderRadius: 10,
-        backgroundColor: "#42b349",
+        backgroundColor: "#ff1493",
         elevation: 5,
         marginHorizontal: width/6,
         justifyContent: "center",

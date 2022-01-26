@@ -1,12 +1,14 @@
 import React from 'react';
 import { Button, View, Text, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import VendorChat from '../screens/mainApp/vendorPanel/ChatScreen';
+import ProfileScreen from '../ProfileScreen';
+import EditProfile from '../EditProfileScreen';
+
+// import Menu from '../MenuScreen';
 
 
 
-
-export default function ChatStack(){
+export default function ProfileStack(){
 
   
   const Stack = createNativeStackNavigator();
@@ -14,7 +16,8 @@ export default function ChatStack(){
   return (
     <View style={styles.container}>
         <Stack.Navigator screenOptions={{headerShown:false}}>
-            <Stack.Screen name='ChatScreen' component={VendorChat} />
+            <Stack.Screen name='Profile' component={ProfileScreen} />
+            <Stack.Screen name='EditProfile' component={EditProfile} />
         </Stack.Navigator>
     </View>
   );

@@ -24,11 +24,11 @@ export default function SearchHeader({nav}){
         <>
             <View style={styles.header}>
                 <View style={{flexDirection:"row",alignItems:"center"}}>
-                    <EvilIcons name="location" color="#fff" size={24} />
-                    <Text style={{color:"#fff",fontSize:12,marginRight:10}}>Gujrat, India</Text>
-                    <Entypo name="chevron-thin-down" color="#fff" size={16} />
+                    <EvilIcons name="location" color="#000" size={24} />
+                    <Text style={{color:"#000",fontSize:12,marginRight:10}}>Gujrat, India</Text>
+                    <Entypo name="chevron-thin-down" color="#000" size={16} />
                 </View>
-                <Ionicons name="person-outline" color="#fff" size={24} onPress={nav} />
+                <Fontisto name="bell" color="#000" size={24} onPress={nav} />
             </View>
             <View style={styles.textInputDiv}>
                 <Feather name="search" size={22} style={{marginLeft:10,color:"#000"}} />
@@ -94,20 +94,20 @@ const styles = StyleSheet.create({
         backgroundColor:"gray"
     },
     name: {
-        color:"#fff",
+        color:"#000",
         fontSize:10,
         marginTop:5
     },
     heading: {
         fontWeight:"bold",
-        color:"#fff",
+        color:"#000",
         marginLeft:20,
         fontSize:16
     },
     textInputDiv: {
         marginHorizontal: 20,
         marginVertical: 20,
-        backgroundColor: "#aaa",
+        backgroundColor: "#fff",
         borderRadius: 10,
         flexDirection: "row",
         alignItems: "center",

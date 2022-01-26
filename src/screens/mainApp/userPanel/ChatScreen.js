@@ -91,7 +91,7 @@ const DATA=[
 
 const { height, width } = Dimensions.get("window");
 
-export default function ChatScreen({navigate}){
+export default function ChatScreen({navigation}){
 
     const [text, setText] = useState("");
     const [data, setData] = useState(DATA);
@@ -100,8 +100,7 @@ export default function ChatScreen({navigate}){
     const searchFilter=(val)=>{
         if(val){
             const newData =  data.filter((item)=>{
-                const itemData = item.name ? item.name.toUpperCase()
-                : ''.toUpperCase();
+                const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
                 const textData  = val.toUpperCase();
                 return itemData.indexOf(textData) > -1;
             })
@@ -118,9 +117,13 @@ export default function ChatScreen({navigate}){
     return(
         <View style={styles.container}>
             <View style={styles.header}>
-                <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",marginTop:40}}>
-                    <Text style={{color:"#fff",fontWeight:"bold",fontSize:16}}>Chats</Text>
-                    <Ionicons name="person-outline" color="#fff" size={24} onPress={navigate} />
+                <View style={{
+                    flexDirection:"row",justifyContent:"space-between",
+                    alignItems:"center",marginTop:40
+                    }}
+                >
+                    <Text style={{color:"#000",fontWeight:"bold",fontSize:16}}>Chats</Text>
+                    <Fontisto name="bell" color="#000" size={24} onPress={()=>navigation.navigate("Alert")} />
                 </View>
                 <View style={styles.textInputDiv}>
                     <Feather name="search" size={22} style={{marginLeft:10,color:"#000"}} />
@@ -133,15 +136,20 @@ export default function ChatScreen({navigate}){
                     />
                 </View>
             </View>
-            <View style={{backgroundColor:"#fff",flex:1,borderTopRightRadius:10,borderTopLeftRadius:10,bottom:-10}}>
+            <View style={{
+                backgroundColor:"#fff",flex:1,
+                borderTopRightRadius:10,
+                borderTopLeftRadius:10,bottom:-10
+                }}
+            >
                 <View>
                     <FlatList 
                         data={filterData}
                         keyExtractor={item=>item.id}
                         showsVerticalScrollIndicator={false}
                         renderItem={({item,index})=>(
-                            <View key={index} style={styles.mainView}>
-                                <View style={{flexDirection:"row",alignItems:"center",marginHorizontal:20,marginVertical:10}}>
+                            <TouchableOpacity key={index} style={styles.mainView} onPress={()=>navigation.navigate("ChatRoom",item.name)}>
+                                <View style={styles.subView}>
                                     <View style={{alignItems:"center"}}>
                                         <View style={styles.bgCircle} />
                                         <View style={styles.smCircle}>
@@ -151,14 +159,14 @@ export default function ChatScreen({navigate}){
                                     <View style={styles.texts}>
                                         <Text style={{color:"#000",top:3,fontWeight:"500"}}>{item.name}</Text>
                                         <Text style={{color:"#000",fontSize:11,}}>{item.duration}</Text>
-                                        <Text style={{color:"#aaa",fontSize:10,top:2,marginRight:50}}>{item.msg}</Text>
-                                        <Text style={{color:"#aaa",fontSize:10,top:2,marginRight:50}}>{item.msg}</Text>
+                                        <Text style={styles.msg}>{item.msg}</Text>
+                                        <Text style={styles.msg}>{item.msg}</Text>
                                     </View>
                                     <View style={styles.time}>
                                         <Text style={{color:"#000"}}>{item.time}</Text>
                                     </View>
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         )}
                     />
                 </View>
@@ -170,6 +178,7 @@ export default function ChatScreen({navigate}){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#ffe4e1"
     },
     header: {
         // height: height/8,
@@ -178,7 +187,7 @@ const styles = StyleSheet.create({
     textInputDiv: {
         marginHorizontal: 10,
         marginVertical: 20,
-        backgroundColor: "#aaa",
+        backgroundColor: "#fff",
         borderRadius: 10,
         flexDirection: "row",
         alignItems: "center",
@@ -217,5 +226,17 @@ const styles = StyleSheet.create({
         position: "absolute",
         right: 0,
         top: 3
+    },
+    msg: {
+        color:"#aaa",
+        fontSize:10,
+        top:2,
+        marginRight:50
+    },
+    subView: {
+        flexDirection:"row",
+        alignItems:"center",
+        marginHorizontal:20,
+        marginVertical:10
     }
 })

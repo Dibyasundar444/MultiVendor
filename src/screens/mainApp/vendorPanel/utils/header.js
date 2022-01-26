@@ -16,17 +16,19 @@ import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
 
 
-export default function ProductHeader({profile,notify}){
+export default function Header({profile,notify,title,date,activeStyle,bellColor}){
     return(
-        <View style={{marginVertical: 30,marginHorizontal: 20,}}>
+        <View style={{marginTop: 30,marginHorizontal: 20,}}>
             <View style={styles.header}>
-                <Text style={{color:"#fff",fontSize: 16}}>Hi, John Vendor</Text>
+                <Text style={{color:"#000",fontSize: 16}}>{title}</Text>
                 <View style={{flexDirection:"row",alignItems:"center"}}>
-                    <Ionicons name="person-outline" color="#fff" size={24} onPress={profile} />
-                    <Fontisto name="bell" size={24} color="#fff" onPress={notify} style={{marginLeft:25}} />
+                    <Ionicons name="person-outline" color="#000" size={24} onPress={profile} />
+                    <TouchableOpacity onPress={notify} style={[{marginLeft:20},activeStyle]}>
+                        <Fontisto name="bell" size={24} color={bellColor} />
+                    </TouchableOpacity>
                 </View>
             </View>
-            <Text style={{color:"#aaa",fontSize:12}}>Jan 17, 2022</Text>
+            <Text style={{color:"gray",fontSize:12}}>{date}</Text>
         </View>
     )
 };

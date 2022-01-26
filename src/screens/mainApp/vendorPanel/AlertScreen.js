@@ -12,7 +12,7 @@ import {
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Fontisto from "react-native-vector-icons/Fontisto";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
 import Header from "./utils/header";
@@ -21,89 +21,99 @@ const DATA=[
     {
         "id":"0",
         "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
+        "title":"Service Rating",
+        "totalRating":"5",
+        "ratingGiven":"4",
         "time":"03:40pm"
     },
     {
         "id":"1",
         "name":"Suresh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
+        "title":"Service Rating",
+        "totalRating":"5",
+        "ratingGiven":"4",
         "time":"03:45pm"
     },
     {
         "id":"2",
         "name":"John",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
+        "title":"Service Rating",
+        "totalRating":"5",
+        "ratingGiven":"4",
         "time":"03:33pm"
     },
     {
         "id":"3",
         "name":"Name4",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
+        "title":"Service Rating",
+        "totalRating":"5",
+        "ratingGiven":"4",
         "time":"03:33pm"
     },
     {
         "id":"4",
         "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
+        "title":"Service Rating",
+        "totalRating":"5",
+        "ratingGiven":"4",
         "time":"03:33pm"
     },
     {
         "id":"5",
         "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
+        "title":"Service Rating",
+        "totalRating":"5",
+        "ratingGiven":"4",
         "time":"03:33pm"
     },
     {
         "id":"6",
         "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
+        "title":"Service Rating",
+        "totalRating":"5",
+        "ratingGiven":"4",
         "time":"03:33pm"
     },
     {
         "id":"7",
         "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
+        "title":"Service Rating",
+        "totalRating":"5",
+        "ratingGiven":"4",
         "time":"03:33pm"
     },
     {
         "id":"8",
         "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
+        "title":"Service Rating",
+        "totalRating":"5",
+        "ratingGiven":"4",
         "time":"03:33pm"
     },
     {
         "id":"9",
         "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
+        "title":"Service Rating",
+        "totalRating":"5",
+        "ratingGiven":"4",
         "time":"03:40pm"
     },
 ];
 
 export const { height, width } = Dimensions.get("window");
 
-export default function VendorChat({navigation}){
+export default function AlertScreen(){
 
-    const [text, setText] = useState("");
-    const [data, setData] = useState(DATA);
+    // const [text, setText] = useState("");
+    // const [data, setData] = useState(DATA);
    
 
     return(
         <View style={styles.container}>
             <Header
-                title="Chat(02)"
-                notify={()=>navigation.navigate("AlertScreen")}
-                bellColor="#000"
+                title="Alerts(03)"
+                activeStyle={styles.bell}
+                bellColor="#fff"
             />
             <View style={styles.body}>
                 <View style={{}}>
@@ -115,17 +125,17 @@ export default function VendorChat({navigation}){
                         renderItem={({item,index})=>(
                             <View key={index} style={styles.mainView}>
                                 <View style={styles.subView}>
-                                    <View style={{alignItems:"center"}}>
-                                        <View style={styles.bgCircle} />
-                                        <View style={styles.smCircle}>
-                                            <Text style={{color:"#000",fontSize:12}}>1</Text>
-                                        </View>
-                                    </View>
+                                    <View style={styles.bgCircle} />                        
                                     <View style={styles.texts}>
                                         <Text style={styles.name}>{item.name}</Text>
-                                        <Text style={styles.duration}>{item.duration}</Text>
-                                        <Text style={styles.msg}>{item.msg}</Text>
-                                        <Text style={styles.msg}>{item.msg}</Text>
+                                        <View style={{flexDirection:"row",alignItems:"center",top:2}}>
+                                            <Text style={styles.msg}>{item.title} {item.ratingGiven}/{item.totalRating}</Text>
+                                            <FontAwesome name="star" color="#eb9534" size={16} style={{marginRight:2}} />
+                                            <FontAwesome name="star" color="#eb9534" size={16} style={{marginRight:2}} />
+                                            <FontAwesome name="star" color="#eb9534" size={16} style={{marginRight:2}} />
+                                            <FontAwesome name="star" color="#eb9534" size={16} style={{marginRight:2}} />
+                                            <FontAwesome name="star-o" color="#000" size={16} style={{marginRight:2}} />
+                                        </View>
                                     </View>
                                     <View style={styles.time}>
                                         <Text style={styles.timetxt}>{item.time}</Text>
@@ -166,10 +176,10 @@ const styles = StyleSheet.create({
         borderBottomWidth:1,
     },
     bgCircle: {
-        borderWidth: 1,
-        height: 50,
-        width: 50,
-        borderRadius: 50/2,
+        // borderWidth: 1,
+        height: 55,
+        width: 55,
+        borderRadius: 55/2,
         backgroundColor: "#aaa"
     },
     smCircle: {
@@ -184,6 +194,7 @@ const styles = StyleSheet.create({
     },
     texts: {
         marginLeft: 10,
+        // top: -10
     },
     time: {
         position: "absolute",
@@ -206,8 +217,8 @@ const styles = StyleSheet.create({
     msg: {
         color:"#aaa",
         fontSize:10,
-        top:2,
-        marginRight:50
+        // top:2,
+        marginRight:5
     },
     timetxt: {
         color:"#000",
@@ -216,11 +227,19 @@ const styles = StyleSheet.create({
     },
     name: {
         color:"#000",
-        top:3,
+        // top:3,
         fontWeight:"500"
     },
     duration: {
         color:"#000",
         fontSize:11,
+    },
+    bell: {
+        backgroundColor: "#ff1493",
+        width: 45,
+        height: 45,
+        borderRadius: 45/2,
+        justifyContent:"center",
+        alignItems: "center"
     }
 })

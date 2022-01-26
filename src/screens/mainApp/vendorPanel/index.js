@@ -14,10 +14,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from "./HomeScreen";
 import VendorChat from "./ChatScreen";
 import AddProduct from "./AddProduct";
-import HomeStack from "../../../stackNavigator/HomeStack";
+import HomeStack from "./stackNavigator/HomeStack";
 import MyProduct from "./ProductScreen";
-import ProductStack from "../../../stackNavigator/ProductStack";
-import ChatStack from "../../../stackNavigator/ChatStack";
+import ProductStack from "./stackNavigator/ProductStack";
+import ChatStack from "./stackNavigator/ChatStack";
 
 
 
@@ -152,7 +152,7 @@ export default function VendorPanel({navigation}){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#054d36"
+        backgroundColor: "#ffe4e1"
     },
     bottomTab: {
         backgroundColor: "#fff",
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
         
     },
     active: {
-        backgroundColor: "#42b349",
+        backgroundColor: "#ff1493",
         borderRadius: 15
     }
 })

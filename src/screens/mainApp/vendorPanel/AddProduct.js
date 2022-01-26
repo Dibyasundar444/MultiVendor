@@ -6,7 +6,9 @@ import {
     TouchableOpacity,
     TextInput,
     Platform,
-    PermissionsAndroid
+    PermissionsAndroid,
+    KeyboardAvoidingView,
+    ScrollView
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
@@ -157,11 +159,21 @@ export default function AddProduct({navigation}){
     );
 
     return(
-        <View style={[styles.container,isVisible && {backgroundColor:'rgba(0,0,0,0.7)'}]}>
+        <ScrollView style={[styles.container,isVisible && {backgroundColor:'rgba(0,0,0,0.7)'}]}>
             <AddProduct_Header 
                 goBack={()=>navigation.goBack()}
+                notify={()=>navigation.navigate("AlertScreen")}
             />
             <View style={{marginTop: 60}} />
+            <TouchableOpacity 
+                style={[styles.input1,isVisible && {backgroundColor:'#aaa'}]}
+                activeOpacity={0.6}
+            >
+                <View style={styles.cat}>
+                    <Text style={{color:"gray"}}>Category</Text>
+                    <AntDesign name="down" size={18} color="#000" />
+                </View>
+            </TouchableOpacity>
             <View style={[styles.textInput1,isVisible && {backgroundColor:'#aaa'}]}>
                 <TextInput 
                     style={styles.Name}
@@ -213,14 +225,14 @@ export default function AddProduct({navigation}){
                 </TouchableOpacity>
             </View>
             {isVisible && upload()}
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#054d36",
+        backgroundColor: "#ffe4e1"
     },
     textInput1: {
         height: 45,
@@ -228,6 +240,15 @@ const styles = StyleSheet.create({
         marginHorizontal: 30,
         borderRadius: 10,
         marginBottom: 10
+    },
+    input1: {
+        height: 45,
+        backgroundColor: "#fff",
+        marginHorizontal: 30,
+        borderRadius: 10,
+        marginBottom: 10,
+        justifyContent:"center",
+        paddingHorizontal: 20,
     },
     Name: {
         paddingLeft: 20,
@@ -249,7 +270,7 @@ const styles = StyleSheet.create({
     },
     btn: {
         alignItems:"center",
-        backgroundColor:"#42b349",
+        backgroundColor:"#ff1493",
         paddingVertical:13,
         paddingHorizontal:20,
         borderRadius:10
@@ -295,5 +316,10 @@ const styles = StyleSheet.create({
         borderWidth:0.5,
         alignSelf:"center",
         marginTop:10
+    },
+    cat: {
+        flexDirection:"row",
+        justifyContent:"space-between",
+        alignItems:"center"
     }
 });
