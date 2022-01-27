@@ -7,7 +7,9 @@ import {
     ScrollView,
     Image,
     Dimensions, 
-    TextInput
+    TextInput,
+    Alert,
+    ActivityIndicator
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
@@ -17,17 +19,23 @@ import EvilIcons from "react-native-vector-icons/EvilIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Octicons from "react-native-vector-icons/Octicons";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import axios from "axios";
+import { API_USER } from "../../../../config";
 
 
 const { height, width } = Dimensions.get("window");
 
-export default function EditProfile({navigation}){
+export default function EditProfile({navigation,route}){
 
-    const [name, setName] = useState("");
-    const [phoneNo, setPhoneNo] = useState("");
-    const [address, setAddress] = useState("");
+    const prevData = route.params;
+
+    const [name, setName] = useState(prevData.name);
+    const [phoneNo, setPhoneNo] = useState(prevData.phoneNo);
+    const [address, setAddress] = useState(prevData.address);
     const [isVisible, setIsVisible] = useState(false);
-    const [img, setImg] = useState("");
+    const [img, setImg] = useState(prevData.img);
+    const [isUpdated, setIsUpdated] = useState(false);
+    const [indicator, setIndicator] = useState(false);
 
     const openCamera=async()=>{
         const options = {
@@ -117,6 +125,47 @@ export default function EditProfile({navigation}){
         </View>
     );
 
+    const update_alert=()=>{
+        Alert.alert(
+            "Update your profile",
+            "Are you sure?",
+            [
+                {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+                },
+                { text: "OK", onPress: update }
+            ]
+        )
+    };
+
+    let updateData={
+        "name": name,
+        "phoneNo": phoneNo,
+        "address": address,
+        "profileImg": img
+    };
+    // console.log(updateData);
+
+    const update=()=>{
+        setIndicator(true);
+        axios.patch(`${API_USER}/updateuser`,updateData)
+        .then(res=>{
+            if(res.status===200){
+                setIndicator(false);
+                setIsUpdated(true);
+            }
+            else {
+                setIndicator(false);
+            }
+        })
+        .catch(err=>{
+            console.log(err);
+            setIndicator(false);
+        })
+    };
+
     return(
         <View style={styles.container}>
             <View style={styles.header}>
@@ -127,7 +176,7 @@ export default function EditProfile({navigation}){
                 <View style={{marginHorizontal:20,marginVertical:20}}>
                     <View style={styles.bodyTitle}>
                         <Text style={{color:"#000"}}>Edit Profile</Text>
-                        <Text style={{color:"#ff1493",fontWeight:"500"}} onPress={()=>alert("update_Profile")}>Update</Text>
+                        <Text style={{color:"#ff1493",fontWeight:"500"}} onPress={update_alert}>Update</Text>
                     </View>
                     <View style={styles.imgView}>
                         <Image style={{height:100,width:100,borderRadius:50,backgroundColor:"#ffe4e1"}} 
@@ -179,20 +228,12 @@ export default function EditProfile({navigation}){
                             onChangeText={(val)=>setAddress(val)}
                         />
                     </View>
-                    <TouchableOpacity style={styles.smCard1} onPress={()=>alert("update")}>
-                        <Text style={{marginLeft:20,color:"gray"}}>Demo</Text>
-                        {/* <TextInput 
-                            style={{
-                                width:"100%",borderRadius: 10,
-                                paddingLeft:20,color:"#000",
-                            }}
-                            placeholder="Demo"
-                            placeholderTextColor="#000"
-                            autoCorrect={false}
-                            value={name}
-                            onChangeText={(val)=>setName(val)}
-                        /> */}
-                    </TouchableOpacity>
+                    <View style={{marginTop:20,alignItems:"center"}}>
+                    {
+                        indicator ? <ActivityIndicator size={30} color="#ff1493" /> : isUpdated ? 
+                        <Text style={{color:"green",fontSize:12}}>Updated sucessfully</Text> : null
+                    }
+                    </View>
                 </View>
             </ScrollView>
             {isVisible && upload()}

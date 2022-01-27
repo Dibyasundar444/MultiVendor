@@ -167,11 +167,12 @@ export default function OtpVerify({route,navigation}){
                         }                       
                     </KeyboardAvoidingView>
                     <TouchableOpacity 
-                    style={styles.otp} 
-                    activeOpacity={0.6}
-                    onPress={submit} 
-                    // onPress={()=>navigation.navigate("UserPanel")}
-                    disabled={num.length !==4 ? true : false}>
+                        style={styles.otp} 
+                        activeOpacity={0.6}
+                        onPress={submit} 
+                        // onPress={()=>navigation.navigate("UserPanel")}
+                        disabled={num.length !==4 ? true : false}
+                    >
                         {
                             loading ? <ActivityIndicator /> : <Text style={{color:"#fff",fontWeight:"800"}}>Continue</Text>
                         }

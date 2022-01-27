@@ -48,7 +48,7 @@ const data=[
     },
 ];
 
-export default function MenuHeader({nav}){
+export default function MenuHeader({alert,vendorProfile}){
     return(
         <>
             <View style={styles.header}>
@@ -57,7 +57,7 @@ export default function MenuHeader({nav}){
                     <Text style={{color:"#000",fontSize:12,marginRight:10}}>Gujrat, India</Text>
                     <Entypo name="chevron-thin-down" color="#000" size={16} />
                 </View>
-                <Fontisto name="bell" color="#000" size={24} onPress={nav} />
+                <Fontisto name="bell" color="#000" size={24} onPress={alert} />
             </View>
             <View style={{height:120,width:"100%",backgroundColor:"gray"}} />
             <View style={{marginTop:10,marginLeft:20}}>
@@ -68,7 +68,9 @@ export default function MenuHeader({nav}){
                     showsHorizontalScrollIndicator={false}
                     renderItem={({item})=>(
                         <View key={item.id} style={{alignItems:"center",marginRight:10}}>
-                            <View style={styles.circle} />
+                            <TouchableOpacity style={styles.circle} 
+                                onPress={vendorProfile}
+                            />
                             <Text style={styles.name}>Akash jai</Text>
                         </View>
                     )}

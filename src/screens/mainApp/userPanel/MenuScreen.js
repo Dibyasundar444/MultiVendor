@@ -56,7 +56,8 @@ export default function Menu({navigation}){
     return(
         <ScrollView style={styles.container}>
             <MenuHeader 
-                nav={()=>navigation.navigate("Alert")}
+                alert={()=>navigation.navigate("Alert")}
+                vendorProfile={()=>navigation.navigate("VendorProfile")}
             />
             <View style={{marginLeft:20,marginTop:20}}>
                 <Text style={{color:"#000",fontWeight:"bold",marginBottom:20,fontSize:16}}>Latest Products</Text>
