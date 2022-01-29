@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { 
     View, 
     Text, 
@@ -9,10 +9,11 @@ import {
     Dimensions, 
     TextInput,
     Alert,
-    ActivityIndicator
+    ActivityIndicator,
+    Platform
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
+import Entypo from "react-native-vector-icons/Entypo";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
@@ -20,22 +21,30 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Octicons from "react-native-vector-icons/Octicons";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import axios from "axios";
-import { API_USER } from "../../../../config";
+import storage from '@react-native-firebase/storage';
+import { API, API_USER } from "../../../../config";
 
 
 const { height, width } = Dimensions.get("window");
 
-export default function EditProfile({navigation,route}){
+export default function EditProfile({navigation}){
 
-    const prevData = route.params;
 
-    const [name, setName] = useState(prevData.name);
-    const [phoneNo, setPhoneNo] = useState(prevData.phoneNo);
-    const [address, setAddress] = useState(prevData.address);
+    const [name, setName] = useState("");
+    const [phoneNo, setPhoneNo] = useState("");
+    const [address, setAddress] = useState("");
     const [isVisible, setIsVisible] = useState(false);
-    const [img, setImg] = useState(prevData.img);
+    const [img, setImg] = useState("");
     const [isUpdated, setIsUpdated] = useState(false);
     const [indicator, setIndicator] = useState(false);
+    const [indicator2, setIndicator2] = useState(false);
+    const [isUploaded, setIsUploaded] = useState(false);
+    const [process, setProcess] = useState("");
+    const [url, setUrl] = useState("");
+
+    useEffect(()=>{
+        getUser();
+    },[]);
 
     const openCamera=async()=>{
         const options = {
@@ -59,7 +68,37 @@ export default function EditProfile({navigation,route}){
                     setIsVisible(false);
                 }
                 else{
-                    resp.assets.map(x=>setImg(x.uri));
+                    const imgData = resp.assets[0];
+                    setIndicator2(true);
+                    setIsUploaded(false);
+                    try{
+                        const task = storage()
+                        .ref("USER/profile_image/"+ imgData.fileName)
+                        .putString(imgData.base64,"base64");
+                        task.on('state_changed',
+                            function(snapshot){
+                                const rate = Math.floor((snapshot.bytesTransferred/snapshot.totalBytes)*100);
+                                // setProcess(`${rate}%`);
+                                console.log(rate);
+                            },
+                            function(err){
+                                console.log(err);
+                            },
+                            function(){
+                                task.snapshot.ref.getDownloadURL().then(function(url){
+                                    setUrl(url);
+                                })
+                            }
+                        );                  
+                        task.then(() => {
+                            console.log('PDF uploaded to the bucket!');
+                            setIndicator2(false);
+                            setIsUploaded(true);
+                        });               
+                    }
+                    catch(e){
+                        console.log(e);
+                    }
                     setIsVisible(false);
                 }
             })
@@ -87,7 +126,37 @@ export default function EditProfile({navigation,route}){
                     setIsVisible(false);
                 }
                 else{
-                    resp.assets.map(x=>setImg(x.uri));
+                    const imgData = resp.assets[0];
+                    setIndicator2(true);
+                    setIsUploaded(false);
+                    try{
+                        const task = storage()
+                        .ref("USER/profile_image/"+ imgData.fileName)
+                        .putString(imgData.base64,"base64");
+                        task.on('state_changed',
+                            function(snapshot){
+                                const rate = Math.floor((snapshot.bytesTransferred/snapshot.totalBytes)*100);
+                                // setProcess(`${rate}%`);
+                                console.log(rate);
+                            },
+                            function(err){
+                                console.log(err);
+                            },
+                            function(){
+                                task.snapshot.ref.getDownloadURL().then(function(url){
+                                    setUrl(url);
+                                })
+                            }
+                        );                  
+                        task.then(() => {
+                            console.log('PDF uploaded to the bucket!');
+                            setIndicator2(false);
+                            setIsUploaded(true);
+                        });               
+                    }
+                    catch(e){
+                        console.log(e);
+                    }
                     setIsVisible(false);
                 }
             })
@@ -125,6 +194,23 @@ export default function EditProfile({navigation,route}){
         </View>
     );
 
+    const getUser=()=>{
+        axios.get(`${API_USER}/userDetail`)
+        .then(res=>{
+            if(res.status===200){
+                console.log(res.data);
+                setPhoneNo(res.data.phoneNo);
+                setName(res.data.name);
+                setUrl(res.data.profileImg);
+                setAddress(res.data.address);
+            }
+            else console.log("Status error: ",res.status);
+        })
+        .catch(err=>{
+            console.log(err);
+        })
+    };
+
     const update_alert=()=>{
         Alert.alert(
             "Update your profile",
@@ -144,9 +230,8 @@ export default function EditProfile({navigation,route}){
         "name": name,
         "phoneNo": phoneNo,
         "address": address,
-        "profileImg": img
+        "profileImg": url
     };
-    // console.log(updateData);
 
     const update=()=>{
         setIndicator(true);
@@ -180,8 +265,13 @@ export default function EditProfile({navigation,route}){
                     </View>
                     <View style={styles.imgView}>
                         <Image style={{height:100,width:100,borderRadius:50,backgroundColor:"#ffe4e1"}} 
-                            source={img !=="" ? {uri: img} : require("../../../assets/profile.png")}
+                            source={url ==="" || url === undefined || url === null? require("../../../assets/profile.png") : {uri: url}}
                         />
+                        <View style={{marginTop:10}}>
+                            {
+                            indicator2 ? <ActivityIndicator /> : isUploaded ? <Text style={{color:"green",fontSize:10}}>uploaded</Text> : null
+                            }
+                        </View>
                         <Text style={{color:"#000",fontSize:12,marginTop:10}}
                             onPress={()=>setIsVisible(true)}
                         >+ Update Profile Picture</Text>
@@ -193,7 +283,7 @@ export default function EditProfile({navigation,route}){
                                 width:"100%",borderRadius: 10,
                                 paddingLeft:20,color:"#000"
                             }}
-                            placeholder="John"
+                            placeholder={name==="" || name===undefined ? "Name" : name}
                             placeholderTextColor="#000"
                             autoCorrect={false}
                             value={name}
@@ -207,10 +297,10 @@ export default function EditProfile({navigation,route}){
                                 borderRadius: 10,paddingLeft: 10,
                                 color:"#000",paddingVertical:2,width:"85%",
                             }}
-                            placeholder="7407668045"
+                            placeholder={phoneNo.toString()}
                             placeholderTextColor="#000"
                             autoCorrect={false}
-                            value={phoneNo}
+                            value={phoneNo.toString()}
                             onChangeText={(val)=>setPhoneNo(val)}
                             keyboardType="numeric"
                         />
@@ -221,7 +311,7 @@ export default function EditProfile({navigation,route}){
                                 textAlignVertical:"top",width:"100%",color:"#000",
                                 height:"100%",paddingLeft:20,borderRadius: 10
                             }}
-                            placeholder="Address"
+                            placeholder={address==="" || address===undefined ? "Address" : address}
                             placeholderTextColor="#000"
                             multiline={true}
                             value={address}

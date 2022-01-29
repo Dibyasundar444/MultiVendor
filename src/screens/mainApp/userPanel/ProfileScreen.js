@@ -12,16 +12,16 @@ import {
     Alert
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Fontisto from "react-native-vector-icons/Fontisto";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Octicons from "react-native-vector-icons/Octicons";
-import ProfileHeader from "./utils/ProfileHeader";
-import axios from "axios";
-import { API_USER } from "../../../../config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+
+import { API_USER } from "../../../../config";
+import ProfileHeader from "./utils/ProfileHeader";
+
+
 
 
 
@@ -93,7 +93,7 @@ export default function ProfileScreen({navigation}){
                 setPhoneNo(res.data.phoneNo);
                 setName(res.data.name);
                 setImg(res.data.profileImg);
-                setAddress(res.data.address);
+                // setAddress(res.data.address);
             }
             else console.log("Status error: ",res.status);
         })
@@ -102,12 +102,12 @@ export default function ProfileScreen({navigation}){
         })
     };
 
-    let navData={
-        "name": name,
-        "phoneNo": phoneNo,
-        "img": img,
-        "address": address
-    };
+    // let navData={
+    //     "name": name,
+    //     "phoneNo": phoneNo,
+    //     "img": img,
+    //     "address": address
+    // }; 
 
 
     return(
@@ -118,11 +118,11 @@ export default function ProfileScreen({navigation}){
             <View style={styles.body}>
                 <View style={styles.bgCard}>
                     <Image style={styles.img} 
-                        source={img !=="" ? {uri: img} : require("../../../assets/profile.png")}
+                        source={img ==="" || img === undefined || img === null ? require("../../../assets/profile.png") : {uri: img}}
                     />
                     <View style={styles.texts}>
                         {
-                            name === "" ? null : <Text style={{color:"#000",fontWeight:"500"}}>{name}</Text>
+                            name === "" || name === undefined ? null : <Text style={{color:"#000",fontWeight:"500"}}>{name}</Text>
                         }
                         <Text style={{color:"#000",fontSize: 12}}>+91 {phoneNo}</Text>
                     </View>
@@ -130,7 +130,7 @@ export default function ProfileScreen({navigation}){
                 <Text style={{marginLeft:25,marginTop:20,color:"#000",marginBottom:5}}>Account</Text>
                 <TouchableOpacity 
                     style={styles.smCard}
-                    onPress={()=>navigation.navigate("EditProfile",navData)}
+                    onPress={()=>navigation.navigate("EditProfile")}
                     activeOpacity={0.8}
                 >
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
@@ -180,7 +180,7 @@ export default function ProfileScreen({navigation}){
                 </TouchableOpacity>
             </View>
         </View>
-    )
+    );
 };
 
 const styles = StyleSheet.create({
@@ -189,7 +189,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffe4e1"
     },
     header: {
-        // height: height/8,
         marginHorizontal: 20,
         marginBottom: 20
     },

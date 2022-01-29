@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { 
     View, 
     Text, 
@@ -6,7 +6,9 @@ import {
     TouchableOpacity,
     ScrollView,
     FlatList,
-    Dimensions 
+    Dimensions, 
+    ActivityIndicator,
+    Image
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
@@ -15,6 +17,8 @@ import Fontisto from "react-native-vector-icons/Fontisto";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
 import MenuHeader from "./utils/menuHeader";
+import axios from "axios";
+import { API } from "../../../../config";
 
 const data=[
     {
@@ -53,6 +57,24 @@ const data=[
 const { height, width } = Dimensions.get("window");
 
 export default function Menu({navigation}){
+
+    const [data, setData] = useState([]);
+    const [indicator, setIndicator] = useState(true);
+
+    useEffect(()=>{
+        getProducts();
+    },[]);
+
+    const getProducts=()=>{
+        axios.get(`${API}/allproducts`)
+        .then(resp=>{
+            setData(resp.data);
+            setIndicator(false);
+        })
+        .catch(e=>{
+            console.log("server error: ",e);
+        })
+    };
     return(
         <ScrollView style={styles.container}>
             <MenuHeader 
@@ -61,24 +83,37 @@ export default function Menu({navigation}){
             />
             <View style={{marginLeft:20,marginTop:20}}>
                 <Text style={{color:"#000",fontWeight:"bold",marginBottom:20,fontSize:16}}>Latest Products</Text>
-                <FlatList 
-                    horizontal={true}
-                    data={data}
-                    showsHorizontalScrollIndicator={false}
-                    renderItem={({item})=>(
-                        <View key={item.id} style={styles.box}>
-                            <View style={{height: width/3.5,backgroundColor:"pink",width:"100%",borderRadius:10}} />
-                            <View style={{marginLeft:10,marginTop:5}}>
-                                <Text style={{color:"#000",fontSize:12}}>Product Name</Text>
-                                <Text style={{color:"#000",fontSize:12}}>Details</Text>
-                            </View>
-                            <View style={{flexDirection:"row",justifyContent:"center",marginTop:5}}>
-                                <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
-                                <EvilIcons name="arrow-right" color="#000" size={22} />
-                            </View>
-                        </View>
-                    )}
-                />
+                {
+                    indicator ? <ActivityIndicator style={{left: -10,marginTop: 20}} size={30} />
+                    :
+                    <FlatList 
+                        horizontal={true}
+                        data={data}
+                        showsHorizontalScrollIndicator={false}
+                        renderItem={({item})=>(
+                            <TouchableOpacity
+                            key={item._id} 
+                            style={styles.box}
+                            activeOpacity={0.7}
+                            onPress={()=>navigation.navigate("ProductDetails",{
+                                "title": item.title, "des": item.description, "img": item.images
+                            })}
+                            >
+                                <Image style={{height: width/3.5,backgroundColor:"pink",width:"100%",borderRadius:10}}
+                                    source={{uri: item.images}}
+                                />
+                                <View style={{marginLeft:10,marginTop:5}}>
+                                    <Text style={{color:"#000",fontSize:12}}>{item.title}</Text>
+                                    <Text style={{color:"#000",fontSize:12}}>Details</Text>
+                                </View>
+                                <View style={{flexDirection:"row",justifyContent:"center",marginTop:5}}>
+                                    <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
+                                    <EvilIcons name="arrow-right" color="#000" size={22} />
+                                </View>
+                            </TouchableOpacity>
+                        )}
+                    />
+                }
             </View>
         </ScrollView>
     )

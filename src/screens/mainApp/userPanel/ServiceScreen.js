@@ -15,23 +15,23 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import CategoryHeader from "./utils/CategoryHeader";
 import axios from "axios";
-import { API } from "../../../../config";
+import { API, API_USER } from "../../../../config";
 
 
 const { height, width } = Dimensions.get("window");
 
-export default function Categories({route,navigation}){
+export default function Services({route,navigation}){
 
     const preData = route.params;
     const [data, setData] = useState([]);
     const [indicator, setIndicator] = useState(true);
 
     useEffect(()=>{
-        getCategories();
+        getServices();
     },[]);
 
-    const getCategories=()=>{
-        axios.get(`${API}/products/category/${preData.id}`)
+    const getServices=()=>{
+        axios.get(`${API}/products/service/${preData.id}`)
         .then(resp=>{
             setData(resp.data);
             setIndicator(false);
@@ -41,6 +41,18 @@ export default function Categories({route,navigation}){
         })
     };
 
+    const _details=async(item)=>{
+        await axios.patch(`${API_USER}/products/views/${item._id}`)
+        .then(resp=>{
+            console.log("New view added: ", resp.data.products.views);
+        })
+        .catch(err=>{
+            console.log("Server error: ",err);
+        })
+        navigation.navigate("ServiceDetails",{
+            "header": preData.title, "title": item.title, "des": item.description, "img": item.images
+        })
+    }
 
     return(
         <View style={styles.container}>
@@ -67,10 +79,8 @@ export default function Categories({route,navigation}){
                             <TouchableOpacity 
                                 key={item._id} 
                                 style={styles.box}
-                                activeOpacity={0.7}
-                                onPress={()=>navigation.navigate("CategoryDetails",{
-                                    "header": preData.title, "title": item.title, "des": item.description, "img": item.images
-                                })}
+                                activeOpacity={0.6}
+                                onPress={()=>_details(item)}
                             >
                                 <Image style={styles.images}
                                     source={{uri: item.images}}

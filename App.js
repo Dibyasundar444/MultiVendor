@@ -11,6 +11,9 @@ import Categories from './src/screens/mainApp/userPanel/CategoriesScreen';
 import CategoriesDetails from './src/screens/mainApp/userPanel/CategoriesDetails';
 import ChatRoom from './src/screens/mainApp/userPanel/ChatRoom';
 import AlertScreen from './src/screens/mainApp/userPanel/AlertScreen';
+import Services from './src/screens/mainApp/userPanel/ServiceScreen';
+import ServiceDetails from './src/screens/mainApp/userPanel/ServiceDetails';
+import ProductDetails from './src/screens/mainApp/userPanel/ProductDetails';
 
 
 
@@ -29,6 +32,9 @@ const App = () => {
         <Stack.Screen name="Categories" component={Categories} />
         <Stack.Screen name="CategoryDetails" component={CategoriesDetails} />
         <Stack.Screen name="ChatRoom" component={ChatRoom} />
+        <Stack.Screen name="Services" component={Services} />
+        <Stack.Screen name="ServiceDetails" component={ServiceDetails} />
+        <Stack.Screen name="ProductDetails" component={ProductDetails} />
       </Stack.Navigator>
     </NavigationContainer>
   );

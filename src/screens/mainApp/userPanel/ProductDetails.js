@@ -18,7 +18,7 @@ import CategoryHeader from "./utils/CategoryHeader";
 
 const { height, width } = Dimensions.get("window");
 
-export default function CategoriesDetails({route,navigation}){
+export default function ProductDetails({route,navigation}){
 
     const preData = route.params;
 
@@ -26,7 +26,7 @@ export default function CategoriesDetails({route,navigation}){
         <ScrollView style={styles.container}>
             <View style={{backgroundColor:"#ffe4e1"}}>
                 <CategoryHeader 
-                    route={preData.header}
+                    route="Product Details"
                     back={()=>navigation.goBack()}
                     nav={()=>navigation.navigate("Alert")}
                 />

@@ -18,7 +18,7 @@ import CategoryHeader from "./utils/CategoryHeader";
 
 const { height, width } = Dimensions.get("window");
 
-export default function CategoriesDetails({route,navigation}){
+export default function ServiceDetails({route,navigation}){
 
     const preData = route.params;
 
