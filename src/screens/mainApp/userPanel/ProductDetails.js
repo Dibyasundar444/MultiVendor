@@ -7,7 +7,9 @@ import {
     FlatList,
     Dimensions,
     ScrollView,
-    Image
+    Image,
+    Linking,
+    Platform
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
@@ -22,11 +24,20 @@ export default function ProductDetails({route,navigation}){
 
     const preData = route.params;
 
+    const openDialer=()=>{
+        let number = '';
+        if(Platform.OS === "ios"){
+            number = `telprompt:${1234567890}`;
+        }
+        else number = `tel:${1234567890}`;
+        Linking.openURL(number);
+    };
+
     return(
         <ScrollView style={styles.container}>
             <View style={{backgroundColor:"#ffe4e1"}}>
                 <CategoryHeader 
-                    route="Product Details"
+                    route={preData.header}
                     back={()=>navigation.goBack()}
                     nav={()=>navigation.navigate("Alert")}
                 />
@@ -35,8 +46,8 @@ export default function ProductDetails({route,navigation}){
                 source={{uri: preData.img}}
             />
             <View style={styles.body}>
-                <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>
-                    <Text style={{color:"#000",fontWeight:"500"}}>{preData.title}</Text>
+                <View style={styles.titleView}>
+                    <Text style={styles.title}>{preData.title}</Text>
                     <Text style={{color:"green",fontSize:12}}>data.status</Text>
                 </View>
                 <Text style={{color:"#000",fontSize:12}}>Details</Text>
@@ -45,27 +56,33 @@ export default function ProductDetails({route,navigation}){
                     <Text style={{color:"#000",fontSize:11,flexWrap:"wrap"}}>{preData.des}</Text>
                 </View>
                 <Text style={{color:"#000"}}>Vendor Details</Text>
-                <View style={{marginVertical:10,flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>
+                <View style={[styles.titleView,{marginVertical:10}]}>
                     <View style={{alignItems:"center"}}>
-                        <View style={{height:60,width:60,borderRadius:30,backgroundColor:"gray"}} />
+                        <View style={styles.profile} />
                         <Text style={{color:"#000",fontSize:12}}>Akash jai</Text>
                     </View>
                     <View style={{alignItems:"center"}}>
-                        <View style={{height:40,width:40,borderRadius:20,backgroundColor:"#f0bc43",justifyContent:"center",alignItems:"center"}}>
+                        <TouchableOpacity style={[styles.smCircle,{backgroundColor:"#f0bc43"}]}>
                             <FontAwesome name="star-o" color="#fff" size={20} />
-                        </View>
+                        </TouchableOpacity>
                         <Text style={{color:"#000",fontSize:12}}>8/10</Text>
                     </View>
                     <View style={{alignItems:"center"}}>
-                        <View style={{height:40,width:40,borderRadius:20,backgroundColor:"#89f27c",justifyContent:"center",alignItems:"center"}}>
+                        <TouchableOpacity 
+                        style={[styles.smCircle,{backgroundColor:"#89f27c"}]}
+                        onPress={openDialer}
+                        >
                             <Feather name="phone-call" color="#fff" size={18} style={{marginBottom:-2,marginLeft:-2}} />
-                        </View>
+                        </TouchableOpacity>
                         <Text style={{color:"#000",fontSize:12}}>Call</Text>
                     </View>
                     <View style={{alignItems:"center"}}>
-                        <View style={{height:40,width:40,borderRadius:20,backgroundColor:"#89f27c",justifyContent:"center",alignItems:"center"}}>
+                        <TouchableOpacity 
+                        style={[styles.smCircle,{backgroundColor:"#89f27c"}]}
+                        onPress={()=>navigation.navigate("ChatRoom","Akash Jai")}
+                        >
                             <Ionicons name="chatbox-ellipses-outline" color="#fff" size={20} />
-                        </View>
+                        </TouchableOpacity>
                         <Text style={{color:"#000",fontSize:12}}>Chat</Text>
                     </View>
                 </View>
@@ -93,5 +110,17 @@ const styles = StyleSheet.create({
     body :{
         marginHorizontal: 20,
         marginVertical: 20,
+    },
+    titleView: {
+        flexDirection:"row",justifyContent:"space-between",alignItems:"center"
+    },
+    title: {
+        color:"#000",fontWeight:"500",textTransform:"capitalize"
+    },
+    profile: {
+        height:60,width:60,borderRadius:30,backgroundColor:"gray"
+    },
+    smCircle: {
+        height:40,width:40,borderRadius:20,justifyContent:"center",alignItems:"center"
     }
 })

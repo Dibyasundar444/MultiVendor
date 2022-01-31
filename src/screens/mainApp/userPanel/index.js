@@ -18,6 +18,7 @@ import AlertScreen from "./AlertScreen";
 import MenuStack from "./stackNavigator/MenuStack";
 import ProfileScreen from "./ProfileScreen";
 import ProfileStack from "./stackNavigator/ProfileStack";
+import SearchStack from "./stackNavigator/SearchStack";
 
 
 const { height, width } = Dimensions.get("window");
@@ -47,7 +48,7 @@ export default function UserPanel({navigation}){
                 }}
             />
             <Tab.Screen name="Search"
-                component={SearchScreen}
+                component={SearchStack}
                 options={{
                     tabBarIcon: ({focused})=>(
                         <View style={[styles.btn2_inActiveStyle, focused && styles.btn2SubView]}>

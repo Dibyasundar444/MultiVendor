@@ -19,6 +19,7 @@ import Entypo from "react-native-vector-icons/Entypo";
 import SearchHeader from "./utils/searchHeader";
 import axios from "axios";
 import { API } from "../../../../config";
+import VendorsNearby from "./VendorsNearby";
 
 const catData=[
     {
@@ -99,7 +100,7 @@ export default function SearchScreen({navigation}){
         })
         .catch(e=>{
             console.log("server error: ",e);
-            setIndicator1(false);
+            // setIndicator1(false);
         })
     };
     const getServices=()=>{
@@ -110,7 +111,7 @@ export default function SearchScreen({navigation}){
         })
         .catch(e=>{
             console.log("server error: ",e);
-            setIndicator2(false);
+            // setIndicator2(false);
         })
     };
 
@@ -182,42 +183,9 @@ export default function SearchScreen({navigation}){
                     onChangeText={(val)=>searchFilter(val)}
                 />
             </View>
-            <View>
-                <Text style={styles.heading}>Top Vendors Near you</Text>
-                <ScrollView style={{marginVertical:20}} 
-                    horizontal={true} s
-                    howsHorizontalScrollIndicator={false}
-                >
-                    <View style={{alignItems:"center",marginLeft:20}}>
-                        <View style={styles.circle} />
-                        <Text style={styles.name}>Akash jai</Text>
-                    </View>
-                    <View style={{alignItems:"center",marginLeft:10}}>
-                        <View style={styles.circle} />
-                        <Text style={styles.name}>Akash jai</Text>
-                    </View>
-                    <View style={{alignItems:"center",marginLeft:10}}>
-                        <View style={styles.circle} />
-                        <Text style={styles.name}>Akash jai</Text>
-                    </View>
-                    <View style={{alignItems:"center",marginLeft:10}}>
-                        <View style={styles.circle} />
-                        <Text style={styles.name}>Akash jai</Text>
-                    </View>
-                    <View style={{alignItems:"center",marginLeft:10}}>
-                        <View style={styles.circle} />
-                        <Text style={styles.name}>Akash jai</Text>
-                    </View>
-                    <View style={{alignItems:"center",marginLeft:10}}>
-                        <View style={styles.circle} />
-                        <Text style={styles.name}>Akash jai</Text>
-                    </View>
-                    <View style={{alignItems:"center",marginLeft:10,marginRight:20}}>
-                        <View style={styles.circle} />
-                        <Text style={styles.name}>Akash jai</Text>
-                    </View>
-                </ScrollView>
-            </View>
+            <VendorsNearby 
+                vendorProfile={(item)=>navigation.navigate("VendorProfile",item)}
+            />
             <View style={{marginHorizontal:20}}>
                 <Text style={styles.subHeader}>Browse Categories</Text>          
                 {
@@ -271,7 +239,8 @@ const styles = StyleSheet.create({
     name: {
         color:"#000",
         fontSize:12,
-        flexWrap:"wrap"
+        flexWrap:"wrap",
+        textTransform: "capitalize"
     },
     subView: {
         flexDirection:"row",

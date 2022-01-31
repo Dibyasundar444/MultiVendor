@@ -36,7 +36,7 @@ export default function CategoriesDetails({route,navigation}){
             />
             <View style={styles.body}>
                 <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>
-                    <Text style={{color:"#000",fontWeight:"500"}}>{preData.title}</Text>
+                    <Text style={{color:"#000",fontWeight:"500",textTransform:"capitalize"}}>{preData.title}</Text>
                     <Text style={{color:"green",fontSize:12}}>data.status</Text>
                 </View>
                 <Text style={{color:"#000",fontSize:12}}>Details</Text>

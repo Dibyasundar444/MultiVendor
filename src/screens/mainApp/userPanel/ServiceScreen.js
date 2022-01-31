@@ -7,7 +7,8 @@ import {
     FlatList,
     Dimensions,
     Image,
-    ActivityIndicator
+    ActivityIndicator,
+    ScrollView
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
@@ -49,10 +50,10 @@ export default function Services({route,navigation}){
         .catch(err=>{
             console.log("Server error: ",err);
         })
-        navigation.navigate("ServiceDetails",{
+        navigation.navigate("ProductDetails",{
             "header": preData.title, "title": item.title, "des": item.description, "img": item.images
         })
-    }
+    };
 
     return(
         <View style={styles.container}>
@@ -61,43 +62,39 @@ export default function Services({route,navigation}){
                 back={()=>navigation.goBack()}
                 nav={()=>navigation.navigate("Alert")}
             />
-            <View style={{flex:1}}>
+            <ScrollView style={{flex:1}} contentContainerStyle={{paddingHorizontal:10}}>
                 {
                     indicator ? 
                     <View style={{justifyContent:"center",alignItems:"center",flex:0.9}}>
                         <ActivityIndicator size={50} /> 
                     </View>
                     :
-                    <FlatList 
-                        style={{marginBottom:height/7.7}}
-                        data={data}
-                        numColumns={2}
-                        showsVerticalScrollIndicator={false}
-                        keyExtractor={item=>item.id}
-                        columnWrapperStyle={styles.wrapper}
-                        renderItem={({item})=>(
-                            <TouchableOpacity 
-                                key={item._id} 
-                                style={styles.box}
-                                activeOpacity={0.6}
-                                onPress={()=>_details(item)}
-                            >
-                                <Image style={styles.images}
-                                    source={{uri: item.images}}
-                                />
-                                <View style={{marginLeft:10,marginTop:5}}>
-                                    <Text style={{color:"#000",fontSize:12}}>{item.title}</Text>
-                                    <Text style={{color:"#000",fontSize:12}}>Details</Text>
-                                </View>
-                                <View style={styles.enquire}>
-                                    <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
-                                    <EvilIcons name="arrow-right" color="#000" size={22} />
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                    />
+                    <View style={{flexDirection:"row",flexWrap:"wrap",justifyContent:"space-between"}}>
+                        {
+                            data.map(item=>(
+                                <TouchableOpacity 
+                                    key={item._id} 
+                                    style={styles.box}
+                                    activeOpacity={0.6}
+                                    onPress={()=>_details(item)}
+                                >
+                                    <Image style={styles.images}
+                                        source={{uri: item.images}}
+                                    />
+                                    <View style={{marginLeft:10,marginTop:5}}>
+                                        <Text style={{color:"#000",fontSize:12}}>{item.title}</Text>
+                                        <Text style={{color:"#000",fontSize:12}}>Details</Text>
+                                    </View>
+                                    <View style={styles.enquire}>
+                                        <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
+                                        <EvilIcons name="arrow-right" color="#000" size={22} />
+                                    </View>
+                                </TouchableOpacity>
+                            ))
+                        }
+                    </View>
                 }
-            </View>
+            </ScrollView>
         </View>
     )
 };
@@ -131,6 +128,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         elevation: 5,
         borderRadius: 10,
+        marginBottom: 10
     },
     images: {
         height: width/3.5,

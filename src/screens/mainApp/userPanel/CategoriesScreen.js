@@ -57,7 +57,6 @@ export default function Categories({route,navigation}){
                     </View>
                     :
                     <FlatList 
-                        style={{marginBottom:height/7.7}}
                         data={data}
                         numColumns={2}
                         showsVerticalScrollIndicator={false}
@@ -68,7 +67,7 @@ export default function Categories({route,navigation}){
                                 key={item._id} 
                                 style={styles.box}
                                 activeOpacity={0.7}
-                                onPress={()=>navigation.navigate("CategoryDetails",{
+                                onPress={()=>navigation.navigate("ProductDetails",{
                                     "header": preData.title, "title": item.title, "des": item.description, "img": item.images
                                 })}
                             >
@@ -76,7 +75,7 @@ export default function Categories({route,navigation}){
                                     source={{uri: item.images}}
                                 />
                                 <View style={{marginLeft:10,marginTop:5}}>
-                                    <Text style={{color:"#000",fontSize:12}}>{item.title}</Text>
+                                    <Text style={{color:"#000",fontSize:12,textTransform:"capitalize"}}>{item.title}</Text>
                                     <Text style={{color:"#000",fontSize:12}}>Details</Text>
                                 </View>
                                 <View style={styles.enquire}>

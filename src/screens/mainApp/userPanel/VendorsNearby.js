@@ -16,43 +16,10 @@ import Fontisto from "react-native-vector-icons/Fontisto";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
 import axios from "axios";
-import { API_VENDOR } from "../../../../../config";
-import VendorsNearby from "../VendorsNearby";
+import { API_VENDOR } from "../../../../config";
 
-const data=[
-    {
-        "id":"0"
-    },
-    {
-        "id":"1"
-    },
-    {
-        "id":"2"
-    },
-    {
-        "id":"3"
-    },
-    {
-        "id":"4"
-    },
-    {
-        "id":"5"
-    },
-    {
-        "id":"6"
-    },
-    {
-        "id":"7"
-    },
-    {
-        "id":"8"
-    },
-    {
-        "id":"9"
-    },
-];
 
-export default function MenuHeader({alert,vendorProfile}){
+export default function VendorsNearby({vendorProfile}){
 
     const [vendors, setVendors] = useState([]);
     const [indicator, setIndicator] = useState(true);
@@ -60,6 +27,7 @@ export default function MenuHeader({alert,vendorProfile}){
     useEffect(()=>{
         getVendors();
     },[vendors]);
+    
     const getVendors=()=>{
         axios.get(`${API_VENDOR}/allvendors`)
         .then(resp=>{
@@ -68,21 +36,31 @@ export default function MenuHeader({alert,vendorProfile}){
         })
         .catch(err=>{
             console.log("Server error: ",err);
-            // setIndicator(false);
         })
     };
     return(
-        <View>
-            <View style={styles.header}>
-                <View style={{flexDirection:"row",alignItems:"center"}}>
-                    <EvilIcons name="location" color="#000" size={24} />
-                    <Text style={{color:"#000",fontSize:12,marginRight:10}}>Gujrat, India</Text>
-                    <Entypo name="chevron-thin-down" color="#000" size={16} />
-                </View>
-                <Fontisto name="bell" color="#000" size={24} onPress={alert} />
+        <>
+            <View style={{marginTop:10,marginLeft:20}}>
+                <Text style={styles.heading}>Top Vendors Near you</Text>
+                {
+                    indicator ? <ActivityIndicator style={{left: -10,marginTop: 20}} size={30} />
+                    : 
+                    <FlatList 
+                        horizontal={true}
+                        data={vendors}
+                        showsHorizontalScrollIndicator={false}
+                        renderItem={({item,index})=>(
+                            <View key={index} style={{alignItems:"center",marginRight:10}}>
+                                <TouchableOpacity style={styles.circle} 
+                                    onPress={()=>vendorProfile(item)}
+                                />
+                                <Text style={styles.name}>{item.name}</Text>
+                            </View>
+                        )}
+                    />
+                }
             </View>
-            <View style={{height:120,width:"100%",backgroundColor:"gray"}} />
-        </View>
+        </>
     )
 };
 const styles = StyleSheet.create({
