@@ -13,16 +13,10 @@ import {
     Platform
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Entypo from "react-native-vector-icons/Entypo";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import Fontisto from "react-native-vector-icons/Fontisto";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import Octicons from "react-native-vector-icons/Octicons";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import axios from "axios";
 import storage from '@react-native-firebase/storage';
-import { API, API_USER } from "../../../../config";
+import { API, API_VENDOR } from "../../../../config";
 
 
 const { height, width } = Dimensions.get("window");
@@ -43,7 +37,7 @@ export default function EditProfile({navigation}){
     const [url, setUrl] = useState("");
 
     useEffect(()=>{
-        getUser();
+        getVendor();
     },[]);
 
     const openCamera=async()=>{
@@ -73,7 +67,7 @@ export default function EditProfile({navigation}){
                     setIsUploaded(false);
                     try{
                         const task = storage()
-                        .ref("USER/profile_image/"+ imgData.fileName)
+                        .ref("VENDOR/profile_image/"+ imgData.fileName)
                         .putString(imgData.base64,"base64");
                         task.on('state_changed',
                             function(snapshot){
@@ -131,7 +125,7 @@ export default function EditProfile({navigation}){
                     setIsUploaded(false);
                     try{
                         const task = storage()
-                        .ref("USER/profile_image/"+ imgData.fileName)
+                        .ref("VENDOR/profile_image/"+ imgData.fileName)
                         .putString(imgData.base64,"base64");
                         task.on('state_changed',
                             function(snapshot){
@@ -194,17 +188,14 @@ export default function EditProfile({navigation}){
         </View>
     );
 
-    const getUser=()=>{
-        axios.get(`${API_USER}/userdetail`)
+    const getVendor=()=>{
+        axios.get(`${API_VENDOR}/vendordetail`)
         .then(res=>{
-            if(res.status===200){
-                console.log(res.data);
-                setPhoneNo(res.data.phoneNo);
-                setName(res.data.name);
-                setUrl(res.data.profileImg);
-                setAddress(res.data.address);
-            }
-            else console.log("Status error: ",res.status);
+            // console.log(res.data);
+            setPhoneNo(res.data.phoneNo);
+            setName(res.data.name);
+            setUrl(res.data.profileImg);
+            setAddress(res.data.address);
         })
         .catch(err=>{
             console.log(err);
@@ -228,22 +219,18 @@ export default function EditProfile({navigation}){
 
     let updateData={
         "name": name,
-        "phoneNo": phoneNo,
         "address": address,
-        "profileImg": url
+        "profileImg": url,
+        "role": 1
     };
 
     const update=()=>{
         setIndicator(true);
-        axios.patch(`${API_USER}/updateuser`,updateData)
+        axios.patch(`${API_VENDOR}/updatevendor`,updateData)
         .then(res=>{
-            if(res.status===200){
-                setIndicator(false);
-                setIsUpdated(true);
-            }
-            else {
-                setIndicator(false);
-            }
+            setIndicator(false);
+            setIsUpdated(true);
+            console.log(res.data);
         })
         .catch(err=>{
             console.log(err);
@@ -292,7 +279,8 @@ export default function EditProfile({navigation}){
                     </View>
                     <View style={styles.smCard1}>
                         <Text style={{color:"#000",marginLeft:20}}>+91</Text>
-                        <TextInput 
+                        <Text style={{color:"#000",marginLeft:10}}>{phoneNo}</Text>
+                        {/* <TextInput 
                             style={{
                                 borderRadius: 10,paddingLeft: 10,
                                 color:"#000",paddingVertical:2,width:"85%",
@@ -303,7 +291,7 @@ export default function EditProfile({navigation}){
                             value={phoneNo.toString()}
                             onChangeText={(val)=>setPhoneNo(val)}
                             keyboardType="numeric"
-                        />
+                        /> */}
                     </View>
                     <View style={styles.desCard}>
                         <TextInput 

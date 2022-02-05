@@ -42,17 +42,8 @@ export default function Services({route,navigation}){
         })
     };
 
-    const _details=async(item)=>{
-        await axios.patch(`${API_USER}/products/views/${item._id}`)
-        .then(resp=>{
-            console.log("New view added: ", resp.data.products.views);
-        })
-        .catch(err=>{
-            console.log("Server error: ",err);
-        })
-        navigation.navigate("ProductDetails",{
-            "header": preData.title, "title": item.title, "des": item.description, "img": item.images
-        })
+    const _details=(item)=>{
+        navigation.navigate("ProductDetails",item);
     };
 
     return(
@@ -69,7 +60,7 @@ export default function Services({route,navigation}){
                         <ActivityIndicator size={50} /> 
                     </View>
                     :
-                    <View style={{flexDirection:"row",flexWrap:"wrap",justifyContent:"space-between"}}>
+                    <View style={styles.mapContainer}>
                         {
                             data.map(item=>(
                                 <TouchableOpacity 
@@ -82,8 +73,12 @@ export default function Services({route,navigation}){
                                         source={{uri: item.images}}
                                     />
                                     <View style={{marginLeft:10,marginTop:5}}>
-                                        <Text style={{color:"#000",fontSize:12}}>{item.title}</Text>
-                                        <Text style={{color:"#000",fontSize:12}}>Details</Text>
+                                        <Text style={{
+                                            color:"#000",fontSize:12,textTransform:"capitalize"
+                                        }}>
+                                            {item.title}
+                                        </Text>
+                                        <Text style={{color:"#000",fontSize:12}}>{item.description}</Text>
                                     </View>
                                     <View style={styles.enquire}>
                                         <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
@@ -145,5 +140,10 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         justifyContent:"center",
         marginTop:5
+    },
+    mapContainer: {
+        flexDirection:"row",
+        flexWrap:"wrap",
+        justifyContent:"space-between"
     }
 })

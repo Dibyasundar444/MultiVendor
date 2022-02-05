@@ -12,6 +12,8 @@ import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+
 import SearchScreen from "./SearchScreen";
 import ChatScreen from "./ChatScreen";
 import AlertScreen from "./AlertScreen";
@@ -25,6 +27,14 @@ const { height, width } = Dimensions.get("window");
 const Tab = createBottomTabNavigator();
 
 export default function UserPanel({navigation}){
+
+    const getTabBarVisibility=(route)=>{
+        const routeName = getFocusedRouteNameFromRoute(route);
+        if(routeName === "EditProfile"){
+            return "none";
+        }
+        return "flex";
+    };
 
     return(
         <Tab.Navigator screenOptions={{
@@ -71,7 +81,8 @@ export default function UserPanel({navigation}){
             />
             <Tab.Screen name="ProfileStack"
                 component={ProfileStack}
-                options={{
+                options={({route})=>({
+                    tabBarStyle: [styles.bottomTab,{display: getTabBarVisibility(route)}],
                     tabBarIcon: ({focused})=>(
                         <View style={{flex:1,width:width/4,justifyContent:"center"}}>
                             <View style={[styles.btn4_inActiveStyle, focused && styles.btn4_activeStyle]}>
@@ -80,7 +91,7 @@ export default function UserPanel({navigation}){
                             </View>
                         </View>
                     )
-                }}
+                })}
             />
         </Tab.Navigator>
     )

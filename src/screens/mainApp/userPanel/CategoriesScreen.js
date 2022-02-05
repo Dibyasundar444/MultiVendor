@@ -15,7 +15,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import CategoryHeader from "./utils/CategoryHeader";
 import axios from "axios";
-import { API } from "../../../../config";
+import { API, API_USER } from "../../../../config";
 
 
 const { height, width } = Dimensions.get("window");
@@ -39,6 +39,10 @@ export default function Categories({route,navigation}){
         .catch(e=>{
             console.log("server error: ",e);
         })
+    };
+
+    const _details=(item)=>{
+        navigation.navigate("ProductDetails",item);
     };
 
 
@@ -67,16 +71,14 @@ export default function Categories({route,navigation}){
                                 key={item._id} 
                                 style={styles.box}
                                 activeOpacity={0.7}
-                                onPress={()=>navigation.navigate("ProductDetails",{
-                                    "header": preData.title, "title": item.title, "des": item.description, "img": item.images
-                                })}
+                                onPress={()=>_details(item)}
                             >
                                 <Image style={styles.images}
                                     source={{uri: item.images}}
                                 />
                                 <View style={{marginLeft:10,marginTop:5}}>
                                     <Text style={{color:"#000",fontSize:12,textTransform:"capitalize"}}>{item.title}</Text>
-                                    <Text style={{color:"#000",fontSize:12}}>Details</Text>
+                                    <Text style={{color:"#000",fontSize:12}}>{item.description}</Text>
                                 </View>
                                 <View style={styles.enquire}>
                                     <Text style={{color:"#000",fontSize:10}}>Enquire</Text>

@@ -26,6 +26,6 @@ export default function ProfileStack(){
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#054d36"
+    backgroundColor: "#ffe4e1"
   }
 });

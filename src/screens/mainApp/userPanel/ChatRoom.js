@@ -23,20 +23,20 @@ export default function ChatRoom({route,navigation}){
 
     const name = route.params;
     const [messages, setMessages] = useState([]);
+    console.log(messages);
 
     useEffect(() => {
         setMessages([
             {
-            _id: 1,
-            text: 'Hello developer',
-            createdAt: new Date(),
-            avatar: 'https://placeimg.com/140/140/any',
-            user: {
-                _id: 2,
-                name: 'React Native',
-                avatar: 'https://placeimg.com/140/140/any',
-            },
-            },
+                _id: 1,
+                text: 'Hello developer',
+                createdAt: new Date(),
+                user: {
+                    _id: 2,
+                    name: name,
+                    avatar: 'https://placeimg.com/140/140/any',
+                },
+            }
         ])
     }, []);
 
@@ -54,11 +54,11 @@ export default function ChatRoom({route,navigation}){
                 wrapperStyle={{
                     right: {
                         backgroundColor: '#ffe4e1',
-                        borderRadius: 0
+                        borderRadius: 5
                     },
                     left: {
                         backgroundColor: '#ffe4e1',
-                        borderRadius: 0
+                        borderRadius: 5,
                     },
                 }}
                 textStyle={{
@@ -90,15 +90,16 @@ export default function ChatRoom({route,navigation}){
                     messages={messages}
                     onSend={messages => onSend(messages)}
                     user={{
-                        _id: 1
+                        _id: 1,
+                        avatar : require("../../../assets/logo.jpg")
                     }}
                     textInputStyle={{color: "#000"}}
                     scrollToBottom={true}
                     scrollToBottomComponent={scrollToBottom}
                     renderBubble={renderBubble}
-                    showUserAvatar={true}
-                    renderUsernameOnMessage={true}
-                    renderAvatarOnTop={true}
+                    showUserAvatar
+                    // renderUsernameOnMessage
+                    renderAvatarOnTop
                     // renderMessage={renderMessage}
                     // renderComposer={renderComposer}
                     // renderInputToolbar={renderInputToolbar}
@@ -129,3 +130,25 @@ const styles = StyleSheet.create({
         
     }
 })
+
+
+// [
+//     {
+//         "_id": "d345143f-47c0-4898-9a5c-783f4016527d", 
+//         "createdAt": 2022-02-01T06:17:28.988Z, 
+//         "text": "Hi", 
+//         "user": {
+//             "_id": 1
+//         }
+//     }, 
+//     {
+//         "_id": 1, 
+//         "createdAt": 2022-02-01T06:17:20.275Z, 
+//         "text": "Hello developer", 
+//         "user": {
+//             "_id": 2, 
+//             "avatar": "https://placeimg.com/140/140/any", 
+//             "name": "React Native"
+//         }
+//     }
+// ]

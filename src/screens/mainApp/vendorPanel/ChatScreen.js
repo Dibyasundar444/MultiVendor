@@ -103,6 +103,7 @@ export default function VendorChat({navigation}){
             <Header
                 title="Chat(02)"
                 notify={()=>navigation.navigate("AlertScreen")}
+                profile={()=>navigation.navigate("ProfileScreen")}
                 bellColor="#000"
             />
             <View style={styles.body}>

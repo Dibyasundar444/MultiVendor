@@ -15,86 +15,16 @@ import {
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Fontisto from "react-native-vector-icons/Fontisto";
+import Entypo from "react-native-vector-icons/Entypo";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API } from "../../../../config";
+import ChatDialog from "./utils/chatDialog";
 
 
 const { height, width } = Dimensions.get("window");
-const data=[
-    {
-        "id": "0",
-        "pName": "Product Name",
-        "pDetails": "Details",
-        "status": "Available",
-        "description": "qwertyuiopasdfghjklzxcvbnmasdfghjklqwertyuidfghjzxctbnmxcfvbhnsdfghnjdfghdfghjdfghjfghjfghjdfgbhnjfghdfghjdfghxdcfvgbhdqwertyuiodfghjkzxcvbnmkcvbnmnmxcvbnmcvbnm,cvbnmxcvbndfghjdfghjdfghjdfghj"
-    },
-    {
-        "id":"1",
-        "pName": "Product Name",
-        "pDetails": "Details",
-        "status": "Available",
-        "description": "qwertyuiopasdfghjklzxcvbnmasdfghjklqwertyuidfghjzxctbnmxcfvbhnsdfghnjdfghdfghjdfghjfghjfghjdfgbhnjfghdfghjdfghxdcfvgbhdqwertyuiodfghjkzxcvbnmkcvbnmnmxcvbnmcvbnm,cvbnmxcvbndfghjdfghjdfghjdfghj"
-    },
-    {
-        "id":"2",
-        "pName": "Product Name",
-        "pDetails": "Details",
-        "status": "Available",
-        "description": "qwertyuiopasdfghjklzxcvbnmasdfghjklqwertyuidfghjzxctbnmxcfvbhnsdfghnjdfghdfghjdfghjfghjfghjdfgbhnjfghdfghjdfghxdcfvgbhdqwertyuiodfghjkzxcvbnmkcvbnmnmxcvbnmcvbnm,cvbnmxcvbndfghjdfghjdfghjdfghj"
-    },
-    {
-        "id":"3",
-        "pName": "Product Name",
-        "pDetails": "Details",
-        "status": "Available",
-        "description": "qwertyuiopasdfghjklzxcvbnmasdfghjklqwertyuidfghjzxctbnmxcfvbhnsdfghnjdfghdfghjdfghjfghjfghjdfgbhnjfghdfghjdfghxdcfvgbhdqwertyuiodfghjkzxcvbnmkcvbnmnmxcvbnmcvbnm,cvbnmxcvbndfghjdfghjdfghjdfghj"
-    },
-    {
-        "id":"4",
-        "pName": "Product Name",
-        "pDetails": "Details",
-        "status": "Available",
-        "description": "qwertyuiopasdfghjklzxcvbnmasdfghjklqwertyuidfghjzxctbnmxcfvbhnsdfghnjdfghdfghjdfghjfghjfghjdfgbhnjfghdfghjdfghxdcfvgbhdqwertyuiodfghjkzxcvbnmkcvbnmnmxcvbnmcvbnm,cvbnmxcvbndfghjdfghjdfghjdfghj"
-    },
-    {
-        "id":"5",
-        "pName": "Product Name",
-        "pDetails": "Details",
-        "status": "Available",
-        "description": "qwertyuiopasdfghjklzxcvbnmasdfghjklqwertyuidfghjzxctbnmxcfvbhnsdfghnjdfghdfghjdfghjfghjfghjdfgbhnjfghdfghjdfghxdcfvgbhdqwertyuiodfghjkzxcvbnmkcvbnmnmxcvbnmcvbnm,cvbnmxcvbndfghjdfghjdfghjdfghj"
-    },
-    {
-        "id":"6",
-        "pName": "Product Name",
-        "pDetails": "Details",
-        "status": "Available",
-        "description": "qwertyuiopasdfghjklzxcvbnmasdfghjklqwertyuidfghjzxctbnmxcfvbhnsdfghnjdfghdfghjdfghjfghjfghjdfgbhnjfghdfghjdfghxdcfvgbhdqwertyuiodfghjkzxcvbnmkcvbnmnmxcvbnmcvbnm,cvbnmxcvbndfghjdfghjdfghjdfghj"
-    },
-    {
-        "id":"7",
-        "pName": "Product Name",
-        "pDetails": "Details",
-        "status": "Available",
-        "description": "qwertyuiopasdfghjklzxcvbnmasdfghjklqwertyuidfghjzxctbnmxcfvbhnsdfghnjdfghdfghjdfghjfghjfghjdfgbhnjfghdfghjdfghxdcfvgbhdqwertyuiodfghjkzxcvbnmkcvbnmnmxcvbnmcvbnm,cvbnmxcvbndfghjdfghjdfghjdfghj"
-    },
-    {
-        "id":"8",
-        "pName": "Product Name",
-        "pDetails": "Details",
-        "status": "Available",
-        "description": "qwertyuiopasdfghjklzxcvbnmasdfghjklqwertyuidfghjzxctbnmxcfvbhnsdfghnjdfghdfghjdfghjfghjfghjdfgbhnjfghdfghjdfghxdcfvgbhdqwertyuiodfghjkzxcvbnmkcvbnmnmxcvbnmcvbnm,cvbnmxcvbndfghjdfghjdfghjdfghj"
-    },
-    {
-        "id":"9",
-        "pName": "Product Name",
-        "pDetails": "Details",
-        "status": "Available",
-        "description": "qwertyuiopasdfghjklzxcvbnmasdfghjklqwertyuidfghjzxctbnmxcfvbhnsdfghnjdfghdfghjdfghjfghjfghjdfgbhnjfghdfghjdfghxdcfvgbhdqwertyuiodfghjkzxcvbnmkcvbnmnmxcvbnmcvbnm,cvbnmxcvbndfghjdfghjdfghjdfghj"
-    },
-];
 
 
 export default function VendorProfile({navigation,route}){
@@ -102,6 +32,11 @@ export default function VendorProfile({navigation,route}){
     const item = route.params;
     const [products, setProducts] = useState([]);
     const [indicator, setIndicator] = useState(true);
+    const [indicator2, setIndicator2] = useState(false);
+    const [isVisible, setIsvisible] = useState(false);
+    const [isSend, setIsSend] = useState(false);
+    const [title, setTitle] = useState("");
+    const [msg, setMsg] = useState("");
 
     useEffect(()=>{
         getVendors();
@@ -127,68 +62,118 @@ export default function VendorProfile({navigation,route}){
         Linking.openURL(number);
     };
 
+    let MESSAGE={
+        "title": title,
+        "query": msg,
+        "vendorId": item._id
+    };
+    const _sendMsg=()=>{
+        setIndicator2(true);
+        axios.post(`${API}/contactvendor`,MESSAGE)
+        .then(resp=>{
+            console.log(resp.data);  
+            setIndicator2(false);         
+            setIsSend(true);
+            setTitle("");
+            setMsg("");
+        })
+        .catch(err=>{
+            console.log("Error from server MSG: ",err);
+        })
+    };
+
     return(
         <View style={styles.container}>
-            <View style={styles.header}>
-                <View style={styles.title}>
-                    <AntDesign name="left" size={22} color="#fff" onPress={()=>navigation.goBack()} />
-                    <Text style={styles.vendor}>Vendors</Text>
-                </View>
-                <View style={styles.profile}>
-                    <View style={styles.circle} />
-                    <View>
-                        <Text style={{fontWeight:"600",color:"#fff",textTransform:'capitalize'}}>{item.name}</Text>
-                        <Text style={{fontWeight:"500",fontSize:12,color:"#fff"}}>Cloths, Toys</Text>
-                        <Text style={{fontSize:10}}>Delhi, India</Text>
+            <>
+                <View style={styles.header}>
+                    <View style={styles.title}>
+                        <AntDesign name="left" 
+                            size={22} 
+                            color="#fff" 
+                            onPress={()=>navigation.goBack()} 
+                        />
+                        <Text style={styles.vendor}>Vendors</Text>
+                    </View>
+                    <View style={styles.profile}>
+                        <View style={styles.circle} />
+                        <View>
+                            <Text style={{fontWeight:"600",color:"#fff",textTransform:'capitalize'}}>{item.name}</Text>
+                            <Text style={{fontWeight:"500",fontSize:12,color:"#fff"}}>Cloths, Toys</Text>
+                            <Text style={{fontSize:10}}>Delhi, India</Text>
+                        </View>
+                    </View>
+                    <Text style={styles.des}>Description</Text>
+                    <View style={styles.btns}>
+                        <TouchableOpacity style={styles.btnRound} onPress={()=>openDialer()}>
+                            <Feather name="phone-call" color="#000" size={16} />
+                        </TouchableOpacity>
+                        <View style={styles.btnRound}>
+                            <AntDesign name="star" color="#fc9d28" size={18} />
+                            <Text style={{fontSize:8,color:"#000",fontWeight:"500"}}>5/5</Text>
+                        </View>
+                        <TouchableOpacity style={styles.btnRound} onPress={()=>setIsvisible(true)}>
+                            <MaterialIcons name="chat" color="#000" size={20} />
+                        </TouchableOpacity>
                     </View>
                 </View>
-                <Text style={styles.des}>Description</Text>
-                <View style={styles.btns}>
-                    <TouchableOpacity style={styles.btnRound} onPress={()=>openDialer()}>
-                        <Feather name="phone-call" color="#000" size={16} />
-                    </TouchableOpacity>
-                    <View style={styles.btnRound}>
-                        <AntDesign name="star" color="#fc9d28" size={18} />
-                        <Text style={{fontSize:8,color:"#000",fontWeight:"500"}}>5/5</Text>
-                    </View>
-                    <TouchableOpacity style={styles.btnRound} onPress={()=>navigation.navigate("ChatRoom",item.name)}>
-                        <MaterialIcons name="chat" color="#000" size={20} />
-                    </TouchableOpacity>
+                <View style={{marginTop:20,marginBottom:10}}> 
+                    <Text style={styles.bodyTitle}>All Products</Text>
+                    {
+                        indicator ? <ActivityIndicator size={40} style={{marginTop:width/3.5}} /> 
+                        : 
+                        <FlatList 
+                            style={{marginBottom:height/1.9}}
+                            data={products}
+                            numColumns={2}
+                            showsVerticalScrollIndicator={false}
+                            keyExtractor={item=>item._id}
+                            columnWrapperStyle={styles.wrapper}
+                            renderItem={({item,index})=>(
+                                <TouchableOpacity 
+                                    key={index} 
+                                    style={styles.box}
+                                    activeOpacity={0.6}
+                                    onPress={()=>navigation.navigate("ProductDetails",item)}
+                                >
+                                    <View style={{height: width/3.5,backgroundColor:"pink",width:"100%",borderRadius:10}} />
+                                    <View style={{marginLeft:10,marginTop:5}}>
+                                        <Text style={{color:"#000",fontSize:12,textTransform:"capitalize"}}>{item.title}</Text>
+                                        <Text style={{color:"#000",fontSize:12}}>{item.description}</Text>
+                                    </View>
+                                    <View style={{flexDirection:"row",justifyContent:"center",marginTop:5}}>
+                                        <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
+                                        <EvilIcons name="arrow-right" color="#000" size={22} />
+                                    </View>
+                                </TouchableOpacity>
+                            )}
+                        />
+                    }
                 </View>
-            </View>
-            <View style={{marginTop:20,marginBottom:10}}> 
-                <Text style={styles.bodyTitle}>All Products</Text>
-                {
-                    indicator ? <ActivityIndicator size={40} style={{marginTop:width/3.5}} /> 
-                    : 
-                    <FlatList 
-                        style={{marginBottom:height/1.9}}
-                        data={products}
-                        numColumns={2}
-                        showsVerticalScrollIndicator={false}
-                        keyExtractor={item=>item._id}
-                        columnWrapperStyle={styles.wrapper}
-                        renderItem={({item,index})=>(
-                            <TouchableOpacity 
-                                key={index} 
-                                style={styles.box}
-                                activeOpacity={0.6}
-                                onPress={()=>navigation.navigate("ProductDetails",item)}
-                            >
-                                <View style={{height: width/3.5,backgroundColor:"pink",width:"100%",borderRadius:10}} />
-                                <View style={{marginLeft:10,marginTop:5}}>
-                                    <Text style={{color:"#000",fontSize:12,textTransform:"capitalize"}}>{item.title}</Text>
-                                    <Text style={{color:"#000",fontSize:12}}>{item.description}</Text>
-                                </View>
-                                <View style={{flexDirection:"row",justifyContent:"center",marginTop:5}}>
-                                    <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
-                                    <EvilIcons name="arrow-right" color="#000" size={22} />
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                    />
-                }
-            </View>
+            </>
+            {
+                isVisible && 
+                <ChatDialog 
+                    Name={item.name}
+                    closeDialog={()=>{
+                        setIsvisible(false);
+                        setTitle("");
+                        setMsg("");
+                        setIsSend(false);
+                    }}
+                    title={title}
+                    setTitle={(val)=>setTitle(val)}
+                    msg={msg}
+                    setMsg={(val)=>setMsg(val)}
+                    send={_sendMsg}
+                    isSend={isSend}
+                    setSend={
+                        setTimeout(()=>{
+                            setIsSend(false)
+                        },8000)
+                    }
+                    INDICATOR2={indicator2}
+                />
+            }
         </View>
     );
 };
@@ -270,5 +255,5 @@ const styles = StyleSheet.create({
         justifyContent:"space-between",
         marginBottom:10,
         marginHorizontal:20
-    }
+    },
 })

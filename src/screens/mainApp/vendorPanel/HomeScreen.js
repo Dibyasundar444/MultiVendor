@@ -1,20 +1,20 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { 
     View, 
     Text, 
     StyleSheet, 
     TouchableOpacity,
+    TouchableHighlight,
     ScrollView,
     FlatList,
     Dimensions, 
-    Image
+    Image,
+    ActivityIndicator
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import Fontisto from "react-native-vector-icons/Fontisto";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
+import { API } from "../../../../config";
 import Header from "./utils/header";
 
 const data=[
@@ -68,108 +68,69 @@ const data=[
         "img": require("../../../assets/image1.jpeg")
     },
 ];
-const serviceData=[
-    {
-        "id":"0",
-        "title":"Beauty Parlours",
-        "img": require("../../../assets/image1.jpeg")
-    },
-    {
-        "id":"1",
-        "title":"DTH",
-        "img": require("../../../assets/image1.jpeg")
-    },
-    {
-        "id":"2",
-        "title":"Landline",
-        "img": require("../../../assets/image1.jpeg")
-    },
-    {
-        "id":"3",
-        "title":"Beauty Parlours",
-        "img": require("../../../assets/image1.jpeg")
-    },
-    {
-        "id":"4",
-        "title":"Beauty Parlours",
-        "img": require("../../../assets/image1.jpeg")
-    },
-    {
-        "id":"5",
-        "title":"Beauty Parlours",
-        "img": require("../../../assets/image1.jpeg")
-    },
-    {
-        "id":"6",
-        "title":"Beauty Parlours",
-        "img": require("../../../assets/image1.jpeg")
-    },
-    {
-        "id":"7",
-        "title":"Beauty Parlours",
-        "img": require("../../../assets/image1.jpeg")
-    },
-    {
-        "id":"8",
-        "title":"Beauty Parlours",
-        "img": require("../../../assets/image1.jpeg")
-    },
-    {
-        "id":"9",
-        "title":"Beauty Parlours",
-        "img": require("../../../assets/image1.jpeg")
-    },
-];
 
 const { height, width } = Dimensions.get("window");
 let clickBoxHeight = height/4.5;
 
 
 export default function HomeScreen({navigation}){
+    const [serviceData, setServiceData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    useEffect(()=>{
+        getServices();
+    },[]);
 
-
+    const getServices=()=>{
+        axios.get(`${API}/service`)
+        .then(resp=>{
+            setServiceData(resp.data);
+            setLoading(false);
+        })
+        .catch(err=>{
+            console.log("server error: ",err);
+        })
+    }
     return(
         <View style={styles.container}>
             <Header 
                 title="Hi, John Vendor"
                 date="Jan 21, 2022"
                 notify={()=>navigation.navigate("AlertScreen")}
+                profile={()=>navigation.navigate("ProfileScreen")}
                 bellColor="#000"
             />
-            <View style={styles.body}>
-                {/* <View style={styles.body1}> */}
-                    <Text style={{color:"#000",fontSize:16,fontWeight:"600"}}>This Month</Text>
-                    {/* <TouchableOpacity onPress={()=>navigation.navigate("addProductScreen")}>
-                        <Text style={{color:"#fff",fontSize:12}}>+Add Product</Text>
-                        <View style={{width:90,borderWidth:0.5,borderColor:"#fff"}} />
-                    </TouchableOpacity> */}
-                {/* </View> */}
+            <ScrollView style={styles.body} 
+                showsVerticalScrollIndicator={false}
+                // stickyHeaderIndices={[2]}    
+            >
+                <Text style={{color:"#000",fontSize:16,fontWeight:"600"}}>This Month</Text>
                 <View>
-                    <FlatList 
-                        data={data}
+                    <ScrollView
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}
-                        keyExtractor={item=>item.id}
-                        renderItem={({item,index})=>(
-                            <TouchableOpacity
-                                key={index}
-                                activeOpacity={0.6}
-                                style={styles.box}
-                            >
-                                <View style={styles.boxSubView}>
-                                    <Image style={styles.img} source={item.img} />
-                                </View>
-                                <View style={{marginLeft:5,marginTop:5}}>
-                                    <Text style={{fontSize:12,color:"#000"}}>{item.name}</Text>
-                                    <Text style={{fontSize:11,color:"#000"}}>{item.Deatails}</Text>
-                                    <View style={{flexDirection:"row",alignItems:"center"}}>
-                                        <Entypo name="eye" color="#000" size={18} style={{marginRight:5}} />
-                                        <Text style={{fontSize:10,color:"#000"}}>{item.views}</Text>
+                    >
+                        {
+                            data.map(item=>(
+                                <TouchableOpacity
+                                    key={item.id}
+                                    activeOpacity={0.6}
+                                    style={styles.box}
+                                >
+                                    <View style={styles.boxSubView}>
+                                        <Image style={styles.img} source={item.img} />
                                     </View>
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                    />
+                                    <View style={{marginLeft:5,marginTop:5}}>
+                                        <Text style={{fontSize:12,color:"#000"}}>{item.name}</Text>
+                                        <Text style={{fontSize:11,color:"#000"}}>{item.Deatails}</Text>
+                                        <View style={{flexDirection:"row",alignItems:"center"}}>
+                                            <Entypo name="eye" color="#000" size={18} style={{marginRight:5}} />
+                                            <Text style={{fontSize:10,color:"#000"}}>{item.views}</Text>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                            ))
+                        }
+                    </ScrollView>
                 </View>
                 <View style={styles.body2}>
                     <View style={styles.body1}>
@@ -179,25 +140,31 @@ export default function HomeScreen({navigation}){
                             <View style={{width:90,borderWidth:0.5,borderColor:"#000"}} />
                         </TouchableOpacity>
                     </View>
-                    <FlatList 
-                        style={{marginBottom:height/1.2}}
-                        data={serviceData}
-                        keyExtractor={item=>item.id}
+                    <ScrollView style={{}}
                         showsVerticalScrollIndicator={false}
-                        renderItem={({item,index})=>(
-                            <View key={index} style={{borderBottomWidth:1}}>
-                                <View style={styles.subView}>
-                                    <View style={{alignItems:"center",flexDirection:"row"}}>
-                                        <Image style={styles.bgCircle} source={item.img} />
-                                        <Text style={{fontSize:12,color:"#000"}}>{item.title}</Text>
+                    >
+                        {
+                            loading ? <ActivityIndicator style={{marginTop:80}} size={40} /> 
+                            :
+                            serviceData.map(item=>(
+                                <TouchableOpacity 
+                                    key={item._id} 
+                                    activeOpacity={0.7}
+                                    style={{borderBottomWidth:1}}
+                                >
+                                    <View style={styles.subView}>
+                                        <View style={{alignItems:"center",flexDirection:"row"}}>
+                                            <View style={styles.bgCircle} />
+                                            <Text style={{fontSize:12,color:"#000",textTransform:"capitalize"}}>{item.name}</Text>
+                                        </View>
+                                        <AntDesign name="right" size={16} color="#000" />
                                     </View>
-                                    <AntDesign name="right" size={16} color="#000" />
-                                </View>
-                            </View>
-                        )}
-                    />
+                                </TouchableOpacity>
+                            ))
+                        }
+                    </ScrollView>
                 </View>
-            </View>
+            </ScrollView>
         </View>
     )
 };
@@ -242,6 +209,7 @@ const styles = StyleSheet.create({
     },
     body2: {
         marginTop: 20,
+        marginBottom: 80
     },
     subView: {
         flexDirection:"row",
@@ -254,7 +222,7 @@ const styles = StyleSheet.create({
         height: 50,
         width: 50,
         borderRadius: 50/2,
-        // backgroundColor: "#aaa",
+        backgroundColor: "#aaa",
         marginRight: 10
     },
     time: {

@@ -17,19 +17,12 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Octicons from "react-native-vector-icons/Octicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { useIsFocused } from "@react-navigation/native";
 
-import axios from "axios";
+import { API_VENDOR } from "../../../../config";
+import ProfileHeader from "./utils/profileHeader";
 
-import { API_USER } from "../../../../config";
-import ProfileHeader from "./utils/ProfileHeader";
-
-
-
-
-
-
-const { height, width } = Dimensions.get("window");
 
 export default function ProfileScreen({navigation}){
 
@@ -42,7 +35,7 @@ export default function ProfileScreen({navigation}){
 
     useEffect(()=>{
         if(isFocused){
-            getUser();
+            getVendor();
         }
     },[isFocused]);
 
@@ -61,34 +54,26 @@ export default function ProfileScreen({navigation}){
         )
     };
 
-    const logOut=()=> {
-        axios.get(`${API_USER}/logout`)
-        .then(async res=>{
-            if(res.status===200){
-                try{
-                    await AsyncStorage.removeItem("jwt");
-                    navigation.navigate("SignIn");
-                }
-                catch(e){
-                    console.log("logout error: ",e);
-                }
+    const logOut=async()=> {
+        // axios.get(`${API_VENDOR}/logout`)
+        // .then(async res=>{
+            try{
+                await AsyncStorage.removeItem("jwt");
+                navigation.navigate("SignIn");
             }
-            else console.log("Status: ",res.status);
-        })
-        .catch(err=>console.log(err))
+            catch(e){
+                console.log("logout error: ",e);
+            }
+        // })
+        // .catch(err=>console.log(err))
     };
 
-    const getUser=()=>{
-        axios.get(`${API_USER}/userdetail`)
-        .then(res=>{
-            if(res.status===200){
-                console.log(res.data);
-                setPhoneNo(res.data.phoneNo);
-                setName(res.data.name);
-                setImg(res.data.profileImg);
-                // setAddress(res.data.address);
-            }
-            else console.log("Status error: ",res.status);
+    const getVendor=()=>{
+        axios.get(`${API_VENDOR}/vendordetail`)
+        .then(async res=>{
+            setPhoneNo(res.data.phoneNo);
+            setName(res.data.name);
+            setImg(res.data.profileImg);
         })
         .catch(err=>{
             console.log(err);
@@ -117,7 +102,7 @@ export default function ProfileScreen({navigation}){
     return(
         <View style={styles.container}>
             <ProfileHeader 
-                nav={()=>navigation.navigate("Alert")}
+                nav={()=>navigation.navigate("AlertScreen")}
             />
             <View style={styles.body}>
                 <View style={styles.bgCard}>

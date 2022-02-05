@@ -5,6 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import HomeScreen from '../HomeScreen';
 import AlertScreen from '../AlertScreen';
+import ProfileScreen from '../ProfileScreen';
+import EditProfile from '../EditProfileScreen';
 
 
 
@@ -18,6 +20,8 @@ export default function HomeStack(){
         <Stack.Navigator screenOptions={{headerShown:false}}>
             <Stack.Screen name='HomeScreen' component={HomeScreen} />
             <Stack.Screen name='AlertScreen' component={AlertScreen} />
+            <Stack.Screen name='ProfileScreen' component={ProfileScreen} />
+            <Stack.Screen name='EditProfile' component={EditProfile} />
         </Stack.Navigator>
     </View>
   );
@@ -26,6 +30,6 @@ export default function HomeStack(){
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#054d36"
+    backgroundColor: "#ffe4e1"
   }
 });

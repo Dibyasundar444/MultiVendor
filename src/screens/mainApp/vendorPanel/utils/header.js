@@ -16,19 +16,24 @@ import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
 
 
-export default function Header({profile,notify,title,date,activeStyle,bellColor}){
+export default function Header(props){
     return(
         <View style={{marginTop: 30,marginHorizontal: 20,}}>
             <View style={styles.header}>
-                <Text style={{color:"#000",fontSize: 16}}>{title}</Text>
                 <View style={{flexDirection:"row",alignItems:"center"}}>
-                    <Ionicons name="person-outline" color="#000" size={24} onPress={profile} />
-                    <TouchableOpacity onPress={notify} style={[{marginLeft:20},activeStyle]}>
-                        <Fontisto name="bell" size={24} color={bellColor} />
+                {
+                    props.isBack ? <Feather name="chevron-left" color="#000" size={32} onPress={props.back} style={{marginRight:20}} /> : null
+                }
+                <Text style={{color:"#000",fontSize: 16,textTransform:"capitalize"}}>{props.title}</Text>
+                </View>
+                <View style={{flexDirection:"row",alignItems:"center"}}>
+                    <Ionicons name="person-outline" color="#000" size={24} onPress={props.profile} />
+                    <TouchableOpacity onPress={props.notify} style={[{marginLeft:20},props.activeStyle]}>
+                        <Fontisto name="bell" size={24} color={props.bellColor} />
                     </TouchableOpacity>
                 </View>
             </View>
-            <Text style={{color:"gray",fontSize:12}}>{date}</Text>
+            <Text style={{color:"gray",fontSize:12}}>{props.date}</Text>
         </View>
     )
 };

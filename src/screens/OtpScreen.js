@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { 
     View, 
     Text, 
@@ -16,7 +16,7 @@ import OTPInputView from '@twotalltotems/react-native-otp-input';
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import axios from "axios";
 
-import { API_USER, API_VENDOR } from "../../config";
+import { API, API_USER, API_VENDOR } from "../../config";
 
 const { height, width } = Dimensions.get("window");
 
@@ -26,11 +26,10 @@ export default function OtpVerify({route,navigation}){
     const fNumber = prevData.number.split("",6);
     let phNum = Number(prevData.number);
     const [num, setNum] = useState("");
-    const [token, setToken] = useState("");
+    const [token, setToken] = useState(null);
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
     const [resend, setResend] = useState(false);
-
 
     let postData={
         "phoneNo" : phNum,
@@ -42,23 +41,17 @@ export default function OtpVerify({route,navigation}){
         if(prevData.user === "user"){
             axios.post(`${API_USER}/register/verify`,postData)
             .then(async res => {
-                if(res.status === 200){
-                    setError(false);
-                    setLoading(false);
-                    console.log("OTP verified");
-                    try{
-                        const jsonValue = JSON.stringify(res.data);
-                        await AsyncStorage.setItem("jwt",jsonValue);
-                        navigation.navigate("UserPanel");
-                    }
-                    catch(e){
-                        console.log(e);
-                    }
+                setError(false);
+                setLoading(false);
+                console.log("OTP verified");
+                try{
+                    const jsonValue = JSON.stringify(res.data);
+                    await AsyncStorage.setItem("jwt",jsonValue);
+                    await AsyncStorage.setItem("userRole","0");
+                    navigation.navigate("UserPanel");
                 }
-                else {
-                    setError(true);
-                    setLoading(false);
-                    console.log(res.status);
+                catch(e){
+                    console.log(e);
                 }
             })
             .catch(err=>{
@@ -70,23 +63,17 @@ export default function OtpVerify({route,navigation}){
         else if(prevData.user === "vendor"){
             axios.post(`${API_VENDOR}/register/verify`,postData)
             .then(async res => {
-                if(res.status === 200){
-                    setError(false);
-                    setLoading(false);
-                    console.log("OTP verified");
-                    try{
-                        const jsonValue = JSON.stringify(res.data);
-                        await AsyncStorage.setItem("jwt",jsonValue);
-                        navigation.navigate("VendorPanel");
-                    }
-                    catch(e){
-                        console.log(e);
-                    }
+                setError(false);
+                setLoading(false);
+                console.log("OTP verified");
+                try{
+                    const jsonValue = JSON.stringify(res.data);
+                    await AsyncStorage.setItem("jwt",jsonValue);
+                    await AsyncStorage.setItem("userRole","1");
+                    navigation.navigate("VerifyVendor");
                 }
-                else {
-                    setError(true);
-                    setLoading(false)
-                    console.log(res.status);
+                catch(e){
+                    console.log(e);
                 }
             })
             .catch(err=>{

@@ -148,7 +148,10 @@ export default function ChatScreen({navigation}){
                         keyExtractor={item=>item.id}
                         showsVerticalScrollIndicator={false}
                         renderItem={({item,index})=>(
-                            <TouchableOpacity key={index} style={styles.mainView} onPress={()=>navigation.navigate("ChatRoom",item.name)}>
+                            <TouchableOpacity key={index} 
+                                style={styles.mainView} 
+                                onPress={()=>navigation.navigate("ChatRoom",item.name)}
+                            >
                                 <View style={styles.subView}>
                                     <View style={{alignItems:"center"}}>
                                         <View style={styles.bgCircle} />
@@ -181,7 +184,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffe4e1"
     },
     header: {
-        // height: height/8,
         marginHorizontal: 20
     },
     textInputDiv: {
@@ -200,7 +202,6 @@ const styles = StyleSheet.create({
     },
     mainView: {
         borderBottomWidth:1,
-        // justifyContent:"center"
     },
     bgCircle: {
         borderWidth: 1,

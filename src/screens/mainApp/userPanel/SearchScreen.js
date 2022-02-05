@@ -21,59 +21,6 @@ import axios from "axios";
 import { API } from "../../../../config";
 import VendorsNearby from "./VendorsNearby";
 
-const catData=[
-    {
-        "id":"0",
-        "title":"Grocery"
-    },
-    {
-        "id":"1",
-        "title":"Medicines"
-    },
-    {
-        "id":"2",
-        "title":"Used Cars"
-    },
-    {
-        "id":"3",
-        "title":"Beauty"
-    },
-    {
-        "id":"4",
-        "title":"Computers"
-    },
-    {
-        "id":"5",
-        "title":"Camera"
-    },
-];
-
-const serviceData=[
-    {
-        "id":"0",
-        "title":"Clothing"
-    },
-    {
-        "id":"1",
-        "title":"Electronics"
-    },
-    {
-        "id":"2",
-        "title":"Toys"
-    },
-    {
-        "id":"3",
-        "title":"Books"
-    },
-    {
-        "id":"4",
-        "title":"Clothing"
-    },
-    {
-        "id":"5",
-        "title":"Clothing"
-    },
-];
 
 const { height, width } = Dimensions.get("window");
 
@@ -100,7 +47,6 @@ export default function SearchScreen({navigation}){
         })
         .catch(e=>{
             console.log("server error: ",e);
-            // setIndicator1(false);
         })
     };
     const getServices=()=>{
@@ -111,7 +57,6 @@ export default function SearchScreen({navigation}){
         })
         .catch(e=>{
             console.log("server error: ",e);
-            // setIndicator2(false);
         })
     };
 

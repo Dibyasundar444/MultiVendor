@@ -10,14 +10,10 @@ import {
     ActivityIndicator,
     Image
 } from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import Fontisto from "react-native-vector-icons/Fontisto";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
-import Entypo from "react-native-vector-icons/Entypo";
-import MenuHeader from "./utils/menuHeader";
+
 import axios from "axios";
+import MenuHeader from "./utils/menuHeader";
 import { API } from "../../../../config";
 import VendorsNearby from "./VendorsNearby";
 
@@ -53,7 +49,7 @@ export default function Menu({navigation}){
                     vendorProfile={(item)=>navigation.navigate("VendorProfile",item)}
                 />
                 <View style={{marginLeft:20,marginTop:20}}>
-                    <Text style={{color:"#000",fontWeight:"bold",marginBottom:20,fontSize:16}}>Latest Products</Text>
+                    <Text style={styles.products}>Latest Products</Text>
                     {
                         indicator ? <ActivityIndicator style={{left: -10,marginTop: 20}} size={30} />
                         :
@@ -66,18 +62,16 @@ export default function Menu({navigation}){
                                     key={item._id} 
                                     style={styles.box}
                                     activeOpacity={0.7}
-                                    onPress={()=>navigation.navigate("ProductDetails",{
-                                        "title": item.title, "des": item.description, "img": item.images, "header": "Product Details"
-                                    })}
+                                    onPress={()=>navigation.navigate("ProductDetails", item)}
                                 >
-                                    <Image style={{height: width/3.5,backgroundColor:"pink",width:"100%",borderRadius:10}}
+                                    <Image style={styles.img}
                                         source={{uri: item.images}}
                                     />
                                     <View style={{marginLeft:10,marginTop:5}}>
-                                        <Text style={{color:"#000",fontSize:12,textTransform:"capitalize"}}>{item.title}</Text>
+                                        <Text style={styles.title}>{item.title}</Text>
                                         <Text style={{color:"#000",fontSize:12}}>Details</Text>
                                     </View>
-                                    <View style={{flexDirection:"row",justifyContent:"center",marginTop:5}}>
+                                    <View style={styles.enquire}>
                                         <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
                                         <EvilIcons name="arrow-right" color="#000" size={22} />
                                     </View>
@@ -104,5 +98,27 @@ const styles = StyleSheet.create({
         marginBottom:10,
         elevation: 5,
         borderRadius: 10
+    },
+    products: {
+        color:"#000",
+        fontWeight:"bold",
+        marginBottom:20,
+        fontSize:16
+    },
+    img: {
+        height: width/3.5,
+        backgroundColor:"pink",
+        width:"100%",
+        borderRadius:10
+    },
+    title: {
+        color:"#000",
+        fontSize:12,
+        textTransform:"capitalize"
+    },
+    enquire: {
+        flexDirection:"row",
+        justifyContent:"center",
+        marginTop:5
     }
 })

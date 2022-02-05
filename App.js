@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Button, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,6 +15,8 @@ import Services from './src/screens/mainApp/userPanel/ServiceScreen';
 import ServiceDetails from './src/screens/mainApp/userPanel/ServiceDetails';
 import ProductDetails from './src/screens/mainApp/userPanel/ProductDetails';
 import SplashScreen from './src/screens/SplashScreen';
+import EditProfile from './src/screens/mainApp/userPanel/EditProfileScreen';
+import VerifyVendor from './src/screens/VerifyVendor';
 
 
 
@@ -25,19 +26,24 @@ const App = () => {
 
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState("user");
+
+  // console.log(token);
 
   useEffect(()=>{
     getToken();
     setTimeout(()=>{
-      setLoading(false)
+      setLoading(false);
     },5000);
   },[]);
 
   const getToken=async()=>{
     try{
       const Json = await AsyncStorage.getItem("jwt");
+      const role = await AsyncStorage.getItem("userRole");
       const Parsed = JSON.parse(Json);
-      setToken(Parsed)
+      setToken(Parsed);
+      role === "0" ? setUser("user") : setUser("vendor");
     }
     catch(e){
       console.log("Token Error: ",e);
@@ -51,7 +57,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator 
-        initialRouteName={token ? "UserPanel" : "SignIn"} 
+        initialRouteName={!token ? "SignIn" : user === "user" ? "UserPanel" : "VendorPanel"} 
         screenOptions={{headerShown: false}}    
       >
         <Stack.Screen name="SignIn" component={SignIn} />
@@ -65,12 +71,10 @@ const App = () => {
         <Stack.Screen name="Services" component={Services} />
         <Stack.Screen name="ServiceDetails" component={ServiceDetails} />
         <Stack.Screen name="ProductDetails" component={ProductDetails} />
+        <Stack.Screen name="VerifyVendor" component={VerifyVendor} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-});
 
 export default App;
