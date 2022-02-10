@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   ScrollView,
   FlatList,
-  TouchableWithoutFeedback,
+  Dimensions,
   TextInput,
+  TouchableWithoutFeedback,
   Linking,
-  Platform,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -20,21 +20,58 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Bubble, GiftedChat} from 'react-native-gifted-chat';
 import firestore from '@react-native-firebase/firestore';
 
+
 import ChatRoomHeader from './utils/chatRoomHeader';
-import axios from 'axios';
-import {API} from '../../../../config';
 
 export default function ChatRoom({route, navigation}) {
   const preData = route.params;
   const [messages, setMessages] = useState([]);
   const [isPopUp, setIsPopUP] = useState(false);
 
-
   useEffect(() => {
     getChats();
   }, []);
 
- 
+  const getChats = async() => {
+    const docId =
+    preData.totalData._id > preData.customerData._id
+    ? preData.customerData._id + '-' + preData.totalData._id
+    : preData.totalData._id + '-' + preData.customerData._id;
+   const querySnap =  await firestore().collection("chatroom")
+    .doc(docId)
+    .collection("messages")
+    .orderBy('createdAt',"desc")
+    .get()
+   const allMsg = querySnap.docs.map(item=>{
+      return {
+        ...item.data(),
+        createdAt: item.data().createdAt.toDate()
+      }
+    })
+    setMessages(allMsg);
+  };
+
+
+  const onSend = useCallback((messagesArray) => {
+    const msg = messagesArray[0];
+    const myMsg = {
+      ...msg,
+      sentTo: preData.customerData._id,
+      sentBy: preData.totalData._id
+    }
+    setMessages(previousMessages =>
+      GiftedChat.append(previousMessages, myMsg),
+    );
+    const docId =
+    preData.totalData._id > preData.customerData._id
+    ? preData.customerData._id + '-' + preData.totalData._id
+    : preData.totalData._id + '-' + preData.customerData._id;
+    firestore()
+      .collection('chatroom')
+      .doc(docId)
+      .collection('messages')
+      .add({...myMsg, createdAt: firestore.FieldValue.serverTimestamp()});
+  }, []);
 
   const scrollToBottom = () => (
     <FontAwesome name="angle-double-down" size={22} color="#333" />
@@ -56,14 +93,17 @@ export default function ChatRoom({route, navigation}) {
         textStyle={{
           right: {
             color: '#000',
+            fontSize: 13,
           },
           left: {
             color: '#000',
+            fontSize: 13,
           },
         }}
       />
     );
   };
+
   const pop_up = () => (
     <TouchableWithoutFeedback onPress={() => setIsPopUP(false)}>
       <View style={styles.absPop}>
@@ -74,7 +114,7 @@ export default function ChatRoom({route, navigation}) {
             activeOpacity={0.6}>
             <Feather name="phone-call" color="#000" size={20} />
             <Text style={{color: '#000', marginLeft: 10, fontWeight: '500'}}>
-              Call vendor
+              Call user
             </Text>
           </TouchableOpacity>
         </TouchableOpacity>
@@ -83,57 +123,17 @@ export default function ChatRoom({route, navigation}) {
   );
 
   const openDialer = () => {
-    let number = preData.vendorData.phoneNo;
+    let number = preData.phoneNo;
     if (Platform.OS === 'ios') {
       number = `telprompt:${number}`;
     } else number = `tel:${number}`;
     Linking.openURL(number);
   };
 
-  const getChats = async() => {
-    const docId =
-      preData.vendorData._id > preData.totalData._id
-        ? preData.totalData._id + '-' + preData.vendorData._id
-        : preData.vendorData._id + '-' + preData.totalData._id;
-   const querySnap =  await firestore().collection("chatroom")
-    .doc(docId)
-    .collection("messages")
-    .orderBy('createdAt',"desc")
-    .get()
-   const allMsg = querySnap.docs.map(item=>{
-      return {
-        ...item.data(),
-        createdAt: item.data().createdAt.toDate()
-      }
-    })
-    setMessages(allMsg);
-  };
-
-  const onSend = useCallback((messagesArray) => {
-    const msg = messagesArray[0];
-    const myMsg = {
-      ...msg,
-      sentTo: preData.vendorData._id,
-      sentBy: preData.totalData._id
-    }
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, myMsg),
-    );
-    const docId =
-      preData.vendorData._id > preData.totalData._id
-        ? preData.totalData._id + '-' + preData.vendorData._id
-        : preData.vendorData._id + '-' + preData.totalData._id;
-    firestore()
-      .collection('chatroom')
-      .doc(docId)
-      .collection('messages')
-      .add({...myMsg, createdAt: firestore.FieldValue.serverTimestamp()});
-  }, []);
-
   return (
     <View style={styles.container}>
       <ChatRoomHeader
-        name={preData.vendorData.name}
+        name={preData.customerData.name}
         back={() => navigation.goBack()}
         pop_up={() => setIsPopUP(true)}
       />
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   popView: {
-    // maxHeight: 150,
+    maxHeight: 150,
     width: 150,
     backgroundColor: '#fff',
     right: 20,
@@ -201,24 +201,3 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
 });
-
-// [
-//     {
-//         "_id": "d345143f-47c0-4898-9a5c-783f4016527d",
-//         "createdAt": 2022-02-01T06:17:28.988Z,
-//         "text": "Hi",
-//         "user": {
-//             "_id": 1
-//         }
-//     },
-//     {
-//         "_id": 1,
-//         "createdAt": 2022-02-01T06:17:20.275Z,
-//         "text": "Hello developer",
-//         "user": {
-//             "_id": 2,
-//             "avatar": "https://placeimg.com/140/140/any",
-//             "name": "React Native"
-//         }
-//     }
-// ]

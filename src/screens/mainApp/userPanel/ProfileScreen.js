@@ -82,7 +82,7 @@ export default function ProfileScreen({navigation}){
         axios.get(`${API_USER}/userdetail`)
         .then(res=>{
             if(res.status===200){
-                console.log(res.data);
+                // console.log(res.data);
                 setPhoneNo(res.data.phoneNo);
                 setName(res.data.name);
                 setImg(res.data.profileImg);
@@ -146,6 +146,7 @@ export default function ProfileScreen({navigation}){
                 <TouchableOpacity 
                     style={styles.smCard}
                     activeOpacity={0.8}
+                    onPress={()=>navigation.navigate("WishList")}
                 >
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
                         <Octicons name="tasklist" color="#000" size={16}/>
@@ -155,6 +156,7 @@ export default function ProfileScreen({navigation}){
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.smCard}
                     onPress={onShare}
+                    activeOpacity={0.8}
                 >
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
                         <AntDesign name="sharealt" color="#000" size={18}/>
@@ -232,7 +234,7 @@ const styles = StyleSheet.create({
         height: 60,
         width: 60,
         borderRadius: 60/2,
-        backgroundColor: "#ffe4e1",
+        // backgroundColor: "#ffe4e1",
         marginVertical: 10,
         marginHorizontal: 10
     },

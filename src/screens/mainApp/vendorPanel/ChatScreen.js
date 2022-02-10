@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { 
     View, 
     Text, 
@@ -7,7 +7,8 @@ import {
     ScrollView,
     FlatList,
     Dimensions, 
-    TextInput
+    TextInput,
+    Image
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
@@ -15,124 +16,89 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
-import Header from "./utils/header";
+import axios from "axios";
+import { useIsFocused } from "@react-navigation/native";
 
-const DATA=[
-    {
-        "id":"0",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:40pm"
-    },
-    {
-        "id":"1",
-        "name":"Suresh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:45pm"
-    },
-    {
-        "id":"2",
-        "name":"John",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"3",
-        "name":"Name4",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"4",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"5",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"6",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"7",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"8",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"9",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:40pm"
-    },
-];
+import Header from "./utils/header";
+import { API_VENDOR } from "../../../../config";
 
 export const { height, width } = Dimensions.get("window");
 
 export default function VendorChat({navigation}){
 
-    const [text, setText] = useState("");
-    const [data, setData] = useState(DATA);
+    const [chatList, setChatList] = useState([]);
+    const [vendorData, setVendorData] = useState(null);
+    const isFocused = useIsFocused();
+
+    useEffect(()=>{
+        if(isFocused){
+            getChatList();
+        }
+    },[isFocused]);
+
+    const getChatList=()=>{
+        axios.get(`${API_VENDOR}/vendordetail`)
+        .then(resp=>{
+            setChatList(resp.data.customercontact);
+            setVendorData(resp.data);
+        })
+        .catch(err=>{
+            console.log("server error: ",err);
+        })
+    };
    
 
     return(
         <View style={styles.container}>
             <Header
-                title="Chat(02)"
+                title={`Chat(${chatList.length})`}
                 notify={()=>navigation.navigate("AlertScreen")}
                 profile={()=>navigation.navigate("ProfileScreen")}
                 bellColor="#000"
             />
-            <View style={styles.body}>
-                <View style={{}}>
+            <View style={{
+                backgroundColor:"#fff",flex:1,
+                borderTopRightRadius:10,
+                borderTopLeftRadius:10,bottom:-10
+                }}
+            >
+                <View>
                     <FlatList 
-                        data={DATA}
-                        keyExtractor={item=>item.id}
+                        data={chatList}
+                        keyExtractor={item=>item._id}
+                        contentContainerStyle={{paddingBottom:150}}
                         showsVerticalScrollIndicator={false}
-                        style={{marginBottom:80}}
-                        renderItem={({item,index})=>(
-                            <View key={index} style={styles.mainView}>
+                        renderItem={({item})=>(
+                            <TouchableOpacity key={item._id} 
+                                style={styles.mainView} 
+                                onPress={()=>navigation.navigate("ChatRoom",{totalData: vendorData,customerData:item})}
+                            >
                                 <View style={styles.subView}>
                                     <View style={{alignItems:"center"}}>
-                                        <View style={styles.bgCircle} />
-                                        <View style={styles.smCircle}>
+                                        {
+                                            item.profileImg ? 
+                                            <Image style={styles.bgCircle} 
+                                            source={{uri: item.profileImg}}
+                                            />
+                                            :
+                                            <Image style={styles.bgCircle} 
+                                            source={require("../../../assets/profile.png")}
+                                            />
+                                        }
+                                        {/* <View style={styles.smCircle}>
                                             <Text style={{color:"#000",fontSize:12}}>1</Text>
-                                        </View>
+                                        </View> */}
                                     </View>
                                     <View style={styles.texts}>
-                                        <Text style={styles.name}>{item.name}</Text>
-                                        <Text style={styles.duration}>{item.duration}</Text>
-                                        <Text style={styles.msg}>{item.msg}</Text>
-                                        <Text style={styles.msg}>{item.msg}</Text>
+                                        <Text style={{color:"#000",top:0,fontWeight:"500"}}>{item.name}</Text>
+                                        {/* <Text style={{color:"#000",fontSize:11,}}>{item.duration}</Text> */}
+                                        {/* <Text style={styles.msg}>{item.msg}</Text> */}
                                     </View>
-                                    <View style={styles.time}>
-                                        <Text style={styles.timetxt}>{item.time}</Text>
-                                    </View>
+                                    {/* <View style={styles.time}>
+                                        <Text style={{color:"#000"}}>{item.time}</Text>
+                                    </View> */}
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         )}
                     />
                 </View>
@@ -171,7 +137,7 @@ const styles = StyleSheet.create({
         height: 50,
         width: 50,
         borderRadius: 50/2,
-        backgroundColor: "#aaa"
+        // backgroundColor: "#aaa"
     },
     smCircle: {
         borderWidth: 1,

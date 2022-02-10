@@ -69,7 +69,7 @@ export default function Menu({navigation}){
                                     />
                                     <View style={{marginLeft:10,marginTop:5}}>
                                         <Text style={styles.title}>{item.title}</Text>
-                                        <Text style={{color:"#000",fontSize:12}}>Details</Text>
+                                        <Text style={{color:"#000",fontSize:12}}>{item.content}</Text>
                                     </View>
                                     <View style={styles.enquire}>
                                         <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
@@ -82,8 +82,8 @@ export default function Menu({navigation}){
                 </View>
             </ScrollView>
         </View>
-    )
-};
+    );
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffe4e1",
     },
     box: {
-        height: width/2,
+        minHeight: width/2,
         width: width/2.5,
         backgroundColor: "#fff",
         marginHorizontal:5,
@@ -119,6 +119,6 @@ const styles = StyleSheet.create({
     enquire: {
         flexDirection:"row",
         justifyContent:"center",
-        marginTop:5
+        marginVertical:5
     }
 })

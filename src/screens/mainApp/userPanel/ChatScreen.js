@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { 
     View, 
     Text, 
@@ -7,7 +7,8 @@ import {
     ScrollView,
     FlatList,
     Dimensions, 
-    TextInput
+    TextInput,
+    Image
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
@@ -15,91 +16,33 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
+import axios from "axios";
+import { useIsFocused } from "@react-navigation/native";
+// import firestore from '@react-native-firebase/firestore';
 
-const DATA=[
-    {
-        "id":"0",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"1",
-        "name":"Suresh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"2",
-        "name":"John",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"3",
-        "name":"Name4",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"4",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"5",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"6",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"7",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"8",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"9",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-];
+import { API_USER } from "../../../../config";
+
 
 const { height, width } = Dimensions.get("window");
 
 export default function ChatScreen({navigation}){
 
     const [text, setText] = useState("");
-    const [data, setData] = useState(DATA);
-    const [filterData, setFilterData] = useState(DATA);
+    const [filterData, setFilterData] = useState([]);
+    const [chatList, setChatList] = useState([]);
+    const [userData, setUserData] = useState(null);
+    const isFocused = useIsFocused();
+    // const [latestMsg, setLatestMsg] = useState('');
+
+    useEffect(()=>{
+        if(isFocused){
+            getChatList();
+        }
+    },[isFocused]);
 
     const searchFilter=(val)=>{
         if(val){
-            const newData =  data.filter((item)=>{
+            const newData =  chatList.filter((item)=>{
                 const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
                 const textData  = val.toUpperCase();
                 return itemData.indexOf(textData) > -1;
@@ -108,10 +51,41 @@ export default function ChatScreen({navigation}){
             setText(val);
         }
         else{
-            setFilterData(data);
+            setFilterData(chatList);
             setText(val);
         }
     };
+
+    const getChatList=()=>{
+        axios.get(`${API_USER}/userdetail`)
+        .then(resp=>{
+            setChatList(resp.data.vendorcontact);
+            setFilterData(resp.data.vendorcontact);
+            setUserData(resp.data);
+        })
+        .catch(err=>{
+            console.log("server error: ",err);
+        })
+    };
+    // const getChats = async() => {
+    //     const docId =
+    //       preData.vendorData._id > userData._id
+    //         ? userData._id + '-' + preData.vendorData._id
+    //         : preData.vendorData._id + '-' + userData._id;
+    //    const querySnap =  await firestore().collection("chatroom")
+    //     .doc(docId)
+    //     .collection("messages")
+    //     .orderBy('createdAt',"desc")
+    //     .get()
+    //    const allMsg = querySnap.docs.map(item=>{
+    //       return {
+    //         ...item.data(),
+    //         createdAt: item.data().createdAt.toDate()
+    //       }
+    //     })
+    //     setMessages(allMsg);
+    //   };
+
 
 
     return(
@@ -145,29 +119,37 @@ export default function ChatScreen({navigation}){
                 <View>
                     <FlatList 
                         data={filterData}
-                        keyExtractor={item=>item.id}
+                        keyExtractor={item=>item._id}
                         showsVerticalScrollIndicator={false}
-                        renderItem={({item,index})=>(
-                            <TouchableOpacity key={index} 
+                        renderItem={({item})=>(
+                            <TouchableOpacity key={item._id} 
                                 style={styles.mainView} 
-                                onPress={()=>navigation.navigate("ChatRoom",item.name)}
+                                onPress={()=>navigation.navigate("ChatRoom",{totalData: userData,vendorData:item})}
                             >
                                 <View style={styles.subView}>
                                     <View style={{alignItems:"center"}}>
-                                        <View style={styles.bgCircle} />
-                                        <View style={styles.smCircle}>
+                                        {
+                                            item.profileImg ? 
+                                            <Image style={styles.bgCircle} 
+                                            source={{uri: item.profileImg}}
+                                            />
+                                            :
+                                            <Image style={styles.bgCircle} 
+                                            source={require("../../../assets/profile.png")}
+                                            />
+                                        }
+                                        {/* <View style={styles.smCircle}>
                                             <Text style={{color:"#000",fontSize:12}}>1</Text>
-                                        </View>
+                                        </View> */}
                                     </View>
                                     <View style={styles.texts}>
-                                        <Text style={{color:"#000",top:3,fontWeight:"500"}}>{item.name}</Text>
-                                        <Text style={{color:"#000",fontSize:11,}}>{item.duration}</Text>
-                                        <Text style={styles.msg}>{item.msg}</Text>
-                                        <Text style={styles.msg}>{item.msg}</Text>
+                                        <Text style={{color:"#000",top:0,fontWeight:"500"}}>{item.name}</Text>
+                                        {/* <Text style={{color:"#000",fontSize:11,}}>{item.duration}</Text> */}
+                                        {/* <Text style={styles.msg}>{item.msg}</Text> */}
                                     </View>
-                                    <View style={styles.time}>
+                                    {/* <View style={styles.time}>
                                         <Text style={{color:"#000"}}>{item.time}</Text>
-                                    </View>
+                                    </View> */}
                                 </View>
                             </TouchableOpacity>
                         )}
@@ -208,7 +190,7 @@ const styles = StyleSheet.create({
         height: 50,
         width: 50,
         borderRadius: 50/2,
-        backgroundColor: "#aaa"
+        // backgroundColor: "#aaa"
     },
     smCircle: {
         borderWidth: 1,

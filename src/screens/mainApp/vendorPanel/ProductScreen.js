@@ -91,7 +91,7 @@ export default function MyProduct({navigation}) {
               renderItem={({item}) => (
                 <TouchableOpacity key={item._id} style={styles.box}
                     activeOpacity={0.6}
-                    onPress={()=>navigation.navigate("ProductDetails",item)}
+                    onPress={()=>navigation.navigate("ProductDetailsVendor",item)}
                 >
                   <View style={styles.boxSubView}>
                     <Image
@@ -110,7 +110,7 @@ export default function MyProduct({navigation}) {
                       {item.title}
                     </Text>
                     <Text style={{fontSize: 11, color: '#000'}}>
-                      {item.content.split('', 20)}.......
+                      {item.content}
                     </Text>
                     <View
                       style={{
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   box: {
-    height: clickBoxHeight,
+    minHeight: clickBoxHeight,
     width: '48%',
     borderRadius: 10,
     marginBottom: 10,

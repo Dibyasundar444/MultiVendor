@@ -11,6 +11,8 @@ import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Foundation from "react-native-vector-icons/Foundation";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+
 // import HomeScreen from "./HomeScreen";
 // import VendorChat from "./ChatScreen";
 // import AddProduct from "./AddProduct";
@@ -25,6 +27,13 @@ const Tab = createBottomTabNavigator();
 
 export default function VendorPanel({navigation}){
 
+    const getTabBarVisibility=(route)=>{
+        const routeName = getFocusedRouteNameFromRoute(route);
+        if(routeName === "ChatRoom"){
+            return "none";
+        }
+        return "flex";
+    };
 
     return(
         <Tab.Navigator screenOptions={{
@@ -47,25 +56,27 @@ export default function VendorPanel({navigation}){
             />
             <Tab.Screen name="MyProduct"
                 component={ProductStack}
-                options={{
+                options={({route})=>({
+                    tabBarStyle: [styles.bottomTab,{display: getTabBarVisibility(route)}],
                     tabBarIcon: ({focused})=>(
                         <View style={[styles.default2,focused && styles.active]}>
                             <Foundation name="clipboard-notes" color={focused?"#fff":"#000"} size={26} />
                             <Text style={{fontSize:12,color:focused?"#fff":"#000"}}>Products</Text>
                         </View>
                     )
-                }}
+                })}
             />
             <Tab.Screen name="Chat"
                 component={ChatStack}
-                options={{
+                options={({route})=>({
+                    tabBarStyle: [styles.bottomTab,{display: getTabBarVisibility(route)}],
                     tabBarIcon: ({focused})=>(
                         <View style={[styles.default2,focused && styles.active]}>
                             <Ionicons name="chatbox-ellipses-outline" color={focused?"#fff":"#000"} size={26} />
                             <Text style={{fontSize:12,color:focused?"#fff":"#000"}}>Chats</Text>
                         </View>
                     )
-                }}
+                })}
             />
         </Tab.Navigator>
     )

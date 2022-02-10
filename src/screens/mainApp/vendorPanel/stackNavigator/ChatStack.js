@@ -5,6 +5,7 @@ import VendorChat from '../ChatScreen';
 import AlertScreen from '../AlertScreen';
 import ProfileScreen from '../ProfileScreen';
 import EditProfile from '../EditProfileScreen';
+import ChatRoom from '../ChatRoom';
 
 
 
@@ -21,6 +22,7 @@ export default function ChatStack(){
             <Stack.Screen name='AlertScreen' component={AlertScreen} />
             <Stack.Screen name='ProfileScreen' component={ProfileScreen} />
             <Stack.Screen name='EditProfile' component={EditProfile} />
+            <Stack.Screen name='ChatRoom' component={ChatRoom} />
         </Stack.Navigator>
     </View>
   );

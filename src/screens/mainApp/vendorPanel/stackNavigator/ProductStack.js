@@ -25,7 +25,7 @@ export default function ProductStack(){
             <Stack.Screen name='AlertScreen' component={AlertScreen} />
             <Stack.Screen name='ProfileScreen' component={ProfileScreen} />
             <Stack.Screen name='EditProfile' component={EditProfile} />
-            <Stack.Screen name='ProductDetails' component={ProductDetails} />
+            {/* <Stack.Screen name='ProductDetails' component={ProductDetails} /> */}
         </Stack.Navigator>
     </View>
   );

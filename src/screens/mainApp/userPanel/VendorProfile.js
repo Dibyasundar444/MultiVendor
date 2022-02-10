@@ -32,11 +32,11 @@ export default function VendorProfile({navigation,route}){
     const item = route.params;
     const [products, setProducts] = useState([]);
     const [indicator, setIndicator] = useState(true);
-    const [indicator2, setIndicator2] = useState(false);
-    const [isVisible, setIsvisible] = useState(false);
-    const [isSend, setIsSend] = useState(false);
-    const [title, setTitle] = useState("");
-    const [msg, setMsg] = useState("");
+    // const [indicator2, setIndicator2] = useState(false);
+    // const [isVisible, setIsvisible] = useState(false);
+    // const [isSend, setIsSend] = useState(false);
+    // const [title, setTitle] = useState("");
+    // const [msg, setMsg] = useState("");
 
     useEffect(()=>{
         getVendors();
@@ -63,19 +63,21 @@ export default function VendorProfile({navigation,route}){
     };
 
     let MESSAGE={
-        "title": title,
-        "query": msg,
+        "title": "title",
+        "query": "msg",
         "vendorId": item._id
     };
+
     const _sendMsg=()=>{
-        setIndicator2(true);
-        axios.post(`${API}/contactvendor`,MESSAGE)
+        // setIndicator2(true);
+        axios.post(`${API}/contactvendors`,MESSAGE)
         .then(resp=>{
             console.log(resp.data);  
-            setIndicator2(false);         
-            setIsSend(true);
-            setTitle("");
-            setMsg("");
+            navigation.navigate("Chat");
+            // setIndicator2(false);         
+            // setIsSend(true);
+            // setTitle("");
+            // setMsg("");
         })
         .catch(err=>{
             console.log("Error from server MSG: ",err);
@@ -111,7 +113,7 @@ export default function VendorProfile({navigation,route}){
                             <AntDesign name="star" color="#fc9d28" size={18} />
                             <Text style={{fontSize:8,color:"#000",fontWeight:"500"}}>5/5</Text>
                         </View>
-                        <TouchableOpacity style={styles.btnRound} onPress={()=>setIsvisible(true)}>
+                        <TouchableOpacity style={styles.btnRound} onPress={_sendMsg}>
                             <MaterialIcons name="chat" color="#000" size={20} />
                         </TouchableOpacity>
                     </View>
@@ -150,7 +152,7 @@ export default function VendorProfile({navigation,route}){
                     }
                 </View>
             </>
-            {
+            {/* {
                 isVisible && 
                 <ChatDialog 
                     Name={item.name}
@@ -168,12 +170,12 @@ export default function VendorProfile({navigation,route}){
                     isSend={isSend}
                     setSend={
                         setTimeout(()=>{
-                            setIsSend(false)
-                        },8000)
+                            setIsSend(false);
+                        },3000)
                     }
                     INDICATOR2={indicator2}
                 />
-            }
+            } */}
         </View>
     );
 };

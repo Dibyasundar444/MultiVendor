@@ -1,288 +1,561 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from 'react';
 import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    FlatList,
-    Dimensions,
-    ScrollView,
-    Image,
-    Linking,
-    Platform,
-    TextInput,
-    ActivityIndicator
-} from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  ScrollView,
+  Image,
+  Linking,
+  Platform,
+  TextInput,
+  ActivityIndicator,
+} from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
-import CategoryHeader from "./utils/CategoryHeader";
-import { API, API_USER, API_VENDOR } from "../../../../config";
-import axios from "axios";
-import ChatDialog from "./utils/chatDialog";
+import CategoryHeader from './utils/CategoryHeader';
+import {API, API_USER, API_VENDOR} from '../../../../config';
+// import ChatDialog from './utils/chatDialog';
 
+const {height, width} = Dimensions.get('window');
 
-const { height, width } = Dimensions.get("window");
+export default function ProductDetails({route, navigation}) {
+  const preData = route.params;
+  // const [isVisible, setIsvisible] = useState(false);
+  const [isVisible2, setIsvisible2] = useState(false);
+  // const [isSend, setIsSend] = useState(false);
+  // const [title, setTitle] = useState('');
+  // const [msg, setMsg] = useState('');
+  const [comment, setComment] = useState('');
+  const [commentSent, setCommentSent] = useState(false);
+  const [indicator, setIndicator] = useState(false);
+  // const [indicator2, setIndicator2] = useState(false);
+  const [oneVendor, setOneVendor] = useState({});
+  const [heartPressed, setHeartPressed] = useState(false);
+  const [wishlist, setWishlist] = useState([]);
+  const [commentList, setCommentList] = useState([]);
+  
+  useEffect(() => {
+    views();
+    setTimeout(() => {
+      setCommentSent(false);
+    }, 2000);
+    getOneVendor();
+    getWishlist();
+    getCommentList();
+  }, []);
 
-export default function ProductDetails({route,navigation}){
+  const openDialer = () => {
+    let number = oneVendor.phoneNo;
+    if (Platform.OS === 'ios') {
+      number = `telprompt:${number}`;
+    } else number = `tel:${number}`;
+    Linking.openURL(number);
+  };
 
-    const preData = route.params;
-    const [isVisible, setIsvisible] = useState(false);
-    const [isSend, setIsSend] = useState(false);
-    const [title, setTitle] = useState("");
-    const [msg, setMsg] = useState("");
-    const [comment, setComment] = useState("");
-    const [commentSent, setCommentSent] = useState(false);
-    const [indicator, setIndicator] = useState(false);
-    const [indicator2, setIndicator2] = useState(false);
-    const [oneVendor, setOneVendor] = useState({});
+  const views = () => {
+    axios
+      .patch(`${API_USER}/products/views/${preData._id}`)
+      .then(resp => {
+        console.log('New view added: ', resp.data.products.views);
+      })
+      .catch(err => {
+        console.log('Server error: ', err);
+      });
+  };
 
-    useEffect(()=>{
-        views();
-        setTimeout(()=>{
-            setCommentSent(false);
-        },2000);
-        getOneVendor();
-    },[]);
+  let MESSAGE = {
+    title: "title",
+    query: "msg",
+    productId: preData._id,
+    vendorId: oneVendor._id,
+  };
 
-    const openDialer=()=>{
-        let number = oneVendor.phoneNo;
-        if(Platform.OS === "ios"){
-            number = `telprompt:${number}`;
+  const _sendMsg = () => {
+    // setIndicator2(true);
+    axios
+      .post(`${API}/contactvendors`, MESSAGE)
+      .then(resp => {
+        console.log(resp.data);
+        navigation.navigate("Chat")
+        // setIndicator2(false);
+        // setIsSend(true);
+        // setTitle('');
+        // setMsg('');
+      })
+      .catch(err => {
+        console.log('Error from server MSG: ', err);
+      });
+  };
+
+  let COMMENT = {
+    comment: comment,
+    productId: preData._id,
+    vendorId: preData.vendor,
+  };
+  const _sendComment = () => {
+    setIndicator(true);
+    axios
+      .post(`${API}/comment`, COMMENT)
+      .then(resp => {
+        setIndicator(false);
+        setCommentSent(true);
+        getCommentList();
+        console.log('Comment is Sent');
+        setComment('');
+      })
+      .catch(err => {
+        console.log('Error from server CMT: ', err);
+      });
+  };
+
+  const commentMsg = () => {
+    setTimeout(() => {
+      setCommentSent(false);
+    }, 5000);
+    return (
+      <Text style={{color: 'green', fontSize: 12, textAlign: 'center'}}>
+        Sent successfully
+      </Text>
+    );
+  };
+
+  const getOneVendor = () => {
+    axios
+      .get(`${API_VENDOR}/onevendordetail/${preData.vendor}`)
+      .then(resp => {
+        setOneVendor(resp.data);
+      })
+      .catch(err => {
+        console.log('OneVendor Error: ', err);
+      });
+  };
+
+  const addWishList = async () => {
+    setHeartPressed(!heartPressed);
+    if (!heartPressed) {
+      wishlist.push(preData);
+      await AsyncStorage.setItem('MyWishList', JSON.stringify(wishlist));
+    } else if (heartPressed) {
+      const removeItem = wishlist.filter(item => item._id !== preData._id);
+      await AsyncStorage.setItem('MyWishList', JSON.stringify(removeItem));
+    }
+  };
+
+  const getWishlist = async () => {
+    try {
+      const listJSON = await AsyncStorage.getItem('MyWishList');
+      const listParsed = JSON.parse(listJSON);
+      if (listParsed !== null) {
+        setWishlist(listParsed);
+        var __FOUND = listParsed.find(function (item, index) {
+          if (item._id == preData._id) return true;
+        });
+        __FOUND !== undefined ? setHeartPressed(true) : setHeartPressed(false);
+      } else {
+        setWishlist([]);
+        setHeartPressed(false);
+      }
+    } catch (err) {
+      console.log('error of getting wishlist', err);
+    }
+  };
+
+  const getCommentList = () => {
+    axios
+      .get(`${API}/commentofprod/${preData._id}`)
+      .then(resp => {
+        setCommentList(resp.data);
+        console.log('ok');
+      })
+      .catch(err => {
+        console.log('server err: ', err);
+      });
+  };
+  const showComment = () => (
+    commentList.map(item=>{
+        if(item.customerId == null){
+            return(
+                <View style={styles.cmntView} key={item._id}>
+                {item.vendorId.profileImg ? (
+                  <Image
+                    style={styles.cmntCircle}
+                    source={{uri: item.vendorId.profileImg}}
+                  />
+                ) : (
+                  <Image
+                    style={styles.cmntCircle}
+                    source={require('../../../assets/profile.png')}
+                  />
+                )}
+                <View style={{width: '90%', alignItems: 'flex-start'}}>
+                  {item.vendorId.name ? (
+                    <Text style={{fontSize: 13, color: '#000'}}>
+                      {item.vendorId.name}
+                    </Text>
+                  ) : (
+                    <Text style={{fontSize: 13, color: '#000'}}>
+                      {item.vendorId._id.split('', 10)}***
+                    </Text>
+                  )}
+                  <View style={styles.cmntBox}>
+                    <Text style={{color: '#000', fontSize: 12}}>
+                      {item.comment}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            )
         }
-        else number = `tel:${number}`;
-        Linking.openURL(number);
-    };
-
-    const views = async() => {
-        await axios.patch(`${API_USER}/products/views/${preData._id}`)
-        .then(resp=>{
-            console.log("New view added: ", resp.data.products.views);
-        })
-        .catch(err=>{
-            console.log("Server error: ",err);
-        })
-    };
-
-    let MESSAGE={
-        "title": title,
-        "query": msg,
-        "productId": preData._id,
-        "vendorId": "61f497b7a36c3400168d45b1"
-    };
-
-    const _sendMsg=()=>{
-        setIndicator2(true);
-        axios.post(`${API}/contactvendor`,MESSAGE)
-        .then(resp=>{
-            console.log(resp.data);  
-            setIndicator2(false);         
-            setIsSend(true);
-            setTitle("");
-            setMsg("");
-        })
-        .catch(err=>{
-            console.log("Error from server MSG: ",err);
-        })
-    };
-    
-    let COMMENT = {
-        "comment": comment,
-        "productId": preData._id,
-        "vendorId": preData.vendor
-    };
-    const _sendComment=()=>{
-        setIndicator(true);
-        axios.post(`${API}/comment`,COMMENT)
-        .then(resp=>{
-            setIndicator(false);
-            setCommentSent(true);
-            console.log("Comment is Sent");
-            setComment("");
-        })
-        .catch(err=>{
-            console.log("Error from server CMT: ",err);
-        })
-    };
-    
-    const commentMsg=()=>{
-        setTimeout(()=>{
-            setCommentSent(false);
-        },5000);
-        return(
-            <Text style={{color:"green",fontSize:12,textAlign:"center"}}>Sent successfully</Text>
-        )
-    };
-
-    const getOneVendor=()=>{
-        axios.get(`${API_VENDOR}/onevendordetail/${preData.vendor}`)
-        .then(resp=>{
-            setOneVendor(resp.data);
-        })
-        .catch(err=>{
-            console.log("OneVendor Error: ",err);
-        })
-    };
-        
-
-    return(
-        <View style={styles.container}>
-            <ScrollView style={{flex:1}}>
-                <View style={{backgroundColor:"#ffe4e1"}}>
-                    <CategoryHeader 
-                        route={preData.title}
-                        back={()=>navigation.goBack()}
-                        nav={()=>navigation.navigate("Alert")}
-                    />
+        else if(item.vendorId == null){
+            return(
+                <View style={styles.cmntView} key={item._id}>
+                {item.customerId.profileImg ? (
+                  <Image
+                    style={styles.cmntCircle}
+                    source={{uri: item.customerId.profileImg}}
+                  />
+                ) : (
+                  <Image
+                    style={styles.cmntCircle}
+                    source={require('../../../assets/profile.png')}
+                  />
+                )}
+                <View style={{width: '90%', alignItems: 'flex-start'}}>
+                  {item.customerId.name ? (
+                    <Text style={{fontSize: 13, color: '#000'}}>
+                      {item.customerId.name}
+                    </Text>
+                  ) : (
+                    <Text style={{fontSize: 13, color: '#000'}}>
+                      {item.customerId._id.split('', 10)}***
+                    </Text>
+                  )}
+                  <View style={styles.cmntBox}>
+                    <Text style={{color: '#000', fontSize: 12}}>
+                      {item.comment}
+                    </Text>
+                  </View>
                 </View>
-                <Image style={styles.banner} 
-                    source={{uri: preData.images}}
-                />
-                <View style={styles.body}>
-                    <View style={styles.titleView}>
-                        <Text style={styles.title}>{preData.title}</Text>
-                        <Text style={{color:"green",fontSize:12}}>data.status</Text>
-                    </View>
-                    <Text style={{color:"#000",fontSize:12}}>{preData.description}</Text>
-                    <View style={{marginBottom:20}}>
-                        <Text style={{color:"#000",fontSize:13,marginVertical:10}}>{preData.content}</Text>
-                        <Text style={{color:"#000",fontSize:11,flexWrap:"wrap"}}>{preData.des}</Text>
-                    </View>
-                    <Text style={{color:"#000"}}>Vendor Details</Text>
-                    <View style={[styles.titleView,{marginVertical:10}]}>
-                        <View style={{alignItems:"center"}}>
-                            <View style={styles.profile} />
-                            <Text style={{color:"#000",fontSize:12,textTransform:"capitalize"}}>{oneVendor.name}</Text>
-                        </View>
-                        <View style={{alignItems:"center"}}>
-                            <TouchableOpacity style={[styles.smCircle,{backgroundColor:"#f0bc43"}]}>
-                                <FontAwesome name="star-o" color="#fff" size={20} />
-                            </TouchableOpacity>
-                            <Text style={{color:"#000",fontSize:12}}>8/10</Text>
-                        </View>
-                        <View style={{alignItems:"center"}}>
-                            <TouchableOpacity 
-                            style={[styles.smCircle,{backgroundColor:"#89f27c"}]}
-                            onPress={openDialer}
-                            >
-                                <Feather name="phone-call" color="#fff" size={18} style={{marginBottom:-2,marginLeft:-2}} />
-                            </TouchableOpacity>
-                            <Text style={{color:"#000",fontSize:12}}>Call</Text>
-                        </View>
-                        <View style={{alignItems:"center"}}>
-                            <TouchableOpacity 
-                                style={[styles.smCircle,{backgroundColor:"#89f27c"}]}
-                                onPress={()=>setIsvisible(true)}
-                            >
-                                <Ionicons name="chatbox-ellipses-outline" color="#fff" size={20} />
-                            </TouchableOpacity>
-                            <Text style={{color:"#000",fontSize:12}}>Chat</Text>
-                        </View>
-                    </View>
-                    <View style={{flexDirection:"row",alignItems:"center"}}>
-                        <TextInput 
-                            style={styles.comInput}
-                            placeholder="Write your comment..."
-                            placeholderTextColor="gray"
-                            value={comment}
-                            onChangeText={(val)=>setComment(val)}
+              </View>
+            )
+        }
+        else if (item.customerId !==null && item.vendorId !== null){
+            return(
+                <View key={item._id}>
+                    <View style={styles.cmntView}>
+                        {item.customerId.profileImg ? (
+                        <Image
+                            style={styles.cmntCircle}
+                            source={{uri: item.customerId.profileImg}}
                         />
-                        {
-                            indicator ? <ActivityIndicator style={{marginLeft:10}} size={24} /> 
-                            :
-                            <TouchableOpacity 
-                                onPress={_sendComment}
-                                disabled={comment !== "" ? false : true}
-                            >
-                                <MaterialCommunityIcons name="send-circle" color="#ff1493" size={44} />
-                            </TouchableOpacity>
-                        }
+                        ) : (
+                        <Image
+                            style={styles.cmntCircle}
+                            source={require('../../../assets/profile.png')}
+                        />
+                        )}
+                        <View style={{width: '90%', alignItems: 'flex-start'}}>
+                        {item.customerId.name ? (
+                            <Text style={{fontSize: 13, color: '#000'}}>
+                            {item.customerId.name}
+                            </Text>
+                        ) : (
+                            <Text style={{fontSize: 13, color: '#000'}}>
+                            {item.customerId._id.split('', 10)}***
+                            </Text>
+                        )}
+                        <View style={styles.cmntBox}>
+                            <Text style={{color: '#000', fontSize: 12}}>
+                            {item.comment}
+                            </Text>
+                        </View>
+                        </View>
                     </View>
-                    {
-                        commentSent && commentMsg()                       
-                    }
-                    <View style={{flexDirection:"row",alignItems:"center",marginTop:10}}>
-                        <Text style={{color:"#000",fontSize:14,marginRight:10}}>View Comments (23)</Text>
-                        <AntDesign name="down" color="#000" size={18} />
+                    <View style={styles.cmntView}>
+                        {item.vendorId.profileImg ? (
+                        <Image
+                            style={styles.cmntCircle}
+                            source={{uri: item.vendorId.profileImg}}
+                        />
+                        ) : (
+                        <Image
+                            style={styles.cmntCircle}
+                            source={require('../../../assets/profile.png')}
+                        />
+                        )}
+                        <View style={{width: '90%', alignItems: 'flex-start'}}>
+                        {item.vendorId.name ? (
+                            <Text style={{fontSize: 13, color: '#000'}}>
+                            {item.vendorId.name}
+                            </Text>
+                        ) : (
+                            <Text style={{fontSize: 13, color: '#000'}}>
+                            {item.vendorId._id.split('', 10)}***
+                            </Text>
+                        )}
+                        <View style={styles.cmntBox}>
+                            <Text style={{color: '#000', fontSize: 12}}>
+                            {item.comment}
+                            </Text>
+                        </View>
+                        </View>
                     </View>
                 </View>
-            </ScrollView>   
-            {
-                isVisible &&
-                <ChatDialog 
-                    Name={oneVendor.name}
-                    closeDialog={()=>{
-                        setIsvisible(false);
-                        setTitle("");
-                        setMsg("");
-                        setIsSend(false);
-                    }}
-                    title={title}
-                    setTitle={(val)=>setTitle(val)}
-                    msg={msg}
-                    setMsg={(val)=>setMsg(val)}
-                    send={_sendMsg}
-                    isSend={isSend}
-                    setSend={
-                        setTimeout(()=>{
-                            setIsSend(false);
-                        },8000)
-                    }
-                    INDICATOR2={indicator2}
-                />
-            }           
+            )
+        }
+        
+    })
+  );
+
+  return (
+    <View style={styles.container}>
+      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+        <View style={{backgroundColor: '#ffe4e1'}}>
+          <CategoryHeader
+            route={preData.title}
+            back={() => navigation.goBack()}
+            nav={() => navigation.navigate('Alert')}
+          />
         </View>
-    )
-};
+        {preData.images === '' ? (
+          <View style={styles.banner}>
+            <Text
+              style={{
+                color: '#fff',
+                fontSize: 12,
+                textAlign: 'center',
+                marginTop: 50,
+              }}>
+              No image available
+            </Text>
+          </View>
+        ) : (
+          <Image style={styles.banner} source={{uri: preData.images}} />
+        )}
+        <View style={styles.body}>
+          <TouchableOpacity
+            style={styles.absWishlist}
+            onPress={addWishList}
+            activeOpacity={1}>
+            <AntDesign
+              name={heartPressed ? 'heart' : 'hearto'}
+              color={heartPressed ? '#ff1493' : '#000'}
+              size={18}
+            />
+          </TouchableOpacity>
+          <View style={styles.titleView}>
+            <Text style={styles.title}>{preData.title}</Text>
+            <Text style={{color: 'green', fontSize: 12}}>data.status</Text>
+          </View>
+          <Text style={{color: '#000', fontSize: 12}}>{preData.content}</Text>
+          <View style={{marginBottom: 20}}>
+            <Text style={{color: '#000', fontSize: 13, marginVertical: 10}}>
+              {preData.description}
+            </Text>
+            <Text style={{color: '#000', fontSize: 11, flexWrap: 'wrap'}}>
+              {preData.des}
+            </Text>
+          </View>
+          <Text style={{color: '#000'}}>Vendor Details</Text>
+          <View style={[styles.titleView, {marginVertical: 10}]}>
+            <View style={{alignItems: 'center'}}>
+              <View style={styles.profile} />
+              <Text
+                style={{
+                  color: '#000',
+                  fontSize: 12,
+                  textTransform: 'capitalize',
+                }}>
+                {oneVendor.name}
+              </Text>
+            </View>
+            <View style={{alignItems: 'center'}}>
+              <TouchableOpacity
+                style={[styles.smCircle, {backgroundColor: '#f0bc43'}]}>
+                <FontAwesome name="star-o" color="#fff" size={20} />
+              </TouchableOpacity>
+              <Text style={{color: '#000', fontSize: 12}}>8/10</Text>
+            </View>
+            <View style={{alignItems: 'center'}}>
+              <TouchableOpacity
+                style={[styles.smCircle, {backgroundColor: '#89f27c'}]}
+                onPress={openDialer}>
+                <Feather
+                  name="phone-call"
+                  color="#fff"
+                  size={18}
+                  style={{marginBottom: -2, marginLeft: -2}}
+                />
+              </TouchableOpacity>
+              <Text style={{color: '#000', fontSize: 12}}>Call</Text>
+            </View>
+            <View style={{alignItems: 'center'}}>
+              <TouchableOpacity
+                style={[styles.smCircle, {backgroundColor: '#89f27c'}]}
+                onPress={_sendMsg}>
+                <Ionicons
+                  name="chatbox-ellipses-outline"
+                  color="#fff"
+                  size={20}
+                />
+              </TouchableOpacity>
+              <Text style={{color: '#000', fontSize: 12}}>Chat</Text>
+            </View>
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TextInput
+              style={styles.cmntInput}
+              placeholder="Write your comment..."
+              placeholderTextColor="gray"
+              value={comment}
+              onChangeText={val => setComment(val)}
+            />
+            {indicator ? (
+              <ActivityIndicator style={{marginLeft: 10}} size={24} />
+            ) : (
+              <TouchableOpacity
+                onPress={_sendComment}
+                disabled={comment !== '' ? false : true}>
+                <MaterialCommunityIcons
+                  name="send-circle"
+                  color="#ff1493"
+                  size={44}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+          {commentSent && commentMsg()}
+          <View style={{alignItems: 'flex-start', marginTop: 10}}>
+            <TouchableOpacity
+              style={{flexDirection: 'row', alignItems: 'center'}}
+              activeOpacity={0.7}
+              onPress={() => setIsvisible2(!isVisible2)}>
+              <Text style={{color: '#000', fontSize: 14, marginRight: 10}}>
+                View Comments ({commentList.length})
+              </Text>
+              <AntDesign
+                name={isVisible2 ? 'up' : 'down'}
+                color="#000"
+                size={18}
+              />
+            </TouchableOpacity>
+          </View>
+          {isVisible2 && (
+            <>
+              {showComment()}
+            </>
+          )}
+        </View>
+      </ScrollView>
+      {/* {isVisible && (
+        <ChatDialog
+          Name={oneVendor.name}
+          closeDialog={() => {
+            setIsvisible(false);
+            setTitle('');
+            setMsg('');
+            setIsSend(false);
+          }}
+          title={title}
+          setTitle={val => setTitle(val)}
+          msg={msg}
+          setMsg={val => setMsg(val)}
+          send={_sendMsg}
+          isSend={isSend}
+          setSend={
+            setTimeout(()=>{
+                setIsSend(false);
+            },3000)
+          }
+          INDICATOR2={indicator2}
+        />
+      )} */}
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
-    container: {
-        flex:1,
-        backgroundColor: "#fff"
-    },
-    banner: {
-        width:"100%",
-        height: 160,
-        borderRadius: 10,
-        backgroundColor: "gray",
-        marginTop: -10
-    },
-    body :{
-        marginHorizontal: 20,
-        marginVertical: 20,
-    },
-    titleView: {
-        flexDirection:"row",
-        justifyContent:"space-between",
-        alignItems:"center"
-    },
-    title: {
-        color:"#000",
-        fontWeight:"500",
-        textTransform:"capitalize"
-    },
-    profile: {
-        height:60,
-        width:60,
-        borderRadius:30,
-        backgroundColor:"gray"
-    },
-    smCircle: {
-        height:40,
-        width:40,
-        borderRadius:20,
-        justifyContent:"center",
-        alignItems:"center"
-    },
-    comInput: {
-        width:"85%",
-        marginRight:5,
-        borderRadius:35,
-        paddingLeft:10,
-        color:"#000",
-        backgroundColor:"#ffe4e1"
-    }
-})
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  banner: {
+    width: '100%',
+    height: 160,
+    borderRadius: 10,
+    backgroundColor: 'gray',
+    marginTop: -10,
+  },
+  body: {
+    marginHorizontal: 20,
+    marginVertical: 20,
+  },
+  titleView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  title: {
+    color: '#000',
+    fontWeight: '500',
+    textTransform: 'capitalize',
+  },
+  profile: {
+    height: 60,
+    width: 60,
+    borderRadius: 30,
+    backgroundColor: 'gray',
+  },
+  smCircle: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cmntInput: {
+    width: '85%',
+    marginRight: 5,
+    borderRadius: 35,
+    paddingLeft: 15,
+    color: '#000',
+    backgroundColor: '#ffe4e1',
+  },
+  absWishlist: {
+    position: 'absolute',
+    right: 20,
+    height: 30,
+    width: 30,
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    top: -35,
+    elevation: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cmntCircle: {
+    height: 30,
+    width: 30,
+    borderRadius: 15,
+    // backgroundColor: 'gray',
+    marginRight: 10,
+  },
+  cmntBox: {
+    backgroundColor: '#ffe4e1',
+    padding: 5,
+    borderRadius: 5,
+  },
+  cmntView: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginVertical: 5,
+  },
+});
