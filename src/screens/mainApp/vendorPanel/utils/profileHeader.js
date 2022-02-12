@@ -6,13 +6,17 @@ import {
     Dimensions, 
 } from "react-native";
 import Fontisto from "react-native-vector-icons/Fontisto";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
-export default function ProfileHeader({nav}){
+export default function ProfileHeader({nav,goBack}){
 
     return(
         <View style={styles.header}>
             <View style={styles.headerSub}>
-                <Text style={{color:"#000",fontSize:16,fontWeight:"500"}}>Profile</Text>
+                <View style={{flexDirection:"row",alignItems:"center"}}>
+                    <AntDesign name="left" color="#000" size={24} onPress={goBack}/>
+                    <Text style={{color:"#000",fontSize:16,fontWeight:"500",marginLeft:30}}>Profile</Text>
+                </View>
                 <Fontisto name="bell" color="#000" size={24} onPress={nav} />
             </View>
         </View>

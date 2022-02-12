@@ -102,7 +102,7 @@ const DATA=[
 
 export const { height, width } = Dimensions.get("window");
 
-export default function AlertScreen(){
+export default function AlertScreen({navigation}){
 
     // const [text, setText] = useState("");
     // const [data, setData] = useState(DATA);
@@ -114,6 +114,7 @@ export default function AlertScreen(){
                 title="Alerts(03)"
                 activeStyle={styles.bell}
                 bellColor="#fff"
+                profile={()=>navigation.navigate("ProfileScreen")}
             />
             <View style={styles.body}>
                 <View style={{}}>

@@ -10,16 +10,12 @@ import {
     ActivityIndicator,
     TextInput
 } from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import Fontisto from "react-native-vector-icons/Fontisto";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import Entypo from "react-native-vector-icons/Entypo";
 import SearchHeader from "./utils/searchHeader";
 import axios from "axios";
 import { API } from "../../../../config";
 import VendorsNearby from "./VendorsNearby";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const { height, width } = Dimensions.get("window");
@@ -32,11 +28,24 @@ export default function SearchScreen({navigation}){
     const [indicator2, setIndicator2] = useState(true);
     const [text, setText] = useState("");
     const [filterData, setFilterData] = useState([]);
+    const [location, setLocation] = useState({});
 
     useEffect(()=>{
         getCategories();
         getServices();
+        getLocation();
     },[]);
+
+    const getLocation=async()=>{
+        try{
+            const JSON_OBJ = await AsyncStorage.getItem('location');
+            const Parsed = JSON.parse(JSON_OBJ);
+            Parsed !== null ? setLocation(Parsed) : setLocation({});
+        }
+        catch(err){
+            console.log("err",err);
+        }
+    };
 
     const getCategories=()=>{
         axios.get(`${API}/category`)
@@ -117,6 +126,9 @@ export default function SearchScreen({navigation}){
         <ScrollView style={styles.container}showsVerticalScrollIndicator={false} >
             <SearchHeader
                 nav={()=>navigation.navigate("Alert")}
+                city={location.city}
+                state={location.state}
+                country={location.country}
             />
             <View style={styles.textInputDiv}>
                 <Feather name="search" size={22} style={{marginLeft:10,color:"#000"}} />

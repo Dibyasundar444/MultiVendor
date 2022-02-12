@@ -10,12 +10,14 @@ import {
     TextInput,
     Image,
     Alert,
-    Share
+    Share,
+    ActivityIndicator
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Octicons from "react-native-vector-icons/Octicons";
+import EvilIcons from "react-native-vector-icons/EvilIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useIsFocused } from "@react-navigation/native";
@@ -29,7 +31,10 @@ export default function ProfileScreen({navigation}){
     const [phoneNo, setPhoneNo] = useState();
     const [img, setImg] = useState("");
     const [name, setName] = useState("");
+    const [location, setLocation] = useState({});
     const isFocused = useIsFocused();
+    const [isUpdated, setIsUpdated] = useState(false);
+    const [indicator, setIndicator] = useState(false);
     
     const link = "link/will/be/here";
 
@@ -37,6 +42,7 @@ export default function ProfileScreen({navigation}){
         if(isFocused){
             getVendor();
         }
+        getLocation();
     },[isFocused]);
 
     const logOut_alert=()=>{
@@ -99,10 +105,50 @@ export default function ProfileScreen({navigation}){
         }
     };
 
+    const getLocation=async()=>{
+        try{
+            const JSON_OBJ = await AsyncStorage.getItem('location');
+            const Parsed = JSON.parse(JSON_OBJ);
+            Parsed !== null ? setLocation(Parsed) : setLocation({});
+        }
+        catch(err){
+            console.log("err",err);
+        }
+    };
+
+    let updateData={
+        locality: location.city,
+        state: location.state,
+        country: location.country,
+        latitude: location.lat,
+        longitude:  location.long
+    };
+
+    if(isUpdated){
+        setTimeout(()=>{
+            setIsUpdated(false);
+        },3000)
+    };
+
+    const updateLocation=()=>{
+        setIndicator(true);
+        axios.patch(`${API_VENDOR}/updatevendor`,updateData)
+        .then(res=>{
+            setIndicator(false);
+            setIsUpdated(true);
+            console.log(res.data);
+        })
+        .catch(err=>{
+            console.log(err);
+            setIndicator(false);
+        })
+    }
+
     return(
         <View style={styles.container}>
             <ProfileHeader 
                 nav={()=>navigation.navigate("AlertScreen")}
+                goBack={()=>navigation.goBack()}
             />
             <View style={styles.body}>
                 <View style={styles.bgCard}>
@@ -128,7 +174,7 @@ export default function ProfileScreen({navigation}){
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
                 </TouchableOpacity>
-                <TouchableOpacity 
+                {/* <TouchableOpacity 
                     style={styles.smCard}
                     activeOpacity={0.8}
                 >
@@ -137,7 +183,7 @@ export default function ProfileScreen({navigation}){
                         <Text style={{color:"#000",marginLeft: 20}}>Wishlist</Text>
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity style={styles.smCard}
                     onPress={onShare}
                 >
@@ -150,11 +196,18 @@ export default function ProfileScreen({navigation}){
                 <TouchableOpacity 
                     style={styles.smCard}
                     activeOpacity={0.8}
-                    onPress={()=>alert("update")}
+                    onPress={updateLocation}
                 >
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
-                        <AntDesign name="setting" color="#000" size={18}/>
-                        <Text style={{color:"#000",marginLeft: 20}}>Setting</Text>
+                        <EvilIcons name="location" color="#000" size={24} />
+                        {
+                            indicator ? 
+                            <View style={{flex:1}}>
+                                <ActivityIndicator style={{marginLeft:-50}} />
+                            </View>
+                            :
+                            <Text style={{color:"#000",marginLeft: 10}}>{isUpdated?"Updated":"Update location"}</Text>
+                        }
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
                 </TouchableOpacity>

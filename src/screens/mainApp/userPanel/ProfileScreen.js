@@ -164,7 +164,7 @@ export default function ProfileScreen({navigation}){
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
                 </TouchableOpacity>
-                <TouchableOpacity 
+                {/* <TouchableOpacity 
                     style={styles.smCard}
                     activeOpacity={0.8}
                     onPress={()=>alert("update")}
@@ -174,7 +174,7 @@ export default function ProfileScreen({navigation}){
                         <Text style={{color:"#000",marginLeft: 20}}>Setting</Text>
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity 
                     style={styles.smCard}
                     activeOpacity={0.8}

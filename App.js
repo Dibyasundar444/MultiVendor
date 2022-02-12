@@ -3,6 +3,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
+import Geolocation from '@react-native-community/geolocation';
+import Geocoder from 'react-native-geocoding';
 
 import SignIn from './src/screens/SigninScreen';
 import OtpVerify from './src/screens/OtpScreen';
@@ -16,7 +18,7 @@ import Services from './src/screens/mainApp/userPanel/ServiceScreen';
 import ServiceDetails from './src/screens/mainApp/userPanel/ServiceDetails';
 import ProductDetails from './src/screens/mainApp/userPanel/ProductDetails';
 import SplashScreen from './src/screens/SplashScreen';
-import EditProfile from './src/screens/mainApp/userPanel/EditProfileScreen';
+// import EditProfile from './src/screens/mainApp/userPanel/EditProfileScreen';
 import VerifyVendor from './src/screens/VerifyVendor';
 import ProductDetailsVendor from './src/screens/mainApp/vendorPanel/ProductDetails';
 
@@ -27,19 +29,60 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState('');
 
-  // console.log(token);
+  Geocoder.init('AIzaSyADsP1zSHCrMeyM2spsz4uwRj0PVnQlNx0');
 
+  Geolocation.getCurrentPosition(info => {
+    Geocoder.from(info.coords.latitude, info.coords.longitude)
+      .then(json => {
+        let LOCATION = {
+          city: json.results[0].address_components[1].long_name,
+          state: json.results[0].address_components[3].long_name,
+          country: json.results[0].address_components[4].short_name,
+          lat: info.coords.latitude,
+          long: info.coords.longitude
+        };
+        try {
+          AsyncStorage.setItem('location', JSON.stringify(LOCATION));
+        } catch (err) {
+          console.log('storage err: ', err);
+        }
+      })
+      .catch(error => console.warn(error));
+  });
+
+  //......useEffect hook....................................
   useEffect(() => {
     getToken();
     setTimeout(() => {
       setLoading(false);
-    }, 5000);           // loading will be hold for 5s
+    }, 5000); // loading will be hold for 5s
     cloudMessage();
-    getFCM();
+    getFCM();  
+  }, []);
+
+  const unsubscribe = () => {
     messaging().onMessage(async remoteMessage => {
       console.log('A new FCM message arrived :', remoteMessage);
+      const preMsg = await AsyncStorage.getItem('notifications');
+      const parse = JSON.parse(preMsg);
+      if (parse) {
+        const messageArray = parse;
+        messageArray.push(remoteMessage);
+        console.log('arr', messageArray);
+        await AsyncStorage.setItem(
+          'notifications',
+          JSON.stringify(messageArray),
+        );
+      } else {
+        const messageArray = [remoteMessage];
+        await AsyncStorage.setItem(
+          'notifications',
+          JSON.stringify(messageArray),
+        );
+      }
     });
-  }, []);
+    return unsubscribe;
+  };
 
   //........ permission for push notification for IOS only.........
   const cloudMessage = async () => {
@@ -55,7 +98,7 @@ const App = () => {
   const getFCM = async () => {
     let fcmToken = await messaging().getToken();
     if (fcmToken) {
-          //  console.log("FCMtoken: ",fcmToken);  // send token to server
+      //  console.log("FCMtoken: ",fcmToken);  // send token to server
       messaging().subscribeToTopic('topic');
     } else {
       console.log('token not found');
@@ -97,7 +140,10 @@ const App = () => {
         <Stack.Screen name="ServiceDetails" component={ServiceDetails} />
         <Stack.Screen name="ProductDetails" component={ProductDetails} />
         <Stack.Screen name="VerifyVendor" component={VerifyVendor} />
-        <Stack.Screen name='ProductDetailsVendor' component={ProductDetailsVendor} />
+        <Stack.Screen
+          name="ProductDetailsVendor"
+          component={ProductDetailsVendor}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

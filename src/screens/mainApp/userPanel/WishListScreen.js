@@ -47,6 +47,7 @@ export default function WishListScreen({navigation}) {
         }, 1500);
       }
     } else {
+      setIndicator(false);
       setWishlist([]);
       setIsData(false);
       console.log('no data in wishlist');

@@ -149,7 +149,6 @@ export default function SignIn({navigation}){
                         style={styles.otp} 
                         activeOpacity={0.6} 
                         onPress={submit}
-                        // onPress={()=>navigation.navigate("OtpVerify",navData)}
                         disabled={loading ? true : false}
                     >
                         {

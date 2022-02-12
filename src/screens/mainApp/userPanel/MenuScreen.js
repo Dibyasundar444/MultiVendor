@@ -16,6 +16,7 @@ import axios from "axios";
 import MenuHeader from "./utils/menuHeader";
 import { API } from "../../../../config";
 import VendorsNearby from "./VendorsNearby";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const { height, width } = Dimensions.get("window");
@@ -24,9 +25,11 @@ export default function Menu({navigation}){
 
     const [data, setData] = useState([]);
     const [indicator, setIndicator] = useState(true);
+    const [location, setLocation] = useState({});
 
     useEffect(()=>{
         getProducts();
+        getLocation();
     },[]);
 
     const getProducts=()=>{
@@ -39,10 +42,24 @@ export default function Menu({navigation}){
             console.log("server error: ",e);
         })
     };
+
+    const getLocation=async()=>{
+        try{
+            const JSON_OBJ = await AsyncStorage.getItem('location');
+            const Parsed = JSON.parse(JSON_OBJ);
+            Parsed !== null ? setLocation(Parsed) : setLocation({});
+        }
+        catch(err){
+            console.log("err",err);
+        }
+    };
     return(
         <View style={styles.container}>
             <MenuHeader 
                 alert={()=>navigation.navigate("Alert")}
+                city={location.city}
+                state={location.state}
+                country={location.country}
             />
             <ScrollView style={{marginBottom:70}}>
                 <VendorsNearby 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { 
     View, 
     Text, 
@@ -7,7 +7,8 @@ import {
     ScrollView,
     FlatList,
     Dimensions, 
-    TextInput
+    TextInput,
+    Image
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
@@ -15,6 +16,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const data=[
     {
@@ -93,7 +96,20 @@ const { height, width } = Dimensions.get("window");
 
 export default function AlertScreen({navigation}){
 
-    const [text, setText] = useState("");
+    const [notification, setNotification] = useState([]);
+
+    // console.log(notification);
+
+    useEffect(()=>{
+        getNotification();
+    },[]);
+
+    const getNotification=async()=>{
+        const msg = await AsyncStorage.getItem("notifications");
+        const parse = JSON.parse(msg);
+        console.log(parse);
+        parse !== null ? setNotification(parse) : setNotification([]);
+    };
 
 
     return(
@@ -111,28 +127,32 @@ export default function AlertScreen({navigation}){
             </View>
             <View style={styles.body}>
                 <View>
-                    <FlatList 
-                        data={data}
-                        keyExtractor={item=>item.id}
+                    {
+                        notification.length !== 0 ? 
+                        <FlatList 
+                        data={notification}
                         showsVerticalScrollIndicator={false}
                         renderItem={({item,index})=>(
-                            <View key={index} style={styles.mainView}>
+                            <View key={item.messageId} style={styles.mainView}>
                                 <View style={styles.subView}>
-                                    <View style={{alignItems:"center"}}>
-                                        <View style={styles.bgCircle} />
+                                    <View style={styles.circleView}>
+                                        <Image style={styles.bgCircle} source={require('../../../assets/logo.jpg')} />
                                     </View>
                                     <View style={styles.texts}>
-                                        <Text style={styles.name}>{item.name}</Text>
-                                        <Text style={styles.msg}>{item.msg}</Text>
-                                        <Text style={styles.msg}>{item.msg}</Text>
+                                        <Text style={styles.name}>{item.notification.title}</Text>
+                                        <Text style={styles.msg}>{item.notification.body}</Text>
+                                        {/* <Text style={styles.msg}>{item.msg}</Text> */}
                                     </View>
-                                    <View style={styles.time}>
+                                    {/* <View style={styles.time}>
                                         <Text style={styles.timeTxt}>{item.time}</Text>
-                                    </View>
+                                    </View> */}
                                 </View>
                             </View>
                         )}
                     />
+                    :
+                    <Text style={{color:"#aaa",fontWeight:"600",textAlign:"center",marginTop:20}}>No notification yet</Text>
+                    }
                 </View>
             </View>
         </View>
@@ -159,11 +179,11 @@ const styles = StyleSheet.create({
         // justifyContent:"center"
     },
     bgCircle: {
-        borderWidth: 1,
+        // borderWidth: 1,
         height: 50,
         width: 50,
         borderRadius: 50/2,
-        backgroundColor: "#aaa"
+        // backgroundColor: "#aaa"
     },
     smCircle: {
         borderWidth: 1,
@@ -230,4 +250,9 @@ const styles = StyleSheet.create({
         borderRadius: 40/2,
         marginLeft: 10
     },
+    circleView: {
+        borderRadius: 25,
+        borderWidth: 0.5,
+        borderColor:"gray"
+    }
 })

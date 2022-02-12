@@ -8,7 +8,8 @@ import {
     FlatList,
     Dimensions, 
     TextInput,
-    Image
+    Image,
+    ActivityIndicator
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
@@ -31,6 +32,7 @@ export default function ChatScreen({navigation}){
     const [filterData, setFilterData] = useState([]);
     const [chatList, setChatList] = useState([]);
     const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
     const isFocused = useIsFocused();
     // const [latestMsg, setLatestMsg] = useState('');
 
@@ -44,7 +46,7 @@ export default function ChatScreen({navigation}){
         if(val){
             const newData =  chatList.filter((item)=>{
                 const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
-                const textData  = val.toUpperCase();
+                const textData = val.toUpperCase();
                 return itemData.indexOf(textData) > -1;
             })
             setFilterData(newData);
@@ -62,6 +64,7 @@ export default function ChatScreen({navigation}){
             setChatList(resp.data.vendorcontact);
             setFilterData(resp.data.vendorcontact);
             setUserData(resp.data);
+            setLoading(false);
         })
         .catch(err=>{
             console.log("server error: ",err);
@@ -117,7 +120,10 @@ export default function ChatScreen({navigation}){
                 }}
             >
                 <View>
-                    <FlatList 
+                    {
+                        loading ? <ActivityIndicator style={{marginTop:60}} size={40} />
+                        :
+                        <FlatList 
                         data={filterData}
                         keyExtractor={item=>item._id}
                         showsVerticalScrollIndicator={false}
@@ -154,6 +160,7 @@ export default function ChatScreen({navigation}){
                             </TouchableOpacity>
                         )}
                     />
+                    }
                 </View>
             </View>
         </View>

@@ -181,139 +181,39 @@ export default function ProductDetails({route, navigation}) {
   };
   const showComment = () => (
     commentList.map(item=>{
-        if(item.customerId == null){
-            return(
-                <View style={styles.cmntView} key={item._id}>
-                {item.vendorId.profileImg ? (
-                  <Image
-                    style={styles.cmntCircle}
-                    source={{uri: item.vendorId.profileImg}}
-                  />
-                ) : (
-                  <Image
-                    style={styles.cmntCircle}
-                    source={require('../../../assets/profile.png')}
-                  />
-                )}
-                <View style={{width: '90%', alignItems: 'flex-start'}}>
-                  {item.vendorId.name ? (
-                    <Text style={{fontSize: 13, color: '#000'}}>
-                      {item.vendorId.name}
-                    </Text>
-                  ) : (
-                    <Text style={{fontSize: 13, color: '#000'}}>
-                      {item.vendorId._id.split('', 10)}***
-                    </Text>
-                  )}
-                  <View style={styles.cmntBox}>
-                    <Text style={{color: '#000', fontSize: 12}}>
-                      {item.comment}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            )
-        }
-        else if(item.vendorId == null){
-            return(
-                <View style={styles.cmntView} key={item._id}>
-                {item.customerId.profileImg ? (
-                  <Image
-                    style={styles.cmntCircle}
-                    source={{uri: item.customerId.profileImg}}
-                  />
-                ) : (
-                  <Image
-                    style={styles.cmntCircle}
-                    source={require('../../../assets/profile.png')}
-                  />
-                )}
-                <View style={{width: '90%', alignItems: 'flex-start'}}>
-                  {item.customerId.name ? (
-                    <Text style={{fontSize: 13, color: '#000'}}>
-                      {item.customerId.name}
-                    </Text>
-                  ) : (
-                    <Text style={{fontSize: 13, color: '#000'}}>
-                      {item.customerId._id.split('', 10)}***
-                    </Text>
-                  )}
-                  <View style={styles.cmntBox}>
-                    <Text style={{color: '#000', fontSize: 12}}>
-                      {item.comment}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            )
-        }
-        else if (item.customerId !==null && item.vendorId !== null){
-            return(
-                <View key={item._id}>
-                    <View style={styles.cmntView}>
-                        {item.customerId.profileImg ? (
-                        <Image
-                            style={styles.cmntCircle}
-                            source={{uri: item.customerId.profileImg}}
-                        />
-                        ) : (
-                        <Image
-                            style={styles.cmntCircle}
-                            source={require('../../../assets/profile.png')}
-                        />
-                        )}
-                        <View style={{width: '90%', alignItems: 'flex-start'}}>
-                        {item.customerId.name ? (
-                            <Text style={{fontSize: 13, color: '#000'}}>
-                            {item.customerId.name}
-                            </Text>
-                        ) : (
-                            <Text style={{fontSize: 13, color: '#000'}}>
-                            {item.customerId._id.split('', 10)}***
-                            </Text>
-                        )}
-                        <View style={styles.cmntBox}>
-                            <Text style={{color: '#000', fontSize: 12}}>
-                            {item.comment}
-                            </Text>
-                        </View>
-                        </View>
-                    </View>
-                    <View style={styles.cmntView}>
-                        {item.vendorId.profileImg ? (
-                        <Image
-                            style={styles.cmntCircle}
-                            source={{uri: item.vendorId.profileImg}}
-                        />
-                        ) : (
-                        <Image
-                            style={styles.cmntCircle}
-                            source={require('../../../assets/profile.png')}
-                        />
-                        )}
-                        <View style={{width: '90%', alignItems: 'flex-start'}}>
-                        {item.vendorId.name ? (
-                            <Text style={{fontSize: 13, color: '#000'}}>
-                            {item.vendorId.name}
-                            </Text>
-                        ) : (
-                            <Text style={{fontSize: 13, color: '#000'}}>
-                            {item.vendorId._id.split('', 10)}***
-                            </Text>
-                        )}
-                        <View style={styles.cmntBox}>
-                            <Text style={{color: '#000', fontSize: 12}}>
-                            {item.comment}
-                            </Text>
-                        </View>
-                        </View>
-                    </View>
-                </View>
-            )
-        }
-        
-    })
-  );
+      return(
+        <View style={styles.cmntView} key={item._id}>
+        {item.customerId.profileImg ? (
+          <Image
+            style={styles.cmntCircle}
+            source={{uri: item.customerId.profileImg}}
+          />
+        ) : (
+          <Image
+            style={styles.cmntCircle}
+            source={require('../../../assets/profile.png')}
+          />
+        )}
+        <View style={{width: '90%', alignItems: 'flex-start'}}>
+          {item.customerId.name ? (
+            <Text style={{fontSize: 13, color: '#000'}}>
+              {item.customerId.name}
+            </Text>
+          ) : (
+            <Text style={{fontSize: 13, color: '#000'}}>
+              {item.customerId._id.split('', 10)}***
+            </Text>
+          )}
+          <View style={styles.cmntBox}>
+            <Text style={{color: '#000', fontSize: 12}}>
+              {item.comment}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+));
 
   return (
     <View style={styles.container}>
@@ -367,7 +267,7 @@ export default function ProductDetails({route, navigation}) {
           <Text style={{color: '#000'}}>Vendor Details</Text>
           <View style={[styles.titleView, {marginVertical: 10}]}>
             <View style={{alignItems: 'center'}}>
-              <View style={styles.profile} />
+              <Image style={styles.profile} source={{uri : oneVendor.profileImg}} />
               <Text
                 style={{
                   color: '#000',

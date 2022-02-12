@@ -48,37 +48,37 @@ export default function ProductDetailsVendor({route, navigation}) {
     }, 2000);
   }, []);
 
-  let COMMENT = {
-    comment: comment,
-    productId: preData._id,
-    vendorId: preData.vendor,
-  };
-  const _sendComment = () => {
-    setIndicator(true);
-    axios
-      .post(`${API}/comment`, COMMENT)
-      .then(resp => {
-        setIndicator(false);
-        setCommentSent(true);
-        getCommentList();
-        console.log('Comment is Sent', resp.data);
-        setComment('');
-      })
-      .catch(err => {
-        console.log('Error from server CMT: ', err);
-      });
-  };
+  // let COMMENT = {
+  //   comment: comment,
+  //   productId: preData._id,
+  //   vendorId: preData.vendor,
+  // };
+  // const _sendComment = () => {
+  //   setIndicator(true);
+  //   axios
+  //     .post(`${API}/comment`, COMMENT)
+  //     .then(resp => {
+  //       setIndicator(false);
+  //       setCommentSent(true);
+  //       getCommentList();
+  //       console.log('Comment is Sent', resp.data);
+  //       setComment('');
+  //     })
+  //     .catch(err => {
+  //       console.log('Error from server CMT: ', err);
+  //     });
+  // };
 
-  const commentMsg = () => {
-    setTimeout(() => {
-      setCommentSent(false);
-    }, 5000);
-    return (
-      <Text style={{color: 'green', fontSize: 12, textAlign: 'center'}}>
-        Sent successfully
-      </Text>
-    );
-  };
+  // const commentMsg = () => {
+  //   setTimeout(() => {
+  //     setCommentSent(false);
+  //   }, 5000);
+  //   return (
+  //     <Text style={{color: 'green', fontSize: 12, textAlign: 'center'}}>
+  //       Sent successfully
+  //     </Text>
+  //   );
+  // };
 
   const getCommentList = () => {
     axios
@@ -92,43 +92,9 @@ export default function ProductDetailsVendor({route, navigation}) {
       });
   };
 
-  const showComment = () =>
-    commentList.map(item => {
-      if (item.customerId == null) {
-        return (
-          <View style={styles.cmntView} key={item._id}>
-            {item.vendorId.profileImg ? (
-              <Image
-                style={styles.cmntCircle}
-                source={{uri: item.vendorId.profileImg}}
-              />
-            ) : (
-              <Image
-                style={styles.cmntCircle}
-                source={require('../../../assets/profile.png')}
-              />
-            )}
-            <View style={{width: '90%', alignItems: 'flex-start'}}>
-              {item.vendorId.name ? (
-                <Text style={{fontSize: 13, color: '#000'}}>
-                  {item.vendorId.name}
-                </Text>
-              ) : (
-                <Text style={{fontSize: 13, color: '#000'}}>
-                  {item.vendorId._id.split('', 10)}***
-                </Text>
-              )}
-              <View style={styles.cmntBox}>
-                <Text style={{color: '#000', fontSize: 12}}>
-                  {item.comment}
-                </Text>
-              </View>
-            </View>
-          </View>
-        );
-      } else if (item.vendorId == null) {
-        return (
-          <View style={styles.cmntView} key={item._id}>
+  const showComment = () =>(
+    commentList.map(item=>(
+      <View style={styles.cmntView} key={item._id}>
             {item.customerId.profileImg ? (
               <Image
                 style={styles.cmntCircle}
@@ -157,72 +123,8 @@ export default function ProductDetailsVendor({route, navigation}) {
               </View>
             </View>
           </View>
-        );
-      } else if (item.customerId !== null && item.vendorId !== null) {
-        return (
-          <View key={item._id}>
-            <View style={styles.cmntView}>
-              {item.customerId.profileImg ? (
-                <Image
-                  style={styles.cmntCircle}
-                  source={{uri: item.customerId.profileImg}}
-                />
-              ) : (
-                <Image
-                  style={styles.cmntCircle}
-                  source={require('../../../assets/profile.png')}
-                />
-              )}
-              <View style={{width: '90%', alignItems: 'flex-start'}}>
-                {item.customerId.name ? (
-                  <Text style={{fontSize: 13, color: '#000'}}>
-                    {item.customerId.name}
-                  </Text>
-                ) : (
-                  <Text style={{fontSize: 13, color: '#000'}}>
-                    {item.customerId._id.split('', 10)}***
-                  </Text>
-                )}
-                <View style={styles.cmntBox}>
-                  <Text style={{color: '#000', fontSize: 12}}>
-                    {item.comment}
-                  </Text>
-                </View>
-              </View>
-            </View>
-            <View style={styles.cmntView}>
-              {item.vendorId.profileImg ? (
-                <Image
-                  style={styles.cmntCircle}
-                  source={{uri: item.vendorId.profileImg}}
-                />
-              ) : (
-                <Image
-                  style={styles.cmntCircle}
-                  source={require('../../../assets/profile.png')}
-                />
-              )}
-              <View style={{width: '90%', alignItems: 'flex-start'}}>
-                {item.vendorId.name ? (
-                  <Text style={{fontSize: 13, color: '#000'}}>
-                    {item.vendorId.name}
-                  </Text>
-                ) : (
-                  <Text style={{fontSize: 13, color: '#000'}}>
-                    {item.vendorId._id.split('', 10)}***
-                  </Text>
-                )}
-                <View style={styles.cmntBox}>
-                  <Text style={{color: '#000', fontSize: 12}}>
-                    {item.comment}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        );
-      }
-    });
+    ))
+  );
   return (
     <View style={styles.container}>
       <ScrollView
@@ -276,7 +178,7 @@ export default function ProductDetailsVendor({route, navigation}) {
           {isVisible2 && <>{showComment()}</>}
         </View>
       </ScrollView>
-      <View style={{position: 'absolute', bottom: 10, left: 0, right: 0}}>
+      {/* <View style={{position: 'absolute', bottom: 10, left: 0, right: 0}}>
         {commentSent && commentMsg()}
         <View
           style={{
@@ -306,7 +208,7 @@ export default function ProductDetailsVendor({route, navigation}) {
             </TouchableOpacity>
           )}
         </View>
-      </View>
+      </View> */}
     </View>
   );
 }

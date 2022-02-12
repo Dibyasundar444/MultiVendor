@@ -64,7 +64,7 @@ export default function Categories({route,navigation}){
                         data={data}
                         numColumns={2}
                         showsVerticalScrollIndicator={false}
-                        keyExtractor={item=>item.id}
+                        keyExtractor={item=>item._id}
                         columnWrapperStyle={styles.wrapper}
                         renderItem={({item})=>(
                             <TouchableOpacity 
