@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { 
     View, 
     Text, 
@@ -12,7 +12,7 @@ import {
     Image
 } from "react-native";
 import SelectDropdown from "react-native-select-dropdown";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import Fontisto from "react-native-vector-icons/Fontisto";
 import axios from "axios";
 import { API_USER, API_VENDOR } from "../../config";
 
@@ -21,7 +21,7 @@ const { height, width } = Dimensions.get("window");
 
 export default function SignIn({navigation}){
 
-    const UserType = ["user","vendor"];
+    // const UserType = ["user","vendor"];
     const [num, setNum] = useState("");
     const [error, setError] = useState(false);
     const [error1, setError1] = useState(false);
@@ -101,7 +101,7 @@ export default function SignIn({navigation}){
                 <ScrollView style={{marginTop: 20, marginHorizontal: 30}}>
                     <View style={{flexDirection:"row",alignItems:"center",marginBottom:20,justifyContent:"space-between"}}>
                         <Text style={{color:"#000",fontSize:22}}>Sign In</Text>
-                        <SelectDropdown
+                        {/* <SelectDropdown
                             data={UserType}
                             defaultButtonText={"User type"}
                             onSelect={(selectedItem) => {
@@ -126,7 +126,46 @@ export default function SignIn({navigation}){
                             dropdownIconPosition={"right"}
                             dropdownStyle={styles.DropdownStyle}
                             rowStyle={styles.rowStyle}
-                        />
+                        /> */}
+                        <View style={{
+                            flexDirection:"row",
+                            alignItems:"center"
+                        }}>
+                            <Text style={{color:"gray",marginRight:10}}>as</Text>
+                            <TouchableOpacity 
+                                activeOpacity={0.7}
+                                style={{
+                                    elevation: 5,
+                                    backgroundColor:"#fff",
+                                    paddingVertical:5,
+                                    paddingHorizontal: 8,
+                                    flexDirection:"row",
+                                    alignItems:"center",
+                                    borderRadius:5
+                                }}
+                                onPress={()=>setUser("user")}
+                            >
+                                <Fontisto name={user==="user" ? "radio-btn-active" : "radio-btn-passive"} color="#000" size={14}/>
+                                <Text style={{color:"#000",fontSize:13,marginLeft:5}}>User</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                activeOpacity={0.7}
+                                style={{
+                                    elevation: 5,
+                                    backgroundColor:"#fff",
+                                    paddingVertical:5,
+                                    paddingHorizontal: 8,
+                                    flexDirection:"row",
+                                    alignItems:"center",
+                                    borderRadius:5,
+                                    marginHorizontal:5
+                                }}
+                                onPress={()=>setUser("vendor")}
+                            >
+                                <Fontisto name={user==="vendor" ? "radio-btn-active" : "radio-btn-passive"} color="#000" size={14}/>
+                                <Text style={{color:"#000",fontSize:13,marginLeft:5}}>Vendor</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                     {error1 ? <Text style={styles.error1}>please select your user type</Text>:null}
                     <Text style={{color:"#000",fontSize:14,marginBottom:10}}>Enter your phone number</Text>

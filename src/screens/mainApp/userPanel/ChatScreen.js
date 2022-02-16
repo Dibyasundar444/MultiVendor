@@ -149,7 +149,13 @@ export default function ChatScreen({navigation}){
                                         </View> */}
                                     </View>
                                     <View style={styles.texts}>
-                                        <Text style={{color:"#000",top:0,fontWeight:"500"}}>{item.name}</Text>
+                                        {
+                                            item.name ? 
+                                            <Text style={{color:"#000",top:0,fontWeight:"500"}}>{item.name}</Text>
+                                            :
+                                            <Text style={{color:"#000",top:0,fontWeight:"500"}}>Vendor{item._id.split("",2)}**</Text>
+                                        }
+
                                         {/* <Text style={{color:"#000",fontSize:11,}}>{item.duration}</Text> */}
                                         {/* <Text style={styles.msg}>{item.msg}</Text> */}
                                     </View>

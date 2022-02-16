@@ -11,12 +11,13 @@ import {
     Image
 } from "react-native";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import axios from "axios";
 import MenuHeader from "./utils/menuHeader";
 import { API } from "../../../../config";
-import VendorsNearby from "./VendorsNearby";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import VendorsNearby from "./utils/VendorsNearby";
+import { ImageSlider } from "./utils/img-slider";
 
 
 const { height, width } = Dimensions.get("window");
@@ -61,40 +62,93 @@ export default function Menu({navigation}){
                 state={location.state}
                 country={location.country}
             />
-            <ScrollView style={{marginBottom:70}}>
+            
+            <ScrollView 
+                contentContainerStyle={{paddingBottom:100}} 
+                showsVerticalScrollIndicator={false}
+            >
+                {/* <View style={{height:140}}> */}
+                    {/* <Swiper 
+                        showsButtons={false} 
+                        dot={<></>} 
+                        activeDot={<></>} 
+                        autoplay={true} 
+                        // autoplayTimeout={5}
+                        loop={false}
+                    >
+                        <View>
+                            <Image 
+                                source={require('../../../assets/Banner/image1.jpg')} 
+                                style={{height:"100%",width:"100%"}} 
+                                resizeMode="stretch" 
+                            />
+                        </View>
+                        <View>
+                            <Image 
+                                source={require('../../../assets/Banner/image2.jpg')} 
+                                style={{height:"100%",width:"100%"}} 
+                                resizeMode="stretch" 
+                            />
+                        </View>
+                        <View>
+                            <Image 
+                                source={require('../../../assets/Banner/image3.jpg')} 
+                                style={{height:"100%",width:"100%"}} 
+                                resizeMode="stretch" 
+                            />
+                        </View>
+                    </Swiper> */}
+                    <ImageSlider 
+                        data={[
+                            {img: require('../../../assets/Banner/image1.jpg')},
+                            {img: require('../../../assets/Banner/image2.jpg')},
+                            {img: require('../../../assets/Banner/image3.jpg')}
+                        ]}
+                        localImg={true}
+                        autoPlay={true}
+                        // onItemChanged={(item) => console.log("item", item)}
+                        closeIconColor="#fff"
+                        showIndicator={false}
+                        caroselImageContainerStyle={{height:150}}
+                        timer={5000}
+                    />
+                {/* </View> */}
                 <VendorsNearby 
                     vendorProfile={(item)=>navigation.navigate("VendorProfile",item)}
+                    login={()=>navigation.navigate("SignIn")}
                 />
                 <View style={{marginLeft:20,marginTop:20}}>
                     <Text style={styles.products}>Latest Products</Text>
                     {
                         indicator ? <ActivityIndicator style={{left: -10,marginTop: 20}} size={30} />
                         :
-                        <FlatList 
-                            horizontal={true}
-                            data={data}
-                            showsHorizontalScrollIndicator={false}
-                            renderItem={({item})=>(
-                                <TouchableOpacity
-                                    key={item._id} 
-                                    style={styles.box}
-                                    activeOpacity={0.7}
-                                    onPress={()=>navigation.navigate("ProductDetails", item)}
-                                >
-                                    <Image style={styles.img}
-                                        source={{uri: item.images}}
-                                    />
-                                    <View style={{marginLeft:10,marginTop:5}}>
-                                        <Text style={styles.title}>{item.title}</Text>
-                                        <Text style={{color:"#000",fontSize:12}}>{item.content}</Text>
-                                    </View>
-                                    <View style={styles.enquire}>
-                                        <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
-                                        <EvilIcons name="arrow-right" color="#000" size={22} />
-                                    </View>
-                                </TouchableOpacity>
-                            )}
-                        />
+                        <View style={{
+                            flexDirection:"row",
+                            flexWrap:"wrap"
+                        }}>
+                            {
+                                data.map(item=>(
+                                    <TouchableOpacity
+                                        key={item._id} 
+                                        style={styles.box}
+                                        activeOpacity={0.7}
+                                        onPress={()=>navigation.navigate("ProductDetails", item)}
+                                    >
+                                        <Image style={styles.img}
+                                            source={{uri: item.images}}
+                                        />
+                                        <View style={{marginLeft:10,marginTop:5}}>
+                                            <Text style={styles.title}>{item.title}</Text>
+                                            <Text style={{color:"#000",fontSize:12}}>{item.content}</Text>
+                                        </View>
+                                        <View style={styles.enquire}>
+                                            <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
+                                            <EvilIcons name="arrow-right" color="#000" size={22} />
+                                        </View>
+                                    </TouchableOpacity>
+                                ))
+                            }
+                        </View>
                     }
                 </View>
             </ScrollView>
@@ -109,7 +163,7 @@ const styles = StyleSheet.create({
     },
     box: {
         minHeight: width/2,
-        width: width/2.5,
+        width: width/2.4,
         backgroundColor: "#fff",
         marginHorizontal:5,
         marginBottom:10,

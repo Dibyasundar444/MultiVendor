@@ -123,25 +123,39 @@ export default function VendorProfile({navigation, route}) {
                 <Image style={styles.circle} source={{uri: item.profileImg}} />
                 ) : (
                 <Image
-                    style={styles.circle}
-                    source={require('../../../assets/profile.png')}
+                  style={styles.circle}
+                  source={require('../../../assets/profile.png')}
                 />
                 )}
                 <View>
-                <Text
-                    style={{
-                    fontWeight: '600',
-                    color: '#fff',
-                    textTransform: 'capitalize',
-                    }}>
-                    {item.name}
+                {
+                  item.name ? 
+                  <Text
+                  style={{
+                  fontWeight: '600',
+                  color: '#fff',
+                  textTransform: 'capitalize',
+                  }}
+                >
+                  {item.name}
                 </Text>
+                :
+                <Text
+                  style={{
+                  fontWeight: '600',
+                  color: '#fff',
+                  textTransform: 'capitalize',
+                  }}
+                >
+                  Vendor{item._id.split("",2)}**
+                </Text>
+                }
                 {/* <View style={{flexDirection: 'row',alignItems:"center"}}>{services()}</View> */}
                 {
-                    item.locality ? 
-                    <Text style={{fontSize: 10}}>{item.locality}, {item.state} ({item.country})</Text>
-                    :
-                    null
+                  item.locality ? 
+                  <Text style={{fontSize: 10}}>{item.locality}, {item.state} ({item.country})</Text>
+                  :
+                  null
                 }
                 </View>
             </View>

@@ -265,7 +265,7 @@ export default function EditProfile({navigation}){
                     </View>
                     <View style={styles.imgView}>
                         <Image style={{height:100,width:100,borderRadius:50,backgroundColor:"#ffe4e1"}} 
-                            source={url ==="" || url === undefined || url === null? require("../../../assets/profile.png") : {uri: url}}
+                            source={(url ==="" || url === undefined || url === null) ? require("../../../assets/profile.png") : {uri: url}}
                         />
                         <View style={{marginTop:10}}>
                             {
@@ -292,7 +292,7 @@ export default function EditProfile({navigation}){
                     </View>
                     <View style={styles.smCard1}>
                         <Text style={{color:"#000",marginLeft:20}}>+91</Text>
-                        <TextInput 
+                        {/* <TextInput 
                             style={{
                                 borderRadius: 10,paddingLeft: 10,
                                 color:"#000",paddingVertical:2,width:"85%",
@@ -303,7 +303,9 @@ export default function EditProfile({navigation}){
                             value={phoneNo.toString()}
                             onChangeText={(val)=>setPhoneNo(val)}
                             keyboardType="numeric"
-                        />
+                            
+                        /> */}
+                        <Text style={{color:"#000",marginLeft:10}}>{phoneNo}</Text>
                     </View>
                     <View style={styles.desCard}>
                         <TextInput 

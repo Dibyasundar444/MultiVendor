@@ -133,7 +133,7 @@ export default function ChatRoom({route, navigation}) {
   return (
     <View style={styles.container}>
       <ChatRoomHeader
-        name={preData.vendorData.name}
+        name={preData.vendorData.name ? preData.vendorData.name : `Vendor${preData.vendorData._id.split("",2)}**`}
         back={() => navigation.goBack()}
         pop_up={() => setIsPopUP(true)}
       />

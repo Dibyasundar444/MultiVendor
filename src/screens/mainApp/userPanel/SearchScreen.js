@@ -14,7 +14,7 @@ import Feather from "react-native-vector-icons/Feather";
 import SearchHeader from "./utils/searchHeader";
 import axios from "axios";
 import { API } from "../../../../config";
-import VendorsNearby from "./VendorsNearby";
+import VendorsNearby from "./utils/VendorsNearby";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
@@ -142,6 +142,7 @@ export default function SearchScreen({navigation}){
             </View>
             <VendorsNearby 
                 vendorProfile={(item)=>navigation.navigate("VendorProfile",item)}
+                login={()=>navigation.navigate("SignIn")}
             />
             <View style={{marginHorizontal:20}}>
                 <Text style={styles.subHeader}>Browse Categories</Text>          

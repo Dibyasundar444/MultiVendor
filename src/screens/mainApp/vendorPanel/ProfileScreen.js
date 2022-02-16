@@ -202,11 +202,11 @@ export default function ProfileScreen({navigation}){
                         <EvilIcons name="location" color="#000" size={24} />
                         {
                             indicator ? 
-                            <View style={{flex:1}}>
-                                <ActivityIndicator style={{marginLeft:-50}} />
+                            <View style={{flex:0.8}}>
+                                <ActivityIndicator style={{marginLeft:60}} />
                             </View>
                             :
-                            <Text style={{color:"#000",marginLeft: 10}}>{isUpdated?"Updated":"Update location"}</Text>
+                            <Text style={{color:"#000",marginLeft:10}}>{isUpdated?"Updated":"Update location"}</Text>
                         }
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />

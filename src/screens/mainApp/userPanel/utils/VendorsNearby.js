@@ -10,22 +10,24 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Feather from 'react-native-vector-icons/Feather';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Fontisto from 'react-native-vector-icons/Fontisto';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import Entypo from 'react-native-vector-icons/Entypo';
+// import AntDesign from 'react-native-vector-icons/AntDesign';
+// import Feather from 'react-native-vector-icons/Feather';
+// import Ionicons from 'react-native-vector-icons/Ionicons';
+// import Fontisto from 'react-native-vector-icons/Fontisto';
+// import EvilIcons from 'react-native-vector-icons/EvilIcons';
+// import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
-import {API_VENDOR} from '../../../../config';
+import {API_VENDOR} from '../../../../../config';
 
-export default function VendorsNearby({vendorProfile}) {
+export default function VendorsNearby({vendorProfile,login}) {
   const [vendors, setVendors] = useState([]);
   const [indicator, setIndicator] = useState(true);
 
+  console.log(vendors);
+
   useEffect(() => {
     getVendors();
-  }, [vendors]);
+  }, []);
 
   const getVendors = () => {
     axios
@@ -41,7 +43,21 @@ export default function VendorsNearby({vendorProfile}) {
   return (
     <>
       <View style={{marginTop: 10, marginLeft: 20}}>
-        <Text style={styles.heading}>Top Vendors Near you</Text>
+        <View style={{
+          flexDirection:"row",
+          alignItems:"center",
+          justifyContent:"space-between",
+          marginRight:20
+          }}
+        >
+          <Text style={styles.heading}>Top Vendors Near you</Text>
+          <TouchableOpacity 
+            style={styles.vendor}
+            onPress={login}
+          >
+              <Text style={{fontWeight:"500",color:"#fff"}}>Sell</Text>
+          </TouchableOpacity>
+        </View>
         {indicator ? (
           <ActivityIndicator style={{left: -10, marginTop: 20}} size={30} />
         ) : (
@@ -63,11 +79,15 @@ export default function VendorsNearby({vendorProfile}) {
                   ) : (
                     <Image
                       style={styles.circle}
-                      source={require('../../../assets/profile.png')}
+                      source={require('../../../../assets/profile.png')}
                     />
                   )}
                 </TouchableOpacity>
-                <Text style={styles.name}>{item.name}</Text>
+                {
+                  item.name ? <Text style={styles.name}>{item.name}</Text>
+                  :
+                  <Text style={styles.name}>Vendor{item._id.split("",2)}**</Text>
+                }
               </View>
             )}
           />
@@ -100,6 +120,15 @@ const styles = StyleSheet.create({
     color: '#000',
     // marginLeft:20,
     fontSize: 16,
-    marginBottom: 10,
+    // marginBottom: 10,
   },
+  vendor: {
+    alignItems:"center",
+    justifyContent:"center",
+    backgroundColor:"#ff1493",
+    marginVertical:10,
+    paddingVertical:2,
+    paddingHorizontal:8,
+    borderRadius:4
+}
 });

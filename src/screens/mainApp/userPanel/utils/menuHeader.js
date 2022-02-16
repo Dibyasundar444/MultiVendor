@@ -21,13 +21,14 @@ export default function MenuHeader({alert,city,state,country}){
                 </View>
                 <Fontisto name="bell" color="#000" size={24} onPress={alert} />
             </View>
-            <View style={{height:120,width:"100%",backgroundColor:"gray"}} />
+            
         </View>
     )
 };
 const styles = StyleSheet.create({
     header: {
-        marginVertical: 30,
+        marginTop: 30,
+        marginBottom:10,
         marginHorizontal: 20,
         flexDirection: "row",
         justifyContent: "space-between",
