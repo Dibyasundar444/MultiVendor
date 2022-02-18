@@ -29,7 +29,6 @@ const {height, width} = Dimensions.get('window');
 
 export default function VendorProfile({navigation, route}) {
   const item = route.params;
-  console.log(item);
   const [products, setProducts] = useState([]);
   const [indicator, setIndicator] = useState(true);
   // const [indicator2, setIndicator2] = useState(false);
@@ -171,7 +170,7 @@ export default function VendorProfile({navigation, route}) {
             <View style={styles.btnRound}>
               <AntDesign name="star" color="#fc9d28" size={18} />
               <Text style={{fontSize: 8, color: '#000', fontWeight: '500'}}>
-                5/5
+                {item.ratings}/5
               </Text>
             </View>
             <TouchableOpacity style={styles.btnRound} onPress={_sendMsg}>
@@ -197,13 +196,14 @@ export default function VendorProfile({navigation, route}) {
                   style={styles.box}
                   activeOpacity={0.6}
                   onPress={() => navigation.navigate('ProductDetails', item)}>
-                  <View
+                  <Image
                     style={{
                       height: width / 3.5,
                       backgroundColor: 'pink',
                       width: '100%',
                       borderRadius: 10,
                     }}
+                    source={{uri: item.images}}
                   />
                   <View style={{marginLeft: 10, marginTop: 5}}>
                     <Text

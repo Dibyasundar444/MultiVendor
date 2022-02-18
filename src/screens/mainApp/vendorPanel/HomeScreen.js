@@ -15,8 +15,13 @@ import {
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Feather from 'react-native-vector-icons/Feather';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import storage from '@react-native-firebase/storage';
+
 
 import {API} from '../../../../config';
 import Header from './utils/header';
@@ -33,8 +38,10 @@ export default function HomeScreen({navigation}) {
   const [loading3, setloading3] = useState(false);
   const [serviceAdded, setServiceAdded] = useState(false);
   const [isVisible1, setIsvisible1] = useState(false);
+  const [process, setProcess] = useState('');
   const [location, setLocation] = useState({});
   const [addNewService, setAddNewService] = useState('');
+  const [url, setUrl] = useState('');
 
   let tempDate = new Date();
   let year = tempDate.getFullYear();
@@ -96,7 +103,7 @@ export default function HomeScreen({navigation}) {
   const createService=()=>{
     if(addNewService !== ""){
       setloading3(true);
-      axios.patch(`${API}/service`,{name: addNewService})
+      axios.patch(`${API}/service`,{name: addNewService,imgUrl: url})
       .then(resp=>{
         console.log(resp.data);
         setloading3(false);
@@ -112,17 +119,80 @@ export default function HomeScreen({navigation}) {
     }
   };
 
+  const openLibrary = async () => {
+    const options = {
+      storageOptions: {
+        path: 'images',
+        mediaType: 'photo',
+      },
+      includeBase64: true,
+    };
+    // let isCameraPermitted = await requestCameraPermission();
+    // let isStoragePermitted = await requestLibraryPermission();
+
+    // if(isCameraPermitted && isStoragePermitted){
+    launchImageLibrary(options, resp => {
+      if (resp.didCancel) {
+        console.log('Canceled');
+      } else if (resp.error) {
+        console.log('Error: ', resp.error);
+      } else {
+        const imgData = resp.assets[0];
+        try {
+          const task = storage()
+            .ref('VENDOR/service/img' + imgData.fileName)
+            .putString(imgData.base64, 'base64');
+          task.on(
+            'state_changed',
+            function (snapshot) {
+              const rate = Math.floor(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+              );
+              setProcess(`${rate}%`);
+              console.log(rate);
+            },
+            function (err) {
+              console.log(err);
+            },
+            function () {
+              task.snapshot.ref.getDownloadURL().then(function (url) {
+                setUrl(url);
+              });
+            },
+          );
+          task.then(() => {
+            console.log('PDF uploaded to the bucket!');
+          });
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    });
+    // }
+  };
+
   const addService=()=>(
     <View style={styles.absService}>
       <View style={styles.addServiceModal}>
         <View style={{alignItems:"center"}}>
-        <TextInput 
-          style={styles.serviceInput}
-          placeholder="add your service here..."
-          placeholderTextColor="gray"
-          value={addNewService}
-          onChangeText={(val)=>setAddNewService(val)}
-        />
+          <TextInput 
+            style={styles.serviceInput}
+            placeholder="add your service here..."
+            placeholderTextColor="gray"
+            value={addNewService}
+            onChangeText={(val)=>setAddNewService(val)}
+          />
+          <TouchableOpacity
+              style={[styles.textInput1, styles.image]}
+              activeOpacity={0.8}
+              onPress={openLibrary}>
+              <Text style={{color: 'gray'}}>Images</Text>
+              {
+                  !process ? <Feather name="upload" color="#000" size={18} /> : 
+                  process == "100%" ? <MaterialIcons name='done' color="green" size={20} /> :
+                  <Text style={{color:"gray",fontSize:12}}>{process}</Text>
+              }
+          </TouchableOpacity>
         </View>
         {
           loading3 ? 
@@ -131,20 +201,20 @@ export default function HomeScreen({navigation}) {
           </View>
           :
           <View style={styles.btnView}>
-          <TouchableOpacity style={styles.serviceBtn}
-            activeOpacity={0.6}
-            onPress={createService}
-            disabled={loading3 ? true : false}
-          >
-            <Text style={{color:"#fff",fontWeight:"600"}}>+Add Service</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelBtn}
-            activeOpacity={0.6}
-            onPress={()=>{
-              setAddNewService('');
-              setIsvisible1(false);
-            }}
-          >
+            <TouchableOpacity style={styles.serviceBtn}
+              activeOpacity={0.6}
+              onPress={createService}
+              disabled={loading3 ? true : false}
+            >
+              <Text style={{color:"#fff",fontWeight:"600"}}>+Add Service</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelBtn}
+              activeOpacity={0.6}
+              onPress={()=>{
+                setAddNewService('');
+                setIsvisible1(false);
+              }}
+            >
             <Text style={{color:"#fff",fontWeight:"600"}}>Cancel</Text>
           </TouchableOpacity>
         </View>
@@ -257,7 +327,12 @@ export default function HomeScreen({navigation}) {
                   style={{borderBottomWidth: 1}}>
                   <View style={styles.subView}>
                     <View style={{alignItems: 'center', flexDirection: 'row'}}>
-                      <View style={styles.bgCircle} />
+                      {
+                        item.imgUrl ?
+                        <Image style={styles.bgCircle} source={{uri:item.imgUrl}} />
+                        :
+                        <View style={styles.bgCircle} />
+                      }
                       <Text
                         style={{
                           fontSize: 12,
@@ -338,6 +413,8 @@ const styles = StyleSheet.create({
     borderRadius: 50 / 2,
     backgroundColor: '#aaa',
     marginRight: 10,
+    borderWidth: 0.2,
+    borderColor:"#aaa"
   },
   time: {
     position: 'absolute',
@@ -377,7 +454,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     color: "#000",
     paddingLeft: 10,
-    backgroundColor:"#aaa",
+    backgroundColor:"#ffe4e1",
     marginTop:30,
     width:"80%"
   },
@@ -398,6 +475,26 @@ const styles = StyleSheet.create({
     borderRadius:5,
   },
   btnView: {
-    alignItems:"center",flexDirection:"row",justifyContent:"space-around",marginTop:30,marginBottom:10
-  }
+    alignItems:"center",
+    flexDirection:"row",
+    justifyContent:"space-around",
+    marginTop:30,
+    marginBottom:10
+  },
+  textInput1: {
+    marginTop: 15,
+    height: 45,
+    width: "80%",
+    backgroundColor: '#fff',
+    elevation: 5,
+    marginHorizontal: 30,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  image: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
 });

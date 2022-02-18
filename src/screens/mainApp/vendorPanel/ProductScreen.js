@@ -75,7 +75,7 @@ export default function MyProduct({navigation}) {
             <View style={{width: 90, borderWidth: 0.5, borderColor: '#000'}} />
           </TouchableOpacity>
         </View>
-        <View style={{alignItems: 'center'}}>
+        <View style={{}}>
           {loading ? (
             <ActivityIndicator size={40} style={{marginTop: 80}} />
           ) : data.length === 0 ? (

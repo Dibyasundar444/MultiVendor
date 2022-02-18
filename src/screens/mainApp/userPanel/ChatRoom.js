@@ -10,6 +10,7 @@ import {
   TextInput,
   Linking,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -19,15 +20,22 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Bubble, GiftedChat} from 'react-native-gifted-chat';
 import firestore from '@react-native-firebase/firestore';
+import { BottomSheet } from "react-native-btr";
+
 
 import ChatRoomHeader from './utils/chatRoomHeader';
 import axios from 'axios';
-import {API} from '../../../../config';
+import {API, API_USER} from '../../../../config';
+import Rating from './utils/img-slider/Rating';
+const RATING=[{id:0},{id:1},{id:2},{id:3},{id:4}];
 
 export default function ChatRoom({route, navigation}) {
   const preData = route.params;
   const [messages, setMessages] = useState([]);
+  const [rating, setRating] = useState([]);
   const [isPopUp, setIsPopUP] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [indicator, setIndicator] = useState(false);
 
 
   useEffect(() => {
@@ -64,6 +72,7 @@ export default function ChatRoom({route, navigation}) {
       />
     );
   };
+
   const pop_up = () => (
     <TouchableWithoutFeedback onPress={() => setIsPopUP(false)}>
       <View style={styles.absPop}>
@@ -75,6 +84,18 @@ export default function ChatRoom({route, navigation}) {
             <Feather name="phone-call" color="#000" size={20} />
             <Text style={{color: '#000', marginLeft: 10, fontWeight: '500'}}>
               Call vendor
+            </Text>
+          </TouchableOpacity>
+          <View style={{width:"100%",alignItems:"center"}}>
+            <View style={{width:"90%",borderWidth:0.5}} />
+          </View>
+          <TouchableOpacity
+            style={styles.subViewPop}
+            onPress={toggle}
+            activeOpacity={0.6}>
+            <AntDesign name="staro" color="#000" size={20} />
+            <Text style={{color: '#000', marginLeft: 10, fontWeight: '500'}}>
+              Give rating
             </Text>
           </TouchableOpacity>
         </TouchableOpacity>
@@ -130,6 +151,31 @@ export default function ChatRoom({route, navigation}) {
       .add({...myMsg, createdAt: firestore.FieldValue.serverTimestamp()});
   }, []);
 
+  const toggle=()=>{
+    setVisible((visible) => !visible)
+  };
+
+
+
+  let ratingData={
+    rating: rating.length,
+    vendorId: preData.vendorData._id
+  };
+  console.log(ratingData);
+
+  const _submitRating=()=>{
+    setIndicator(true);
+    axios.patch(`${API_USER}/vendorreview`,ratingData)
+    .then(resp=>{
+      console.log(resp.data);
+      setIndicator(false);
+    })
+    .catch(err=>{
+      console.log("err",err);
+      setIndicator(false);
+    })
+  };
+
   return (
     <View style={styles.container}>
       <ChatRoomHeader
@@ -156,6 +202,57 @@ export default function ChatRoom({route, navigation}) {
         />
       </View>
       {isPopUp && pop_up()}
+      <Rating 
+        visible={visible}
+        toggle={toggle}
+        vendorName={preData.vendorData.name}
+        indicator={indicator}
+        submitRating={_submitRating}
+        ratingArr={rating}
+        setRatingArr={setRating}
+      />
+      {/* <BottomSheet
+        visible={visible}
+        onBackButtonPress={toggle}
+        onBackdropPress={toggle}
+      >
+        <View style={styles.card}>
+          <Text style={{color:"hotpink",marginTop:10,fontWeight:"600"}}>Review {preData.vendorData.name}</Text>
+          <View style={{justifyContent:"center",flex:1}}>
+            <View style={{
+                flexDirection:"row",
+                alignItems:"center"
+            }}>
+              {
+                RATING.map((item)=>(
+                  <AntDesign name={rating.includes(`${item.id}`) ? "star" : 'staro'}
+                    color={rating.includes(`${item.id}`) ? "#fc9d28" : '#000'}
+                    size={30} 
+                    key={item.id} 
+                    style={{marginHorizontal:10}}
+                    onPress={()=>click(item)} 
+                  />
+                ))
+              }
+            </View>
+          </View>
+          {
+            indicator ? <ActivityIndicator style={{marginBottom:20}} size={24} />
+            :
+            <TouchableOpacity 
+            onPress={submitRating}
+            style={{
+              backgroundColor:"hotpink",
+              paddingVertical:5,
+              paddingHorizontal:15,
+              borderRadius:5,
+              marginBottom:10
+            }}>
+            <Text style={{color:"#fff",fontWeight:"600"}}>Submit</Text>
+          </TouchableOpacity>
+          }
+        </View>
+      </BottomSheet> */}
     </View>
   );
 }
@@ -201,24 +298,3 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
 });
-
-// [
-//     {
-//         "_id": "d345143f-47c0-4898-9a5c-783f4016527d",
-//         "createdAt": 2022-02-01T06:17:28.988Z,
-//         "text": "Hi",
-//         "user": {
-//             "_id": 1
-//         }
-//     },
-//     {
-//         "_id": 1,
-//         "createdAt": 2022-02-01T06:17:20.275Z,
-//         "text": "Hello developer",
-//         "user": {
-//             "_id": 2,
-//             "avatar": "https://placeimg.com/140/140/any",
-//             "name": "React Native"
-//         }
-//     }
-// ]

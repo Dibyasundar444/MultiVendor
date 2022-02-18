@@ -22,6 +22,7 @@ import axios from 'axios';
 
 import CategoryHeader from './utils/CategoryHeader';
 import {API, API_USER, API_VENDOR} from '../../../../config';
+import Rating from './utils/img-slider/Rating';
 // import ChatDialog from './utils/chatDialog';
 
 const {height, width} = Dimensions.get('window');
@@ -41,6 +42,9 @@ export default function ProductDetails({route, navigation}) {
   const [heartPressed, setHeartPressed] = useState(false);
   const [wishlist, setWishlist] = useState([]);
   const [commentList, setCommentList] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const [indicator2, setIndicator2] = useState(false);
+  const [rating, setRating] = useState([]);
   
   useEffect(() => {
     views();
@@ -215,6 +219,31 @@ export default function ProductDetails({route, navigation}) {
   }
 ));
 
+const toggle=()=>{
+  setVisible((visible) => !visible)
+};
+
+
+
+  let ratingData={
+    rating: rating.length,
+    vendorId: oneVendor._id
+  };
+  console.log(ratingData);
+
+  const _submitRating=()=>{
+    setIndicator2(true);
+    axios.patch(`${API_USER}/vendorreview`,ratingData)
+    .then(resp=>{
+      console.log(resp.data);
+      setIndicator2(false);
+    })
+    .catch(err=>{
+      console.log("err",err);
+      setIndicator2(false);
+    })
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
@@ -279,10 +308,11 @@ export default function ProductDetails({route, navigation}) {
             </View>
             <View style={{alignItems: 'center'}}>
               <TouchableOpacity
+                onPress={()=>setVisible(true)}
                 style={[styles.smCircle, {backgroundColor: '#f0bc43'}]}>
                 <FontAwesome name="star-o" color="#fff" size={20} />
               </TouchableOpacity>
-              <Text style={{color: '#000', fontSize: 12}}>8/10</Text>
+              <Text style={{color: '#000', fontSize: 12}}>{oneVendor.ratings}/5</Text>
             </View>
             <View style={{alignItems: 'center'}}>
               <TouchableOpacity
@@ -354,6 +384,15 @@ export default function ProductDetails({route, navigation}) {
             </>
           )}
         </View>
+        <Rating 
+          visible={visible}
+          toggle={toggle}
+          vendorName={oneVendor.name}
+          indicator={indicator2}
+          submitRating={_submitRating}
+          ratingArr={rating}
+          setRatingArr={setRating}
+        />
       </ScrollView>
       {/* {isVisible && (
         <ChatDialog
