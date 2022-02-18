@@ -70,7 +70,7 @@ export default function OtpVerify({route,navigation}){
                     const jsonValue = JSON.stringify(res.data);
                     await AsyncStorage.setItem("jwt",jsonValue);
                     await AsyncStorage.setItem("userRole","1");
-                    navigation.navigate("VerifyVendor");
+                    navigation.navigate("VendorPanel");
                 }
                 catch(e){
                     console.log(e);
