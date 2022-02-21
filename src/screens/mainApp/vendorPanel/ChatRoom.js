@@ -22,11 +22,15 @@ import firestore from '@react-native-firebase/firestore';
 
 
 import ChatRoomHeader from './utils/chatRoomHeader';
+import { API } from '../../../../config';
+import axios from 'axios';
 
 export default function ChatRoom({route, navigation}) {
   const preData = route.params;
   const [messages, setMessages] = useState([]);
   const [isPopUp, setIsPopUP] = useState(false);
+  const Firestore = firestore();
+  Firestore.settings({ ignoreUndefinedProperties: true });
 
   useEffect(() => {
     getChats();
@@ -37,9 +41,9 @@ export default function ChatRoom({route, navigation}) {
     preData.totalData._id > preData.customerData._id
     ? preData.customerData._id + '-' + preData.totalData._id
     : preData.totalData._id + '-' + preData.customerData._id;
-   const querySnap =  await firestore().collection("chatroom")
+   const querySnap =  await firestore().collection("CHAT")
     .doc(docId)
-    .collection("messages")
+    .collection("MSG")
     .orderBy('createdAt',"desc")
     .get()
    const allMsg = querySnap.docs.map(item=>{
@@ -56,8 +60,18 @@ export default function ChatRoom({route, navigation}) {
     const msg = messagesArray[0];
     const myMsg = {
       ...msg,
-      sentTo: preData.customerData._id,
-      sentBy: preData.totalData._id
+      receiver: {
+        _id: preData.customerData._id,
+        name: preData.customerData.name,
+        avatar: preData.customerData.profileImg,
+        phoneNo: preData.customerData.phoneNo
+      },
+      sender: {
+        _id: preData.totalData._id,
+        name: preData.totalData.name,
+        avatar: preData.totalData.profileImg,
+        phoneNo: preData.totalData.phoneNo
+      }
     }
     setMessages(previousMessages =>
       GiftedChat.append(previousMessages, myMsg),
@@ -67,10 +81,20 @@ export default function ChatRoom({route, navigation}) {
     ? preData.customerData._id + '-' + preData.totalData._id
     : preData.totalData._id + '-' + preData.customerData._id;
     firestore()
-      .collection('chatroom')
+      .collection('CHAT')
       .doc(docId)
-      .collection('messages')
-      .add({...myMsg, createdAt: firestore.FieldValue.serverTimestamp()});
+      .collection('MSG')
+      .add({...myMsg, createdAt: firestore.FieldValue.serverTimestamp()})
+      .then(()=>{
+        // console.log("msg", myMsg);
+        axios.post(`${API}/firebasemessage`,myMsg)
+        .then(res=>{
+          console.log(res.data);
+        })
+        .catch(err=>{
+          console.log(err);
+        })
+      })
   }, []);
 
   const scrollToBottom = () => (
@@ -123,7 +147,7 @@ export default function ChatRoom({route, navigation}) {
   );
 
   const openDialer = () => {
-    let number = preData.phoneNo;
+    let number = preData.customerData.phoneNo;
     if (Platform.OS === 'ios') {
       number = `telprompt:${number}`;
     } else number = `tel:${number}`;
@@ -133,7 +157,7 @@ export default function ChatRoom({route, navigation}) {
   return (
     <View style={styles.container}>
       <ChatRoomHeader
-        name={preData.customerData.name}
+        name={preData.customerData.name ? preData.customerData.name : `User${preData.customerData._id.split("",2)}**`}
         back={() => navigation.goBack()}
         pop_up={() => setIsPopUP(true)}
       />

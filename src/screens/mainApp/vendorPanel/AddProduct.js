@@ -428,11 +428,12 @@ export default function AddProduct({navigation}) {
                   textAlignVertical: 'top',
                 },
               ]}
-              placeholder="Content"
+              placeholder="Content (upto 22 letters)"
               placeholderTextColor="gray"
-              multiline={true}
+              // multiline={true}
               value={content}
               onChangeText={val => setContent(val)}
+              maxLength={22}
             />
           </View>
           <View style={styles.desc}>

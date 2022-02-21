@@ -39,6 +39,7 @@ export default function VendorChat({navigation}){
     const getChatList=()=>{
         axios.get(`${API_VENDOR}/vendordetail`)
         .then(resp=>{
+            console.log(resp.data);
             setChatList(resp.data.customercontact);
             setVendorData(resp.data);
         })
@@ -90,7 +91,12 @@ export default function VendorChat({navigation}){
                                         </View> */}
                                     </View>
                                     <View style={styles.texts}>
+                                    {
+                                        item.name ? 
                                         <Text style={{color:"#000",top:0,fontWeight:"500"}}>{item.name}</Text>
+                                        :
+                                        <Text style={{color:"#000",top:0,fontWeight:"500"}}>User{item._id.split("",2)}**</Text>
+                                    }
                                         {/* <Text style={{color:"#000",fontSize:11,}}>{item.duration}</Text> */}
                                         {/* <Text style={styles.msg}>{item.msg}</Text> */}
                                     </View>
@@ -191,3 +197,54 @@ const styles = StyleSheet.create({
         fontSize:11,
     }
 })
+
+
+
+
+// {
+//     "__v": 1, 
+//     "_id": "620f9ceba44c460016e9a3cf", 
+//     "active": true, 
+//     "createdAt": "2022-02-18T13:19:39.746Z", 
+//     "customercontact": [
+//         {
+//             "__v": 0, 
+//             "_id": "620faf9bf604d500167def16", 
+//             "active": true, 
+//             "createdAt": "2022-02-18T14:39:23.563Z", 
+//             "phoneNo": 8939117490, 
+//             "profileImg": "https://www.w3schools.com/w3images/avatar5.png", 
+//             "role": 0, 
+//             "status": "active", 
+//             "updatedAt": "2022-02-18T14:41:11.628Z", 
+//             "vendorcontact": [Array]
+//         }, 
+//         {
+//             "__v": 0, 
+//             "_id": "62108fee99420c0016c44b96", 
+//             "active": true, 
+//             "createdAt": "2022-02-19T06:36:30.646Z", 
+//             "phoneNo": 7407668045, 
+//             "profileImg": "https://firebasestorage.googleapis.com/v0/b/multivendor-5d027.appspot.com/o/USER%2Fprofile_image%2Frn_image_picker_lib_temp_fe5dcabb-6753-411f-a3c9-41afebf25b62.jpg?alt=media&token=c09e3247-1a0b-40dd-aa3f-17e713de9c40", 
+//             "role": 0, 
+//             "status": "active", 
+//             "updatedAt": "2022-02-21T07:21:15.017Z", 
+//             "vendorcontact": [Array]
+//         }
+//     ], 
+//     "numOfReviews": 1, 
+//     "phoneNo": 7407668045, 
+//     "profileImg": "https://www.w3schools.com/w3images/avatar5.png", 
+//     "ratings": 4, 
+//     "reviews": [
+//         {
+//             "_id": "621092bd99420c0016c44bc0", 
+//             "rating": 4, 
+//             "user": [Object]
+//         }
+//     ], 
+//     "role": 1, 
+//     "services": [], 
+//     "status": "active", 
+//     "updatedAt": "2022-02-19T06:48:29.725Z"
+// }

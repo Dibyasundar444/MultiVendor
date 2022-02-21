@@ -61,6 +61,7 @@ export default function ChatScreen({navigation}){
     const getChatList=()=>{
         axios.get(`${API_USER}/userdetail`)
         .then(resp=>{
+            console.log(resp.data);
             setChatList(resp.data.vendorcontact);
             setFilterData(resp.data.vendorcontact);
             setUserData(resp.data);

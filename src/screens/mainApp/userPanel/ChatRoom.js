@@ -26,8 +26,8 @@ import { BottomSheet } from "react-native-btr";
 import ChatRoomHeader from './utils/chatRoomHeader';
 import axios from 'axios';
 import {API, API_USER} from '../../../../config';
-import Rating from './utils/img-slider/Rating';
-const RATING=[{id:0},{id:1},{id:2},{id:3},{id:4}];
+import Rating from './utils/Rating';
+// const RATING=[{id:0},{id:1},{id:2},{id:3},{id:4}];
 
 export default function ChatRoom({route, navigation}) {
   const preData = route.params;
@@ -36,6 +36,8 @@ export default function ChatRoom({route, navigation}) {
   const [isPopUp, setIsPopUP] = useState(false);
   const [visible, setVisible] = useState(false);
   const [indicator, setIndicator] = useState(false);
+  const Firestore = firestore();
+  Firestore.settings({ ignoreUndefinedProperties: true });
 
 
   useEffect(() => {
@@ -116,9 +118,9 @@ export default function ChatRoom({route, navigation}) {
       preData.vendorData._id > preData.totalData._id
         ? preData.totalData._id + '-' + preData.vendorData._id
         : preData.vendorData._id + '-' + preData.totalData._id;
-   const querySnap =  await firestore().collection("chatroom")
+   const querySnap =  await firestore().collection("CHAT")
     .doc(docId)
-    .collection("messages")
+    .collection("MSG")
     .orderBy('createdAt',"desc")
     .get()
    const allMsg = querySnap.docs.map(item=>{
@@ -134,9 +136,19 @@ export default function ChatRoom({route, navigation}) {
     const msg = messagesArray[0];
     const myMsg = {
       ...msg,
-      sentTo: preData.vendorData._id,
-      sentBy: preData.totalData._id
-    }
+      receiver: {
+        _id: preData.vendorData._id,
+        name: preData.vendorData.name,
+        avatar: preData.vendorData.profileImg,
+        phoneNo: preData.vendorData.phoneNo
+      },
+      sender: {
+        _id: preData.totalData._id,
+        name: preData.totalData.name,
+        avatar: preData.totalData.profileImg,
+        phoneNo: preData.totalData.phoneNo
+      }
+    };
     setMessages(previousMessages =>
       GiftedChat.append(previousMessages, myMsg),
     );
@@ -144,11 +156,22 @@ export default function ChatRoom({route, navigation}) {
       preData.vendorData._id > preData.totalData._id
         ? preData.totalData._id + '-' + preData.vendorData._id
         : preData.vendorData._id + '-' + preData.totalData._id;
+        console.log(myMsg);
     firestore()
-      .collection('chatroom')
+      .collection('CHAT')
       .doc(docId)
-      .collection('messages')
-      .add({...myMsg, createdAt: firestore.FieldValue.serverTimestamp()});
+      .collection('MSG')
+      .add({...myMsg, createdAt: firestore.FieldValue.serverTimestamp()})
+      .then(()=>{
+        // console.log("msg", myMsg);
+        axios.post(`${API}/firebasemessage`,myMsg)
+        .then(res=>{
+          console.log(res.data);
+        })
+        .catch(err=>{
+          console.log(err);
+        })
+      })
   }, []);
 
   const toggle=()=>{
@@ -161,7 +184,7 @@ export default function ChatRoom({route, navigation}) {
     rating: rating.length,
     vendorId: preData.vendorData._id
   };
-  console.log(ratingData);
+  // console.log(ratingData);
 
   const _submitRating=()=>{
     setIndicator(true);

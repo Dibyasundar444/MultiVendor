@@ -11,6 +11,7 @@ import {
   Image,
 } from 'react-native';
 import axios from 'axios';
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import {API_VENDOR} from '../../../../../config';
 
 export default function VendorsNearby({vendorProfile,login}) {
@@ -49,7 +50,10 @@ export default function VendorsNearby({vendorProfile,login}) {
             style={styles.vendor}
             onPress={login}
           >
-              <Text style={{fontWeight:"500",color:"#fff"}}>Sell</Text>
+              <View style={{flexDirection:"row",alignItems:"flex-end"}}>
+                <MaterialCommunityIcons name='account-switch-outline' color="#fff" size={18} />
+                <Text style={{fontWeight:"500",color:"#fff",marginLeft:5}}>Sell</Text>
+              </View>
           </TouchableOpacity>
         </View>
         {indicator ? (

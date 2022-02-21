@@ -14,9 +14,6 @@ export default function Rating({
     visible,indicator,vendorName,submitRating,toggle,ratingArr,setRatingArr
 }) {
 
-//   const [rating, setRating] = useState([]);
-
-
   const click=(item)=>{
     !ratingArr.includes(`${item.id}`)
     ?
@@ -28,24 +25,6 @@ export default function Rating({
       )
     )
   };
-
-//   let ratingData={
-//     rating: rating.length,
-//     vendorId: preData.vendorData._id
-//   };
-
-//   const submitRating=()=>{
-//     setIndicator(true);
-//     axios.patch(`${API_USER}/vendorreview`,ratingData)
-//     .then(resp=>{
-//       console.log(resp.data);
-//       setIndicator(false);
-//     })
-//     .catch(err=>{
-//       console.log("err",err);
-//       setIndicator(false);
-//     })
-//   };
 
   return (
     <View>

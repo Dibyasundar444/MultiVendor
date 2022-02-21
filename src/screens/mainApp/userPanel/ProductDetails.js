@@ -22,7 +22,7 @@ import axios from 'axios';
 
 import CategoryHeader from './utils/CategoryHeader';
 import {API, API_USER, API_VENDOR} from '../../../../config';
-import Rating from './utils/img-slider/Rating';
+import Rating from './utils/Rating';
 // import ChatDialog from './utils/chatDialog';
 
 const {height, width} = Dimensions.get('window');
@@ -136,6 +136,8 @@ export default function ProductDetails({route, navigation}) {
       .get(`${API_VENDOR}/onevendordetail/${preData.vendor}`)
       .then(resp => {
         setOneVendor(resp.data);
+        let f_id = resp.data._id.split('',2);
+        global.f_id = f_id;
       })
       .catch(err => {
         console.log('OneVendor Error: ', err);
@@ -297,7 +299,9 @@ const toggle=()=>{
           <View style={[styles.titleView, {marginVertical: 10}]}>
             <View style={{alignItems: 'center'}}>
               <Image style={styles.profile} source={{uri : oneVendor.profileImg}} />
-              <Text
+              {
+                oneVendor.name ? 
+                <Text
                 style={{
                   color: '#000',
                   fontSize: 12,
@@ -305,6 +309,16 @@ const toggle=()=>{
                 }}>
                 {oneVendor.name}
               </Text>
+              :
+              <Text
+                style={{
+                  color: '#000',
+                  fontSize: 12,
+                  textTransform: 'capitalize',
+                }}>
+                Vendor{global.f_id}**
+              </Text>
+              }
             </View>
             <View style={{alignItems: 'center'}}>
               <TouchableOpacity

@@ -95,34 +95,34 @@ export default function ProductDetailsVendor({route, navigation}) {
   const showComment = () =>(
     commentList.map(item=>(
       <View style={styles.cmntView} key={item._id}>
-            {item.customerId.profileImg ? (
-              <Image
-                style={styles.cmntCircle}
-                source={{uri: item.customerId.profileImg}}
-              />
-            ) : (
-              <Image
-                style={styles.cmntCircle}
-                source={require('../../../assets/profile.png')}
-              />
-            )}
-            <View style={{width: '90%', alignItems: 'flex-start'}}>
-              {item.customerId.name ? (
-                <Text style={{fontSize: 13, color: '#000'}}>
-                  {item.customerId.name}
-                </Text>
-              ) : (
-                <Text style={{fontSize: 13, color: '#000'}}>
-                  {item.customerId._id.split('', 10)}***
-                </Text>
-              )}
-              <View style={styles.cmntBox}>
-                <Text style={{color: '#000', fontSize: 12}}>
-                  {item.comment}
-                </Text>
-              </View>
-            </View>
+        {item.customerId.profileImg ? (
+          <Image
+            style={styles.cmntCircle}
+            source={{uri: item.customerId.profileImg}}
+          />
+        ) : (
+          <Image
+            style={styles.cmntCircle}
+            source={require('../../../assets/profile.png')}
+          />
+        )}
+        <View style={{width: '90%', alignItems: 'flex-start'}}>
+          {item.customerId.name ? (
+            <Text style={{fontSize: 13, color: '#000'}}>
+              {item.customerId.name}
+            </Text>
+          ) : (
+            <Text style={{fontSize: 13, color: '#000'}}>
+              {item.customerId._id.split('', 10)}***
+            </Text>
+          )}
+          <View style={styles.cmntBox}>
+            <Text style={{color: '#000', fontSize: 12}}>
+              {item.comment}
+            </Text>
           </View>
+        </View>
+      </View>
     ))
   );
   return (

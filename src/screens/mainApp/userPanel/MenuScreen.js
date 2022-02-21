@@ -115,7 +115,7 @@ export default function Menu({navigation}){
                 {/* </View> */}
                 <VendorsNearby 
                     vendorProfile={(item)=>navigation.navigate("VendorProfile",item)}
-                    login={()=>navigation.navigate("SignIn")}
+                    login={()=>navigation.navigate("SignIn","vendor")}
                 />
                 <View style={{marginLeft:20,marginTop:20}}>
                     <Text style={styles.products}>Latest Products</Text>

@@ -8,14 +8,18 @@ import {
     FlatList,
     Dimensions, 
     ActivityIndicator,
-    TextInput
+    TextInput,
+    Image
 } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
-import SearchHeader from "./utils/searchHeader";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BottomSheet } from "react-native-btr";
 import axios from "axios";
+
+import SearchHeader from "./utils/searchHeader";
 import { API } from "../../../../config";
 import VendorsNearby from "./utils/VendorsNearby";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 
 const { height, width } = Dimensions.get("window");
@@ -26,9 +30,14 @@ export default function SearchScreen({navigation}){
     const [serviceData, setServiceData] = useState([]);
     const [indicator1, setIndicator1] = useState(true);
     const [indicator2, setIndicator2] = useState(true);
+    const [indicator3, setIndicator3] = useState(false);
+    const [success, setSuccess] = useState(false);
     const [text, setText] = useState("");
     const [filterData, setFilterData] = useState([]);
     const [location, setLocation] = useState({});
+    const [isVisible, setIsVisible] = useState(false);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
 
     useEffect(()=>{
         getCategories();
@@ -79,7 +88,12 @@ export default function SearchScreen({navigation}){
                         onPress={()=>navigation.navigate("Categories",{"title": item.name,"id": item._id})}
                     >
                         <View style={styles.subView}>
-                            <View style={styles.smImg} />
+                            {
+                                item.imgUrl ?
+                                <Image style={styles.smImg} source={{uri: item.imgUrl}} />
+                                :
+                                <View style={styles.smImg} />
+                            }
                             <Text style={styles.name}>{item.name}</Text>
                         </View>
                     </TouchableOpacity>
@@ -96,7 +110,12 @@ export default function SearchScreen({navigation}){
                         onPress={()=>navigation.navigate("Services",{"title": item.name,"id": item._id})}
                     >
                         <View style={styles.subView}>
-                            <View style={styles.smImg} />
+                        {
+                                item.imgUrl ?
+                                <Image style={styles.smImg} source={{uri: item.imgUrl}} />
+                                :
+                                <View style={styles.smImg} />
+                            }
                             <Text style={styles.name}>{item.name}</Text>
                         </View>
                     </TouchableOpacity>
@@ -121,9 +140,37 @@ export default function SearchScreen({navigation}){
         }
     };
 
+    const toggle=()=>{
+        setIsVisible(visble => !visble)
+    };
+
+    const sendRequest=()=>{
+        setIndicator3(true);
+        axios.post(`${API}/customorder`,{title:title,description:description})
+        .then(resp=>{
+            console.log(resp.data);
+            setIndicator3(false);
+            setSuccess(true);
+        })
+        .catch(err=>{
+            console.log(err);
+            setSuccess(false);
+        })
+    };
+
+    if(success){
+        setTimeout(()=>{
+            setSuccess(false);
+        },3000)
+    };
+
 
     return(
-        <ScrollView style={styles.container}showsVerticalScrollIndicator={false} >
+        <ScrollView 
+            style={styles.container} 
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{paddingBottom:100}}
+        >
             <SearchHeader
                 nav={()=>navigation.navigate("Alert")}
                 city={location.city}
@@ -145,17 +192,112 @@ export default function SearchScreen({navigation}){
                 login={()=>navigation.navigate("SignIn")}
             />
             <View style={{marginHorizontal:20}}>
-                <Text style={styles.subHeader}>Browse Categories</Text>          
+                <View style={{flexDirection:"row", alignItems:"center",justifyContent:"space-between",marginVertical:20}}>
+                    <Text style={styles.subHeader}>Browse Categories</Text>   
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor:"#ff1493",
+                            paddingHorizontal:10,
+                            paddingVertical:3,
+                            borderRadius:5
+                        }}
+                        onPress={toggle}
+                    >
+                        <Text style={{
+                            color:"#fff",
+                            fontSize:12
+                        }}>Request a product</Text>
+                    </TouchableOpacity>  
+                </View>     
                 {
                     indicator1 ? <ActivityIndicator /> : <Categories />
                 }             
             </View>
-            <View style={{marginHorizontal:20,marginBottom:height/5,marginTop:10}}>
-                <Text style={styles.subHeader}>Browse Services</Text>          
+            <View style={{marginHorizontal:20,marginTop:10}}>
+                <View style={{marginBottom:10}}>
+                    <Text style={styles.subHeader}>Browse Services</Text>
+                </View>          
                 {
                     indicator2 ? <ActivityIndicator /> : <Services />
                 }             
             </View>
+            <BottomSheet
+            visible={isVisible}
+            onBackButtonPress={toggle}
+            onBackdropPress={toggle}
+            >
+                <View style={styles.sheet}>
+                    <Text style={{
+                        color:"#000",
+                        fontWeight:"600",
+                        marginVertical:10
+                    }}>
+                        Request a Product
+                    </Text>
+                    <View 
+                        style={{
+                            width:"80%",
+                            borderWidth:0.5,
+                        }}
+                    />
+                    <TextInput 
+                        style={{
+                            backgroundColor:"#ffe4e1",
+                            width: "80%",
+                            marginTop:20,
+                            borderRadius:5,
+                            color:"#000",
+                            paddingLeft: 10
+                        }}
+                        placeholder="Title"
+                        placeholderTextColor="gray"
+                        value={title}
+                        onChangeText={(val)=>setTitle(val)}
+                    />
+                    <TextInput 
+                        style={{
+                            backgroundColor:"#ffe4e1",
+                            width: "80%",
+                            marginTop:20,
+                            borderRadius:5,
+                            color:"#000",
+                            paddingLeft: 10,
+                            textAlignVertical:"top",
+                            paddingTop:10,
+                            height:80
+                        }}
+                        placeholder="Description"
+                        placeholderTextColor="gray"
+                        value={description}
+                        onChangeText={(val)=>setDescription(val)}
+                    />
+                    {
+                        indicator3 ? <ActivityIndicator style={{marginTop:40}} color="#ff1493" size={24} />
+                        :
+                        success ? 
+                        <Text style={{
+                            color:"green",
+                            marginTop:40,
+                            fontSize:13
+                        }}>
+                            Request has been sent
+                        </Text>
+                        :
+                        <TouchableOpacity 
+                            style={{
+                                backgroundColor:"#ff1493",
+                                marginTop:40,
+                                paddingVertical:5,
+                                paddingHorizontal:10,
+                                borderRadius:5
+                            }}
+                            onPress={sendRequest}
+                        >
+                            <Text style={{color:"#fff"}}>send request</Text>
+                        </TouchableOpacity>
+                    }
+                </View>
+            </BottomSheet>
         </ScrollView>
     )
 };
@@ -184,7 +326,6 @@ const styles = StyleSheet.create({
     subHeader: {
         color:"#000",
         fontWeight:"bold",
-        marginBottom:20,
         fontSize:16
     },
     smImg: {
@@ -236,4 +377,11 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         width: "85%"
     },
+    sheet: {
+        height:350,
+        backgroundColor:"#fff",
+        borderTopRightRadius:10,
+        borderTopLeftRadius:10,
+        alignItems:"center"
+    }
 })

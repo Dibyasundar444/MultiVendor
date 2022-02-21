@@ -19,15 +19,14 @@ import { API_USER, API_VENDOR } from "../../config";
 
 const { height, width } = Dimensions.get("window");
 
-export default function SignIn({navigation}){
+export default function SignIn({navigation,route}){
 
-    // const UserType = ["user","vendor"];
+    const preData = route.params;
     const [num, setNum] = useState("");
     const [error, setError] = useState(false);
     const [error1, setError1] = useState(false);
-    const [user, setUser] = useState("");
+    // const [user, setUser] = useState("user");
     const [loading, setLoading] = useState(false);
-
 
     const inputHandler=()=>{
         if(num==="" || num.length !== 10){
@@ -38,22 +37,22 @@ export default function SignIn({navigation}){
         }
     };
 
-    let navData = {
-        "number": num,
-        "user": user
-    };
 
     const submit=()=>{
         if(num === "" || num.length !== 10){
             setError(true);
         }
-        else if(user === ""){
-            setError1(true);
-        }
+        // else if(user === ""){
+        //     setError1(true);
+        // }
         else{
-            setError1(false);
+            // setError1(false);
             setLoading(true);
-            if(user === "user"){
+            if(!preData){
+                let navData = {
+                    "number": num,
+                    "user": "user"
+                };
                 axios.post(`${API_USER}/register`,{"phoneNo": Number(num)})
                 .then(res=>{
                     if(res.status === 200){
@@ -70,7 +69,11 @@ export default function SignIn({navigation}){
                     setLoading(false);
                 })
             }
-            else if(user === "vendor"){
+            else {
+                let navData = {
+                    "number": num,
+                    "user": "vendor"
+                };
                 axios.post(`${API_VENDOR}/register`,{"phoneNo": Number(num)})
                 .then(res=>{
                     if(res.status === 200){
@@ -127,7 +130,7 @@ export default function SignIn({navigation}){
                             dropdownStyle={styles.DropdownStyle}
                             rowStyle={styles.rowStyle}
                         /> */}
-                        <View style={{
+                        {/* <View style={{
                             flexDirection:"row",
                             alignItems:"center"
                         }}>
@@ -165,7 +168,7 @@ export default function SignIn({navigation}){
                                 <Fontisto name={user==="vendor" ? "radio-btn-active" : "radio-btn-passive"} color="#000" size={14}/>
                                 <Text style={{color:"#000",fontSize:13,marginLeft:5}}>Vendor</Text>
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                     </View>
                     {error1 ? <Text style={styles.error1}>please select your user type</Text>:null}
                     <Text style={{color:"#000",fontSize:14,marginBottom:10}}>Enter your phone number</Text>

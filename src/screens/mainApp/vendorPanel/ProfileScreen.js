@@ -77,6 +77,7 @@ export default function ProfileScreen({navigation}){
     const getVendor=()=>{
         axios.get(`${API_VENDOR}/vendordetail`)
         .then(async res=>{
+            // console.log(res.data.reviews);
             setPhoneNo(res.data.phoneNo);
             setName(res.data.name);
             setImg(res.data.profileImg);
