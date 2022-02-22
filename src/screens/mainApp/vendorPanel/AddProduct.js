@@ -479,8 +479,7 @@ export default function AddProduct({navigation}) {
                   <Text style={{color:"green",fontSize:12,marginBottom:10}}>Product is added</Text> :
                   error1 ? 
                     <>
-                        <Text style={{color:"red",fontSize:12}}>Cannot add product at this moment !</Text>
-                        <Text style={{color:"red",fontSize:11,marginBottom:10}}>please, try again later...</Text>
+                        <Text style={{color:"red",fontSize:12,top:-5}}>please, fill all the details !</Text>
                     </>
                   : null
               }

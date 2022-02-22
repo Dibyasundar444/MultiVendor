@@ -77,7 +77,7 @@ export default function AlertScreen({navigation}){
     return(
         <View style={styles.container}>
             <Header
-                title="Alerts(03)"
+                title={`Alerts(${data.length})`}
                 activeStyle={styles.bell}
                 bellColor="#fff"
                 profile={()=>navigation.navigate("ProfileScreen")}
