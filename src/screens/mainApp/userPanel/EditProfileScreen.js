@@ -6,26 +6,16 @@ import {
     TouchableOpacity,
     ScrollView,
     Image,
-    Dimensions, 
     TextInput,
     Alert,
     ActivityIndicator,
-    Platform
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Entypo from "react-native-vector-icons/Entypo";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import Fontisto from "react-native-vector-icons/Fontisto";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import Octicons from "react-native-vector-icons/Octicons";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import axios from "axios";
 import storage from '@react-native-firebase/storage';
 import { API, API_USER } from "../../../../config";
 
-
-const { height, width } = Dimensions.get("window");
 
 export default function EditProfile({navigation}){
 
@@ -292,19 +282,6 @@ export default function EditProfile({navigation}){
                     </View>
                     <View style={styles.smCard1}>
                         <Text style={{color:"#000",marginLeft:20}}>+91</Text>
-                        {/* <TextInput 
-                            style={{
-                                borderRadius: 10,paddingLeft: 10,
-                                color:"#000",paddingVertical:2,width:"85%",
-                            }}
-                            placeholder={phoneNo.toString()}
-                            placeholderTextColor="#000"
-                            autoCorrect={false}
-                            value={phoneNo.toString()}
-                            onChangeText={(val)=>setPhoneNo(val)}
-                            keyboardType="numeric"
-                            
-                        /> */}
                         <Text style={{color:"#000",marginLeft:10}}>{phoneNo}</Text>
                     </View>
                     <View style={styles.desCard}>

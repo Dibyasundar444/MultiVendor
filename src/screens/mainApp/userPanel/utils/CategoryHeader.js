@@ -3,17 +3,10 @@ import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity,
-    FlatList,
-    Dimensions
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import Fontisto from "react-native-vector-icons/Fontisto";
 
-
-const { height, width } = Dimensions.get("window");
 
 export default function CategoryHeader({route,nav,back}){
 

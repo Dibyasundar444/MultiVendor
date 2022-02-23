@@ -3,25 +3,16 @@ import {
     View, 
     Text, 
     StyleSheet, 
-    TouchableOpacity,
     ScrollView,
-    FlatList,
     Dimensions, 
-    TextInput,
     Image,
     ActivityIndicator
 } from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import Entypo from "react-native-vector-icons/Entypo";
 import Header from "./utils/header";
 import axios from "axios";
 import { API_VENDOR } from "../../../../config";
 
-const MAX_RATING=[{"id":"0"},{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"}]
 
 export const { height, width } = Dimensions.get("window");
 

@@ -5,7 +5,6 @@ import {
     StyleSheet, 
     TouchableOpacity,
     ScrollView,
-    FlatList,
     Dimensions, 
     ActivityIndicator,
     Image
@@ -27,11 +26,28 @@ export default function Menu({navigation}){
     const [data, setData] = useState([]);
     const [indicator, setIndicator] = useState(true);
     const [location, setLocation] = useState({});
+    const [bannerImg, setBannerImg] = useState([]);
+    const IMAGES = [];
 
     useEffect(()=>{
         getProducts();
         getLocation();
+        getBanner();
     },[]);
+
+    const getBanner=()=>{
+        axios.get(`${API}/banner`)
+        .then(resp=>{
+            resp.data.map(item=>{
+                var innerObj = {img: item.imgUrl};
+                IMAGES.push(innerObj);
+                setBannerImg(IMAGES);
+            });
+        })
+        .catch(err=>{
+            console.log("banner err:",err);
+        })
+    };
 
     const getProducts=()=>{
         axios.get(`${API}/allproducts`)
@@ -54,6 +70,13 @@ export default function Menu({navigation}){
             console.log("err",err);
         }
     };
+
+    const vendorLogin=async()=>{
+        // const SWITCH = await AsyncStorage.getItem('switch');
+        // SWITCH !== null ?  navigation.navigate("VendorPanel")
+        // :
+        navigation.navigate("SignIn","vendor");
+    }
     return(
         <View style={styles.container}>
             <MenuHeader 
@@ -67,55 +90,27 @@ export default function Menu({navigation}){
                 contentContainerStyle={{paddingBottom:100}} 
                 showsVerticalScrollIndicator={false}
             >
-                {/* <View style={{height:140}}> */}
-                    {/* <Swiper 
-                        showsButtons={false} 
-                        dot={<></>} 
-                        activeDot={<></>} 
-                        autoplay={true} 
-                        // autoplayTimeout={5}
-                        loop={false}
-                    >
-                        <View>
-                            <Image 
-                                source={require('../../../assets/Banner/image1.jpg')} 
-                                style={{height:"100%",width:"100%"}} 
-                                resizeMode="stretch" 
-                            />
-                        </View>
-                        <View>
-                            <Image 
-                                source={require('../../../assets/Banner/image2.jpg')} 
-                                style={{height:"100%",width:"100%"}} 
-                                resizeMode="stretch" 
-                            />
-                        </View>
-                        <View>
-                            <Image 
-                                source={require('../../../assets/Banner/image3.jpg')} 
-                                style={{height:"100%",width:"100%"}} 
-                                resizeMode="stretch" 
-                            />
-                        </View>
-                    </Swiper> */}
+                {
+                    bannerImg.length !== 0 ? 
                     <ImageSlider 
-                        data={[
-                            {img: require('../../../assets/Banner/image1.jpg')},
-                            {img: require('../../../assets/Banner/image2.jpg')},
-                            {img: require('../../../assets/Banner/image3.jpg')}
-                        ]}
-                        localImg={true}
+                        data={bannerImg}
                         autoPlay={true}
-                        // onItemChanged={(item) => console.log("item", item)}
                         closeIconColor="#fff"
                         showIndicator={false}
                         caroselImageContainerStyle={{height:150}}
                         timer={5000}
                     />
-                {/* </View> */}
+                    :
+                    <View style={{
+                        height:150,alignItems:"center",justifyContent:"center",
+                        borderTopWidth:0.5,borderBottomWidth:0.5}}
+                    >
+                        <Text style={{color:"#000",fontWeight:"500"}}>Loading...</Text>
+                    </View>
+                }
                 <VendorsNearby 
                     vendorProfile={(item)=>navigation.navigate("VendorProfile",item)}
-                    login={()=>navigation.navigate("SignIn","vendor")}
+                    login={vendorLogin}
                 />
                 <View style={{marginLeft:20,marginTop:20}}>
                     <Text style={styles.products}>Latest Products</Text>

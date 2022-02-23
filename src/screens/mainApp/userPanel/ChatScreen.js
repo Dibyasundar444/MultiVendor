@@ -4,27 +4,17 @@ import {
     Text, 
     StyleSheet, 
     TouchableOpacity,
-    ScrollView,
     FlatList,
-    Dimensions, 
     TextInput,
     Image,
     ActivityIndicator
 } from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import Fontisto from "react-native-vector-icons/Fontisto";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import Entypo from "react-native-vector-icons/Entypo";
 import axios from "axios";
 import { useIsFocused } from "@react-navigation/native";
-// import firestore from '@react-native-firebase/firestore';
 
 import { API_USER } from "../../../../config";
-
-
-const { height, width } = Dimensions.get("window");
 
 export default function ChatScreen({navigation}){
 
@@ -71,25 +61,6 @@ export default function ChatScreen({navigation}){
             console.log("server error: ",err);
         })
     };
-    // const getChats = async() => {
-    //     const docId =
-    //       preData.vendorData._id > userData._id
-    //         ? userData._id + '-' + preData.vendorData._id
-    //         : preData.vendorData._id + '-' + userData._id;
-    //    const querySnap =  await firestore().collection("chatroom")
-    //     .doc(docId)
-    //     .collection("messages")
-    //     .orderBy('createdAt',"desc")
-    //     .get()
-    //    const allMsg = querySnap.docs.map(item=>{
-    //       return {
-    //         ...item.data(),
-    //         createdAt: item.data().createdAt.toDate()
-    //       }
-    //     })
-    //     setMessages(allMsg);
-    //   };
-
 
 
     return(

@@ -10,16 +10,13 @@ import {
     TextInput,
     Alert,
     ActivityIndicator,
-    Platform
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import axios from "axios";
 import storage from '@react-native-firebase/storage';
-import { API, API_VENDOR } from "../../../../config";
+import { API_VENDOR } from "../../../../config";
 
-
-const { height, width } = Dimensions.get("window");
 
 export default function EditProfile({navigation}){
 
@@ -28,12 +25,10 @@ export default function EditProfile({navigation}){
     const [phoneNo, setPhoneNo] = useState("");
     const [address, setAddress] = useState("");
     const [isVisible, setIsVisible] = useState(false);
-    const [img, setImg] = useState("");
     const [isUpdated, setIsUpdated] = useState(false);
     const [indicator, setIndicator] = useState(false);
     const [indicator2, setIndicator2] = useState(false);
     const [isUploaded, setIsUploaded] = useState(false);
-    const [process, setProcess] = useState("");
     const [url, setUrl] = useState("");
 
     useEffect(()=>{
@@ -280,18 +275,6 @@ export default function EditProfile({navigation}){
                     <View style={styles.smCard1}>
                         <Text style={{color:"#000",marginLeft:20}}>+91</Text>
                         <Text style={{color:"#000",marginLeft:10}}>{phoneNo}</Text>
-                        {/* <TextInput 
-                            style={{
-                                borderRadius: 10,paddingLeft: 10,
-                                color:"#000",paddingVertical:2,width:"85%",
-                            }}
-                            placeholder={phoneNo.toString()}
-                            placeholderTextColor="#000"
-                            autoCorrect={false}
-                            value={phoneNo.toString()}
-                            onChangeText={(val)=>setPhoneNo(val)}
-                            keyboardType="numeric"
-                        /> */}
                     </View>
                     <View style={styles.desCard}>
                         <TextInput 

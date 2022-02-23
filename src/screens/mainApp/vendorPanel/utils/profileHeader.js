@@ -3,7 +3,6 @@ import {
     View, 
     Text, 
     StyleSheet, 
-    Dimensions, 
 } from "react-native";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import AntDesign from "react-native-vector-icons/AntDesign";

@@ -4,10 +4,6 @@ import {
     Text, 
     StyleSheet, 
     TouchableOpacity,
-    ScrollView,
-    FlatList,
-    Dimensions, 
-    TextInput,
     Image,
     Alert,
     Share,
@@ -16,11 +12,12 @@ import {
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import Octicons from "react-native-vector-icons/Octicons";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import { useIsFocused } from "@react-navigation/native";
+import { BottomSheet } from "react-native-btr";
+import axios from "axios";
+
 
 import { API_VENDOR } from "../../../../config";
 import ProfileHeader from "./utils/profileHeader";
@@ -35,6 +32,8 @@ export default function ProfileScreen({navigation}){
     const isFocused = useIsFocused();
     const [isUpdated, setIsUpdated] = useState(false);
     const [indicator, setIndicator] = useState(false);
+    const [visible, setVisible] = useState(false);
+
     
     const link = "link/will/be/here";
 
@@ -110,6 +109,7 @@ export default function ProfileScreen({navigation}){
         try{
             const JSON_OBJ = await AsyncStorage.getItem('location');
             const Parsed = JSON.parse(JSON_OBJ);
+            console.log(Parsed);
             Parsed !== null ? setLocation(Parsed) : setLocation({});
         }
         catch(err){
@@ -131,6 +131,10 @@ export default function ProfileScreen({navigation}){
         },3000)
     };
 
+    const toggle=()=>{
+    setVisible((visible) => !visible)
+    };
+
     const updateLocation=()=>{
         setIndicator(true);
         axios.patch(`${API_VENDOR}/updatevendor`,updateData)
@@ -143,7 +147,7 @@ export default function ProfileScreen({navigation}){
             console.log(err);
             setIndicator(false);
         })
-    }
+    };
 
     return(
         <View style={styles.container}>
@@ -175,16 +179,6 @@ export default function ProfileScreen({navigation}){
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
                 </TouchableOpacity>
-                {/* <TouchableOpacity 
-                    style={styles.smCard}
-                    activeOpacity={0.8}
-                >
-                    <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
-                        <Octicons name="tasklist" color="#000" size={16}/>
-                        <Text style={{color:"#000",marginLeft: 20}}>Wishlist</Text>
-                    </View>
-                    <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
-                </TouchableOpacity> */}
                 <TouchableOpacity style={styles.smCard}
                     onPress={onShare}
                 >
@@ -197,20 +191,13 @@ export default function ProfileScreen({navigation}){
                 <TouchableOpacity 
                     style={styles.smCard}
                     activeOpacity={0.8}
-                    onPress={updateLocation}
+                    onPress={toggle}
                 >
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
                         <EvilIcons name="location" color="#000" size={24} />
-                        {
-                            indicator ? 
-                            <View style={{flex:0.8}}>
-                                <ActivityIndicator style={{marginLeft:60}} />
-                            </View>
-                            :
-                            <Text style={{color:"#000",marginLeft:10}}>{isUpdated?"Updated":"Update location"}</Text>
-                        }
+                        <Text style={{color:"#000",marginLeft:10}}>Update location</Text>
                     </View>
-                    <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
+                    <MaterialIcons name="my-location" color="#000" size={18} style={{marginRight: 20}} />
                 </TouchableOpacity>
                 <TouchableOpacity 
                     style={styles.smCard}
@@ -224,6 +211,134 @@ export default function ProfileScreen({navigation}){
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
                 </TouchableOpacity>
             </View>
+            <BottomSheet
+                visible={visible}
+                onBackButtonPress={toggle}
+                onBackdropPress={toggle}
+            >
+                <View style={styles.card}>
+                    <Text 
+                    style={{
+                        color:"#000",
+                        fontWeight:"500",
+                        marginVertical:10
+                    }}
+                    >My Location</Text>
+                    <View 
+                    style={{
+                        width:"80%",
+                        borderWidth: 0.5,
+                        marginBottom:5
+                    }} 
+                    />
+                    <Text 
+                    style={{color:"gray",fontSize:12}}
+                    >
+                        *** this will automatically fetch your current location***
+                    </Text>
+                    <View>
+                        <View
+                        style={{flexDirection:"row",alignItems:"center",marginVertical:20}}
+                        >
+                            <Text
+                            style={{
+                                color:"#000",
+                                fontWeight:"500"
+                            }}
+                            >City :</Text>
+                            <Text
+                            style={{
+                                color:"gray",
+                                fontWeight:"500",
+                                marginHorizontal:10
+                            }}
+                        >{location.city}</Text>
+                        </View>
+                        <View
+                        style={{flexDirection:"row",alignItems:"center"}}
+                        >
+                            <Text
+                            style={{
+                                color:"#000",
+                                fontWeight:"500"
+                            }}
+                            >State :</Text>
+                            <Text
+                            style={{
+                                color:"gray",
+                                fontWeight:"500",
+                                marginHorizontal:10
+                            }}
+                        >{location.state}</Text>
+                        </View>
+                        <View
+                        style={{
+                            flexDirection:"row",
+                            alignItems:"center",
+                            marginVertical:20
+                        }}
+                        >
+                            <Text
+                            style={{
+                                color:"#000",
+                                fontWeight:"500"
+                            }}
+                            >Country :</Text>
+                            <Text
+                            style={{
+                                color:"gray",
+                                fontWeight:"500",
+                                marginHorizontal:10
+                            }}
+                        >{location.country}</Text>
+                        </View>
+                    </View>
+                    {
+                        indicator ? 
+                        <View style={{marginVertical:20}}>
+                            <ActivityIndicator size={30} color="#ff1493" />
+                        </View>
+                        :
+                        <View
+                        style={{
+                            flexDirection:"row",
+                            alignItems:"center",
+                            marginHorizontal:40,
+                            marginVertical:20
+                        }}
+                        >
+                            <TouchableOpacity
+                            style={{
+                                backgroundColor:"#ff1493",
+                                paddingHorizontal:8,
+                                paddingVertical:5,
+                                borderRadius:4
+                            }}
+                            onPress={toggle}
+                            activeOpacity={0.7}
+                            >
+                                <Text style={{color:"#fff",fontWeight:"500"}}>Cancel</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                            style={{
+                                backgroundColor:"green",
+                                paddingHorizontal:8,
+                                paddingVertical:5,
+                                borderRadius:4,
+                                marginLeft:30
+                            }}
+                            onPress={updateLocation}
+                            activeOpacity={0.7}
+                            >
+                                <Text style={{color:"#fff",fontWeight:"500"}}>Confirm</Text>
+                            </TouchableOpacity>
+                        </View>
+                    }
+                    {
+                        isUpdated && <Text style={{color:"green",fontSize:12}}>Successfully Updated</Text>
+                    }
+                </View>
+            </BottomSheet>
         </View>
     );
 };
@@ -288,5 +403,12 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         height: 40,
         borderRadius: 10
-    }
+    },
+    card: {
+        backgroundColor: "#fff",
+        height: 350,
+        borderTopLeftRadius:10,
+        borderTopRightRadius:10,
+        alignItems:"center"
+    },
 })

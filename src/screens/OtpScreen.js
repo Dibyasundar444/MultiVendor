@@ -4,7 +4,6 @@ import {
     Text, 
     StyleSheet, 
     Dimensions, 
-    TextInput, 
     KeyboardAvoidingView, 
     ScrollView, 
     TouchableOpacity, 
@@ -16,7 +15,7 @@ import OTPInputView from '@twotalltotems/react-native-otp-input';
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import axios from "axios";
 
-import { API, API_USER, API_VENDOR } from "../../config";
+import { API_USER, API_VENDOR } from "../../config";
 
 const { height, width } = Dimensions.get("window");
 
@@ -26,7 +25,6 @@ export default function OtpVerify({route,navigation}){
     const fNumber = prevData.number.split("",6);
     let phNum = Number(prevData.number);
     const [num, setNum] = useState("");
-    const [token, setToken] = useState(null);
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
     const [resend, setResend] = useState(false);
@@ -127,7 +125,6 @@ export default function OtpVerify({route,navigation}){
 
     return(
         <View style={styles.container}>
-            {/* <StatusBar backgroundColor="#0d5434" /> */}
             <View style={styles.heading}>
                 <Image style={{height:"30%",resizeMode:"contain"}} source={require("../assets/logo.jpg")} />
                 <Text style={{color:"#000",fontSize: 20,fontWeight:"600"}}>Joyayog</Text>
@@ -157,7 +154,6 @@ export default function OtpVerify({route,navigation}){
                         style={styles.otp} 
                         activeOpacity={0.6}
                         onPress={submit} 
-                        // onPress={()=>navigation.navigate("UserPanel")}
                         disabled={num.length !==4 ? true : false}
                     >
                         {
@@ -194,7 +190,8 @@ const styles = StyleSheet.create({
     },
     textInputDiv: {
         alignItems:"center",
-        marginVertical: 20
+        marginVertical: 20,
+        // backgroundColor:"#fff"
     },
     textInput: {
         height: 60,

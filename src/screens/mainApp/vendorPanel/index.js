@@ -6,18 +6,13 @@ import {
     TouchableOpacity,
     BackHandler
 } from "react-native";
-// import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Foundation from "react-native-vector-icons/Foundation";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
-// import HomeScreen from "./HomeScreen";
-// import VendorChat from "./ChatScreen";
-// import AddProduct from "./AddProduct";
 import HomeStack from "./stackNavigator/HomeStack";
-// import MyProduct from "./ProductScreen";
 import ProductStack from "./stackNavigator/ProductStack";
 import ChatStack from "./stackNavigator/ChatStack";
 

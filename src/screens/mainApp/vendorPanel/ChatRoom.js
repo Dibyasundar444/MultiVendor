@@ -4,18 +4,10 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
-  FlatList,
-  Dimensions,
-  TextInput,
   TouchableWithoutFeedback,
   Linking,
 } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Fontisto from 'react-native-vector-icons/Fontisto';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Bubble, GiftedChat} from 'react-native-gifted-chat';
 import firestore from '@react-native-firebase/firestore';
@@ -157,7 +149,13 @@ export default function ChatRoom({route, navigation}) {
   return (
     <View style={styles.container}>
       <ChatRoomHeader
-        name={preData.customerData.name ? preData.customerData.name : `User${preData.customerData._id.split("",2)}**`}
+        name={
+          preData.customerData.name 
+          ? 
+          preData.customerData.name 
+          : 
+          `User${preData.customerData._id.split("",2)}**`
+        }
         back={() => navigation.goBack()}
         pop_up={() => setIsPopUP(true)}
       />

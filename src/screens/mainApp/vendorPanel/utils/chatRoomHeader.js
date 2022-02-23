@@ -3,23 +3,12 @@ import {
     View, 
     Text, 
     StyleSheet, 
-    TouchableOpacity,
-    ScrollView,
-    FlatList,
-    Dimensions, 
-    TextInput
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import Fontisto from "react-native-vector-icons/Fontisto";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import Entypo from "react-native-vector-icons/Entypo";
 
 
 export default function ChatRoomHeader({name,back,pop_up}){
-
-    // const name = route.params;
 
     return(
         <View style={styles.header}>
@@ -28,7 +17,6 @@ export default function ChatRoomHeader({name,back,pop_up}){
                 <Text style={styles.name}>{name}</Text>
             </View>
             <View style={{flexDirection:"row",alignItems:"center"}}>
-                {/* <Feather name="phone-call" color="#000" size={20} onPress={()=>alert("update")} /> */}
                 <MaterialCommunityIcons name="dots-vertical" color="#000" size={26} style={{marginLeft:20}} onPress={pop_up} />
             </View>
         </View>

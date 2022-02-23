@@ -1,31 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { 
     View, 
     Text, 
     StyleSheet, 
-    TouchableOpacity,
-    ScrollView,
-    FlatList,
-    Dimensions, 
-    TextInput
 } from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import Fontisto from "react-native-vector-icons/Fontisto";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import Octicons from "react-native-vector-icons/Octicons";
 
-
-
-
-const { height, width } = Dimensions.get("window");
 
 export default function ProfileHeader({nav}){
-
-    const [text, setText] = useState("");
-
 
     return(
         <View style={styles.header}>

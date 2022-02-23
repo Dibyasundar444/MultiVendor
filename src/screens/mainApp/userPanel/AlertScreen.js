@@ -3,94 +3,14 @@ import {
     View, 
     Text, 
     StyleSheet, 
-    TouchableOpacity,
-    ScrollView,
     FlatList,
     Dimensions, 
-    TextInput,
     Image
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import Fontisto from "react-native-vector-icons/Fontisto";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import Entypo from "react-native-vector-icons/Entypo";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-const data=[
-    {
-        "id":"0",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"1",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"2",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"3",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"4",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"5",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"6",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"7",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"8",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-    {
-        "id":"9",
-        "name":"Rajesh",
-        "duration":"5 hours",
-        "msg":"Hi!! I am Rajesh",
-        "time":"03:33pm"
-    },
-];
 
 const { height, width } = Dimensions.get("window");
 
@@ -98,7 +18,6 @@ export default function AlertScreen({navigation}){
 
     const [notification, setNotification] = useState([]);
 
-    // console.log(notification);
 
     useEffect(()=>{
         getNotification();

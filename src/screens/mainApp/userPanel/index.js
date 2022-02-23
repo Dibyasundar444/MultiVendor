@@ -1,24 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity,
-    BackHandler,
     Dimensions
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Fontisto from "react-native-vector-icons/Fontisto";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
-import SearchScreen from "./SearchScreen";
 import ChatScreen from "./ChatScreen";
-import AlertScreen from "./AlertScreen";
 import MenuStack from "./stackNavigator/MenuStack";
-import ProfileScreen from "./ProfileScreen";
 import ProfileStack from "./stackNavigator/ProfileStack";
 import SearchStack from "./stackNavigator/SearchStack";
 
@@ -26,7 +20,7 @@ import SearchStack from "./stackNavigator/SearchStack";
 const { height, width } = Dimensions.get("window");
 const Tab = createBottomTabNavigator();
 
-export default function UserPanel({navigation}){
+export default function UserPanel(){
 
     const getTabBarVisibility=(route)=>{
         const routeName = getFocusedRouteNameFromRoute(route);

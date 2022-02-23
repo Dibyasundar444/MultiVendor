@@ -4,10 +4,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-//   ScrollView,
   FlatList,
   Dimensions,
-//   TextInput,
   ActivityIndicator,
   Platform,
   Linking,
@@ -16,14 +14,10 @@ import {
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-// import Ionicons from 'react-native-vector-icons/Ionicons';
-// import Entypo from 'react-native-vector-icons/Entypo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API} from '../../../../config';
-// import ChatDialog from './utils/chatDialog';
 
 const {height, width} = Dimensions.get('window');
 
@@ -31,11 +25,6 @@ export default function VendorProfile({navigation, route}) {
   const item = route.params;
   const [products, setProducts] = useState([]);
   const [indicator, setIndicator] = useState(true);
-  // const [indicator2, setIndicator2] = useState(false);
-  // const [isVisible, setIsvisible] = useState(false);
-  // const [isSend, setIsSend] = useState(false);
-  // const [title, setTitle] = useState("");
-  // const [msg, setMsg] = useState("");
 
   useEffect(() => {
     getVendor_products();
@@ -68,16 +57,11 @@ export default function VendorProfile({navigation, route}) {
   };
 
   const _sendMsg = () => {
-    // setIndicator2(true);
     axios
       .post(`${API}/contactvendors`, MESSAGE)
       .then(resp => {
         console.log(resp.data);
         navigation.navigate('Chat');
-        // setIndicator2(false);
-        // setIsSend(true);
-        // setTitle("");
-        // setMsg("");
       })
       .catch(err => {
         console.log('Error from server MSG: ', err);
@@ -149,7 +133,6 @@ export default function VendorProfile({navigation, route}) {
                   Vendor{item._id.split("",2)}**
                 </Text>
                 }
-                {/* <View style={{flexDirection: 'row',alignItems:"center"}}>{services()}</View> */}
                 {
                   item.locality ? 
                   <Text style={{fontSize: 10}}>{item.locality}, {item.state} ({item.country})</Text>
@@ -233,30 +216,6 @@ export default function VendorProfile({navigation, route}) {
           )}
         </View>
       </>
-      {/* {
-                isVisible && 
-                <ChatDialog 
-                    Name={item.name}
-                    closeDialog={()=>{
-                        setIsvisible(false);
-                        setTitle("");
-                        setMsg("");
-                        setIsSend(false);
-                    }}
-                    title={title}
-                    setTitle={(val)=>setTitle(val)}
-                    msg={msg}
-                    setMsg={(val)=>setMsg(val)}
-                    send={_sendMsg}
-                    isSend={isSend}
-                    setSend={
-                        setTimeout(()=>{
-                            setIsSend(false);
-                        },3000)
-                    }
-                    INDICATOR2={indicator2}
-                />
-            } */}
     </View>
   );
 }

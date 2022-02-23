@@ -4,9 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
   FlatList,
-  Dimensions,
   ActivityIndicator,
   Image,
 } from 'react-native';
@@ -18,7 +16,6 @@ export default function VendorsNearby({vendorProfile,login}) {
   const [vendors, setVendors] = useState([]);
   const [indicator, setIndicator] = useState(true);
 
-  console.log(vendors);
 
   useEffect(() => {
     getVendors();

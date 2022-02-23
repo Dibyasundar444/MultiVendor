@@ -4,10 +4,7 @@ import {
     Text, 
     StyleSheet, 
     TouchableOpacity,
-    ScrollView,
-    FlatList,
     Dimensions, 
-    TextInput,
     Image,
     Alert,
     Share
@@ -164,17 +161,6 @@ export default function ProfileScreen({navigation}){
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
                 </TouchableOpacity>
-                {/* <TouchableOpacity 
-                    style={styles.smCard}
-                    activeOpacity={0.8}
-                    onPress={()=>alert("update")}
-                >
-                    <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
-                        <AntDesign name="setting" color="#000" size={18}/>
-                        <Text style={{color:"#000",marginLeft: 20}}>Setting</Text>
-                    </View>
-                    <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
-                </TouchableOpacity> */}
                 <TouchableOpacity 
                     style={styles.smCard}
                     activeOpacity={0.8}

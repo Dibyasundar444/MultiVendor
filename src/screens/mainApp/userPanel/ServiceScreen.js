@@ -78,7 +78,7 @@ export default function Services({route,navigation}){
                                         }}>
                                             {item.title}
                                         </Text>
-                                        <Text style={{color:"#000",fontSize:12}}>{item.description}</Text>
+                                        <Text style={{color:"#000",fontSize:12}}>{item.content.replace(/\s/g, '')}</Text>
                                     </View>
                                     <View style={styles.enquire}>
                                         <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
         marginLeft: 20
     },
     box: {
-        height: width/2,
+        minHeight: width/2,
         width: "48%",
         backgroundColor: "#fff",
         elevation: 5,

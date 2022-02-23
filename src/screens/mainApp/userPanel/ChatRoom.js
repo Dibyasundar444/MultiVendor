@@ -1,33 +1,24 @@
-import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
-  FlatList,
   TouchableWithoutFeedback,
-  TextInput,
   Linking,
   Platform,
-  ActivityIndicator,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Fontisto from 'react-native-vector-icons/Fontisto';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Bubble, GiftedChat} from 'react-native-gifted-chat';
 import firestore from '@react-native-firebase/firestore';
-import { BottomSheet } from "react-native-btr";
 
 
 import ChatRoomHeader from './utils/chatRoomHeader';
 import axios from 'axios';
 import {API, API_USER} from '../../../../config';
 import Rating from './utils/Rating';
-// const RATING=[{id:0},{id:1},{id:2},{id:3},{id:4}];
 
 export default function ChatRoom({route, navigation}) {
   const preData = route.params;
@@ -234,48 +225,6 @@ export default function ChatRoom({route, navigation}) {
         ratingArr={rating}
         setRatingArr={setRating}
       />
-      {/* <BottomSheet
-        visible={visible}
-        onBackButtonPress={toggle}
-        onBackdropPress={toggle}
-      >
-        <View style={styles.card}>
-          <Text style={{color:"hotpink",marginTop:10,fontWeight:"600"}}>Review {preData.vendorData.name}</Text>
-          <View style={{justifyContent:"center",flex:1}}>
-            <View style={{
-                flexDirection:"row",
-                alignItems:"center"
-            }}>
-              {
-                RATING.map((item)=>(
-                  <AntDesign name={rating.includes(`${item.id}`) ? "star" : 'staro'}
-                    color={rating.includes(`${item.id}`) ? "#fc9d28" : '#000'}
-                    size={30} 
-                    key={item.id} 
-                    style={{marginHorizontal:10}}
-                    onPress={()=>click(item)} 
-                  />
-                ))
-              }
-            </View>
-          </View>
-          {
-            indicator ? <ActivityIndicator style={{marginBottom:20}} size={24} />
-            :
-            <TouchableOpacity 
-            onPress={submitRating}
-            style={{
-              backgroundColor:"hotpink",
-              paddingVertical:5,
-              paddingHorizontal:15,
-              borderRadius:5,
-              marginBottom:10
-            }}>
-            <Text style={{color:"#fff",fontWeight:"600"}}>Submit</Text>
-          </TouchableOpacity>
-          }
-        </View>
-      </BottomSheet> */}
     </View>
   );
 }

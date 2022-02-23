@@ -5,8 +5,6 @@ import {
     StyleSheet, 
     TouchableOpacity,
     ScrollView,
-    FlatList,
-    Dimensions, 
     ActivityIndicator,
     TextInput,
     Image
@@ -21,8 +19,6 @@ import { API } from "../../../../config";
 import VendorsNearby from "./utils/VendorsNearby";
 
 
-
-const { height, width } = Dimensions.get("window");
 
 export default function SearchScreen({navigation}){
 

@@ -9,13 +9,10 @@ import {
     Image,
     ActivityIndicator
 } from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import CategoryHeader from "./utils/CategoryHeader";
 import axios from "axios";
-import { API, API_USER } from "../../../../config";
+import { API } from "../../../../config";
 
 
 const { height, width } = Dimensions.get("window");
@@ -78,7 +75,7 @@ export default function Categories({route,navigation}){
                                 />
                                 <View style={{marginLeft:10,marginTop:5}}>
                                     <Text style={{color:"#000",fontSize:12,textTransform:"capitalize"}}>{item.title}</Text>
-                                    <Text style={{color:"#000",fontSize:12}}>{item.description}</Text>
+                                    <Text style={{color:"#000",fontSize:12}}>{item.content.replace(/\s/g, '')}</Text>
                                 </View>
                                 <View style={styles.enquire}>
                                     <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
@@ -117,7 +114,7 @@ const styles = StyleSheet.create({
         marginLeft: 20
     },
     box: {
-        height: width/2,
+        minHeight: width/2,
         width: "48%",
         backgroundColor: "#fff",
         elevation: 5,

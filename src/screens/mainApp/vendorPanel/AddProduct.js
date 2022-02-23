@@ -5,20 +5,14 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  Platform,
-  PermissionsAndroid,
-  KeyboardAvoidingView,
   ScrollView,
   Button,
   ActivityIndicator,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import AddProduct_Header from './utils/addProductHeader';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {height, width} from './ChatScreen';
 import axios from 'axios';
 import storage from '@react-native-firebase/storage';
 import {API} from '../../../../config';
@@ -48,6 +42,7 @@ export default function AddProduct({navigation}) {
   const [indicator1, setIndicator1] = useState(false);
   const [productAdded, setProductAdded] = useState(false);
   const [error1, setError1] = useState(false);
+  const [error2, setError2] = useState(false);
 
   useEffect(() => {
     getCategories();
@@ -357,8 +352,19 @@ export default function AddProduct({navigation}) {
   };
 
   const createProduct = () => {
-      setIndicator1(true);
-    axios
+    setIndicator1(true);
+    if(
+      name===""|| cost==="" 
+      || desc==="" || content==="" 
+      || imgURL==="" || selectedCategory_ID===""
+      || selectedService_ID===""
+      ){
+      setError2(true);
+      setIndicator1(false);
+    }
+    else{
+      setError2(false);
+      axios
       .post(`${API}/products`, postData)
       .then(resp => {
         // console.log(resp.data);
@@ -372,6 +378,7 @@ export default function AddProduct({navigation}) {
         setProductAdded(false);
         setError1(true);
       });
+    }
   };
 
   return (
@@ -479,9 +486,12 @@ export default function AddProduct({navigation}) {
                   <Text style={{color:"green",fontSize:12,marginBottom:10}}>Product is added</Text> :
                   error1 ? 
                     <>
-                        <Text style={{color:"red",fontSize:12,top:-5}}>please, fill all the details !</Text>
+                        <Text style={{color:"red",fontSize:12,top:-5}}>please try again later...</Text>
                     </>
-                  : null
+                  : 
+                  error2 ? <Text style={{color:"red",fontSize:12,top:-5}}>please, fill all the details !</Text>
+                  :
+                  null
               }
             <TouchableOpacity style={styles.btn} onPress={createProduct}>
               {

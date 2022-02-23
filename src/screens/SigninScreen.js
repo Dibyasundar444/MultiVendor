@@ -25,7 +25,6 @@ export default function SignIn({navigation,route}){
     const [num, setNum] = useState("");
     const [error, setError] = useState(false);
     const [error1, setError1] = useState(false);
-    // const [user, setUser] = useState("user");
     const [loading, setLoading] = useState(false);
 
     const inputHandler=()=>{
@@ -42,11 +41,7 @@ export default function SignIn({navigation,route}){
         if(num === "" || num.length !== 10){
             setError(true);
         }
-        // else if(user === ""){
-        //     setError1(true);
-        // }
         else{
-            // setError1(false);
             setLoading(true);
             if(!preData){
                 let navData = {
@@ -95,7 +90,6 @@ export default function SignIn({navigation,route}){
 
     return(
         <View style={styles.container}>
-            {/* <StatusBar backgroundColor="#0d5434" /> */}
             <View style={styles.heading}>
                 <Image style={{height:"30%",resizeMode:"contain"}} source={require("../assets/logo.jpg")} />
                 <Text style={{color:"#000",fontSize: 20,fontWeight:"600"}}>Joyayog</Text>
@@ -104,71 +98,6 @@ export default function SignIn({navigation,route}){
                 <ScrollView style={{marginTop: 20, marginHorizontal: 30}}>
                     <View style={{flexDirection:"row",alignItems:"center",marginBottom:20,justifyContent:"space-between"}}>
                         <Text style={{color:"#000",fontSize:22}}>Sign In</Text>
-                        {/* <SelectDropdown
-                            data={UserType}
-                            defaultButtonText={"User type"}
-                            onSelect={(selectedItem) => {
-                                setUser(selectedItem)
-                            }}
-                            buttonTextAfterSelection={(selectedItem) => {
-                                return selectedItem;
-                            }}
-                            rowTextForSelection={(item, index) => {
-                                return item;
-                            }}
-                            buttonStyle={styles.dropdownBtnStyle}
-                            renderDropdownIcon={(isOpened) => {
-                                return (
-                                    <MaterialIcons
-                                    name={isOpened ? "expand-less" : "expand-more"}
-                                    color={"#000"}
-                                    size={24}
-                                    />
-                                );
-                                }}
-                            dropdownIconPosition={"right"}
-                            dropdownStyle={styles.DropdownStyle}
-                            rowStyle={styles.rowStyle}
-                        /> */}
-                        {/* <View style={{
-                            flexDirection:"row",
-                            alignItems:"center"
-                        }}>
-                            <Text style={{color:"gray",marginRight:10}}>as</Text>
-                            <TouchableOpacity 
-                                activeOpacity={0.7}
-                                style={{
-                                    elevation: 5,
-                                    backgroundColor:"#fff",
-                                    paddingVertical:5,
-                                    paddingHorizontal: 8,
-                                    flexDirection:"row",
-                                    alignItems:"center",
-                                    borderRadius:5
-                                }}
-                                onPress={()=>setUser("user")}
-                            >
-                                <Fontisto name={user==="user" ? "radio-btn-active" : "radio-btn-passive"} color="#000" size={14}/>
-                                <Text style={{color:"#000",fontSize:13,marginLeft:5}}>User</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                                activeOpacity={0.7}
-                                style={{
-                                    elevation: 5,
-                                    backgroundColor:"#fff",
-                                    paddingVertical:5,
-                                    paddingHorizontal: 8,
-                                    flexDirection:"row",
-                                    alignItems:"center",
-                                    borderRadius:5,
-                                    marginHorizontal:5
-                                }}
-                                onPress={()=>setUser("vendor")}
-                            >
-                                <Fontisto name={user==="vendor" ? "radio-btn-active" : "radio-btn-passive"} color="#000" size={14}/>
-                                <Text style={{color:"#000",fontSize:13,marginLeft:5}}>Vendor</Text>
-                            </TouchableOpacity>
-                        </View> */}
                     </View>
                     {error1 ? <Text style={styles.error1}>please select your user type</Text>:null}
                     <Text style={{color:"#000",fontSize:14,marginBottom:10}}>Enter your phone number</Text>

@@ -23,21 +23,14 @@ import axios from 'axios';
 import CategoryHeader from './utils/CategoryHeader';
 import {API, API_USER, API_VENDOR} from '../../../../config';
 import Rating from './utils/Rating';
-// import ChatDialog from './utils/chatDialog';
 
-const {height, width} = Dimensions.get('window');
 
 export default function ProductDetails({route, navigation}) {
   const preData = route.params;
-  // const [isVisible, setIsvisible] = useState(false);
   const [isVisible2, setIsvisible2] = useState(false);
-  // const [isSend, setIsSend] = useState(false);
-  // const [title, setTitle] = useState('');
-  // const [msg, setMsg] = useState('');
   const [comment, setComment] = useState('');
   const [commentSent, setCommentSent] = useState(false);
   const [indicator, setIndicator] = useState(false);
-  // const [indicator2, setIndicator2] = useState(false);
   const [oneVendor, setOneVendor] = useState({});
   const [heartPressed, setHeartPressed] = useState(false);
   const [wishlist, setWishlist] = useState([]);
@@ -83,16 +76,11 @@ export default function ProductDetails({route, navigation}) {
   };
 
   const _sendMsg = () => {
-    // setIndicator2(true);
     axios
       .post(`${API}/contactvendors`, MESSAGE)
       .then(resp => {
         console.log(resp.data);
-        navigation.navigate("Chat")
-        // setIndicator2(false);
-        // setIsSend(true);
-        // setTitle('');
-        // setMsg('');
+        navigation.navigate("Chat");
       })
       .catch(err => {
         console.log('Error from server MSG: ', err);
@@ -256,7 +244,7 @@ const toggle=()=>{
             nav={() => navigation.navigate('Alert')}
           />
         </View>
-        {preData.images === '' ? (
+        {!preData.images ? (
           <View style={styles.banner}>
             <Text
               style={{
@@ -284,7 +272,12 @@ const toggle=()=>{
           </TouchableOpacity>
           <View style={styles.titleView}>
             <Text style={styles.title}>{preData.title}</Text>
-            <Text style={{color: 'green', fontSize: 12}}>data.status</Text>
+            {
+              preData.availstatus === true ? 
+              <Text style={{color: 'green', fontSize: 10,marginRight:10}}>Available</Text>
+              :
+              <Text style={{color: 'red', fontSize: 10}}>Not available</Text>
+            }
           </View>
           <Text style={{color: '#000', fontSize: 12}}>{preData.content}</Text>
           <View style={{marginBottom: 20}}>
@@ -408,29 +401,6 @@ const toggle=()=>{
           setRatingArr={setRating}
         />
       </ScrollView>
-      {/* {isVisible && (
-        <ChatDialog
-          Name={oneVendor.name}
-          closeDialog={() => {
-            setIsvisible(false);
-            setTitle('');
-            setMsg('');
-            setIsSend(false);
-          }}
-          title={title}
-          setTitle={val => setTitle(val)}
-          msg={msg}
-          setMsg={val => setMsg(val)}
-          send={_sendMsg}
-          isSend={isSend}
-          setSend={
-            setTimeout(()=>{
-                setIsSend(false);
-            },3000)
-          }
-          INDICATOR2={indicator2}
-        />
-      )} */}
     </View>
   );
 }
@@ -498,7 +468,6 @@ const styles = StyleSheet.create({
     height: 30,
     width: 30,
     borderRadius: 15,
-    // backgroundColor: 'gray',
     marginRight: 10,
   },
   cmntBox: {

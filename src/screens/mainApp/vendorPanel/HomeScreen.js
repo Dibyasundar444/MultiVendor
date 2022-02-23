@@ -5,9 +5,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  TouchableHighlight,
   ScrollView,
-  FlatList,
   Dimensions,
   Image,
   TextInput,
@@ -18,8 +16,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useIsFocused} from '@react-navigation/native';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 
 
@@ -39,7 +36,7 @@ export default function HomeScreen({navigation}) {
   const [serviceAdded, setServiceAdded] = useState(false);
   const [isVisible1, setIsvisible1] = useState(false);
   const [process, setProcess] = useState('');
-  const [location, setLocation] = useState({});
+  // const [location, setLocation] = useState({});
   const [addNewService, setAddNewService] = useState('');
   const [url, setUrl] = useState('');
 
@@ -54,22 +51,22 @@ export default function HomeScreen({navigation}) {
 
   useEffect(() => {
     getLatestProductList();
-    getLocation();
+    // getLocation();
     if (isFocused) {
       getServices();
     }
   }, [isFocused]);
 
-  const getLocation=async()=>{
-    try{
-        const JSON_OBJ = await AsyncStorage.getItem('location');
-        const Parsed = JSON.parse(JSON_OBJ);
-        Parsed !== null ? setLocation(Parsed) : setLocation({});
-    }
-    catch(err){
-        console.log("err",err);
-    }
-};
+//   const getLocation=async()=>{
+//     try{
+//         const JSON_OBJ = await AsyncStorage.getItem('location');
+//         const Parsed = JSON.parse(JSON_OBJ);
+//         Parsed !== null ? setLocation(Parsed) : setLocation({});
+//     }
+//     catch(err){
+//         console.log("err",err);
+//     }
+// };
 
   const getServices = () => {
     axios
@@ -324,7 +321,9 @@ export default function HomeScreen({navigation}) {
                 <TouchableOpacity
                   key={item._id}
                   activeOpacity={0.7}
-                  style={{borderBottomWidth: 1}}>
+                  style={{borderBottomWidth: 1}}
+                  onPress={()=>navigation.navigate("VendorProducts",item)}
+                >
                   <View style={styles.subView}>
                     <View style={{alignItems: 'center', flexDirection: 'row'}}>
                       {
