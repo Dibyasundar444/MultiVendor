@@ -79,7 +79,7 @@ export default function ProfileScreen({navigation}){
         axios.get(`${API_USER}/userdetail`)
         .then(res=>{
             if(res.status===200){
-                // console.log(res.data);
+                console.log("user",res.data);
                 setPhoneNo(res.data.phoneNo);
                 setName(res.data.name);
                 setImg(res.data.profileImg);

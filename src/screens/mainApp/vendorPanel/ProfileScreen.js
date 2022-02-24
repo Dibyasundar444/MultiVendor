@@ -181,6 +181,7 @@ export default function ProfileScreen({navigation}){
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.smCard}
                     onPress={onShare}
+                    activeOpacity={0.8}
                 >
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
                         <AntDesign name="sharealt" color="#000" size={18}/>

@@ -39,6 +39,7 @@ export default function OtpVerify({route,navigation}){
         if(prevData.user === "user"){
             axios.post(`${API_USER}/register/verify`,postData)
             .then(async res => {
+                console.log(res.data);
                 setError(false);
                 setLoading(false);
                 console.log("OTP verified");

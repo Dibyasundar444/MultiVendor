@@ -23,8 +23,9 @@ export default function SignIn({navigation,route}){
 
     const preData = route.params;
     const [num, setNum] = useState("");
+    const [email, setEmail] = useState("");
     const [error, setError] = useState(false);
-    const [error1, setError1] = useState(false);
+    const [error2, setError2] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const inputHandler=()=>{
@@ -35,12 +36,23 @@ export default function SignIn({navigation,route}){
             setError(false);
         }
     };
+    const inputHandler2=()=>{
+        if(email === ""){
+            setError2(true);
+        }
+        else{
+            setError2(false);
+        }
+    };
 
 
     const submit=()=>{
         if(num === "" || num.length !== 10){
-            setError(true);
+            setError(true)
         }
+        // else if(email === ""){
+        //     setError2(true)
+        // }
         else{
             setLoading(true);
             if(!preData){
@@ -95,27 +107,39 @@ export default function SignIn({navigation,route}){
                 <Text style={{color:"#000",fontSize: 20,fontWeight:"600"}}>Joyayog</Text>
             </View>
             <View style={styles.modal}>
-                <ScrollView style={{marginTop: 20, marginHorizontal: 30}}>
+                <ScrollView style={{marginHorizontal: 30}}contentContainerStyle={{paddingVertical:20}} >
                     <View style={{flexDirection:"row",alignItems:"center",marginBottom:20,justifyContent:"space-between"}}>
                         <Text style={{color:"#000",fontSize:22}}>Sign In</Text>
                     </View>
-                    {error1 ? <Text style={styles.error1}>please select your user type</Text>:null}
                     <Text style={{color:"#000",fontSize:14,marginBottom:10}}>Enter your phone number</Text>
                     <Text style={{color:"#000",fontSize:12}}>You will receive a 4-digit code for phone</Text>
                     <Text style={{color:"#000",fontSize:12}}>number verification</Text>
-                    <KeyboardAvoidingView style={styles.textInputDiv}>
-                        <Text style={{color:"#000",marginLeft:10}}>+91</Text>
-                        <TextInput style={styles.textInput} 
-                            placeholder="Phone number"
-                            value={num}
-                            onChangeText={(val)=>setNum(val)}
-                            keyboardType="number-pad"
-                            placeholderTextColor="gray"
-                            onBlur={inputHandler}
-                            maxLength={10}
-                        />
-                    </KeyboardAvoidingView>
-                    {error ? <Text style={{fontSize:12,color:"red",textAlign:"center"}}>please enter a valid number</Text>: null}
+                    <View style={{alignItems:"center"}}>
+                        <KeyboardAvoidingView style={styles.textInputDiv}>
+                            <Text style={{color:"#000",marginLeft:10}}>+91</Text>
+                            <TextInput style={styles.textInput} 
+                                placeholder="Phone number"
+                                value={num}
+                                onChangeText={(val)=>setNum(val)}
+                                keyboardType="number-pad"
+                                placeholderTextColor="gray"
+                                onBlur={inputHandler}
+                                maxLength={10}
+                            />
+                        </KeyboardAvoidingView>
+                        {error ? <Text style={{fontSize:12,color:"red",textAlign:"center"}}>please enter a valid number</Text>: null}
+                        {/* <KeyboardAvoidingView style={styles.textInputDiv}>
+                            <TextInput style={styles.emailInput} 
+                                placeholder="Email I'd..."
+                                value={email}
+                                onChangeText={(val)=>setEmail(val)}
+                                // keyboardType="email"
+                                placeholderTextColor="gray"
+                                onBlur={inputHandler2}
+                            />
+                        </KeyboardAvoidingView> */}
+                        {/* {error2 ? <Text style={{fontSize:12,color:"red",textAlign:"center"}}>please enter a valid email id</Text>: null} */}
+                    </View>
                     <TouchableOpacity 
                         style={styles.otp} 
                         activeOpacity={0.6} 
@@ -139,7 +163,7 @@ const styles = StyleSheet.create({
     },
     heading: {
         marginTop: height/6,
-        height: height/4,
+        height: height/4.5,
         alignItems:"center"
     },
     modal: {
@@ -156,13 +180,20 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         borderRadius: 10,
         flexDirection: "row",
-        alignItems: "center"
+        alignItems: "center",
+        overflow:"hidden"
     },
     textInput: {
         height: 60,
         color: "#000",
         paddingLeft: 15,
-        width: "80%"
+        width: "80%",
+    },
+    emailInput: {
+        height: 60,
+        color: "#000",
+        paddingLeft: 15,
+        width: "95%",
     },
     otp: {
         borderRadius: 10,

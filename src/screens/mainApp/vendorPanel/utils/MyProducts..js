@@ -100,7 +100,7 @@ export default function MyProduct() {
           {loading ? (
             <ActivityIndicator size={40} style={{marginTop: 80}} />
           ) : data.length === 0 ? (
-            <Text style={{color: '#000', marginTop: 40}}>No Product found</Text>
+            <Text style={{color: '#000', marginTop: 40, textAlign: "center"}}>No Product found</Text>
           ) : (
             <FlatList
               style={{marginBottom: height / 6.1}}

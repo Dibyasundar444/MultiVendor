@@ -21,7 +21,9 @@ import { API_VENDOR } from "../../../../config";
 export default function EditProfile({navigation}){
 
 
+    const [loading, setLoading] = useState(true);
     const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
     const [phoneNo, setPhoneNo] = useState("");
     const [address, setAddress] = useState("");
     const [isVisible, setIsVisible] = useState(false);
@@ -191,9 +193,12 @@ export default function EditProfile({navigation}){
             setName(res.data.name);
             setUrl(res.data.profileImg);
             setAddress(res.data.address);
+            setEmail(res.data.email);
+            setLoading(false);
         })
         .catch(err=>{
             console.log(err);
+            setLoading(false);
         })
     };
 
@@ -216,7 +221,8 @@ export default function EditProfile({navigation}){
         "name": name,
         "address": address,
         "profileImg": url,
-        "role": 1
+        "role": 1,
+        "email": email
     };
 
     const update=()=>{
@@ -240,6 +246,8 @@ export default function EditProfile({navigation}){
                 <Text style={{color:"#000",marginLeft:30,fontSize:16,fontWeight:"500"}}>Profile</Text>
             </View>
             <ScrollView style={styles.body}>
+                {loading ? <ActivityIndicator size={40} style={{marginTop:100}} />
+                :
                 <View style={{marginHorizontal:20,marginVertical:20}}>
                     <View style={styles.bodyTitle}>
                         <Text style={{color:"#000"}}>Edit Profile</Text>
@@ -266,7 +274,7 @@ export default function EditProfile({navigation}){
                                 paddingLeft:20,color:"#000"
                             }}
                             placeholder={name==="" || name===undefined ? "Name" : name}
-                            placeholderTextColor="#000"
+                            placeholderTextColor="gray"
                             autoCorrect={false}
                             value={name}
                             onChangeText={(val)=>setName(val)}
@@ -276,6 +284,19 @@ export default function EditProfile({navigation}){
                         <Text style={{color:"#000",marginLeft:20}}>+91</Text>
                         <Text style={{color:"#000",marginLeft:10}}>{phoneNo}</Text>
                     </View>
+                    <View style={styles.smCard}>
+                        <TextInput 
+                            style={{
+                                width:"100%",borderRadius: 10,
+                                paddingLeft:20,color:"#000"
+                            }}
+                            placeholder={email==="" || email===undefined ? "Enter email..." : email}
+                            placeholderTextColor="gray"
+                            autoCorrect={false}
+                            value={email}
+                            onChangeText={(val)=>setEmail(val)}
+                        />
+                    </View>
                     <View style={styles.desCard}>
                         <TextInput 
                             style={{
@@ -283,7 +304,7 @@ export default function EditProfile({navigation}){
                                 height:"100%",paddingLeft:20,borderRadius: 10
                             }}
                             placeholder={address==="" || address===undefined ? "Address" : address}
-                            placeholderTextColor="#000"
+                            placeholderTextColor="gray"
                             multiline={true}
                             value={address}
                             onChangeText={(val)=>setAddress(val)}
@@ -295,7 +316,7 @@ export default function EditProfile({navigation}){
                         <Text style={{color:"green",fontSize:12}}>Updated sucessfully</Text> : null
                     }
                     </View>
-                </View>
+                </View>}
             </ScrollView>
             {isVisible && upload()}
         </View>

@@ -56,13 +56,15 @@ export default function ChatRoom({route, navigation}) {
         _id: preData.customerData._id,
         name: preData.customerData.name,
         avatar: preData.customerData.profileImg,
-        phoneNo: preData.customerData.phoneNo
+        phoneNo: preData.customerData.phoneNo,
+        email: preData.customerData.email
       },
       sender: {
         _id: preData.totalData._id,
         name: preData.totalData.name,
         avatar: preData.totalData.profileImg,
-        phoneNo: preData.totalData.phoneNo
+        phoneNo: preData.totalData.phoneNo,
+        email: preData.totalData.email
       }
     }
     setMessages(previousMessages =>
@@ -78,7 +80,7 @@ export default function ChatRoom({route, navigation}) {
       .collection('MSG')
       .add({...myMsg, createdAt: firestore.FieldValue.serverTimestamp()})
       .then(()=>{
-        // console.log("msg", myMsg);
+        console.log("msg", myMsg);
         axios.post(`${API}/firebasemessage`,myMsg)
         .then(res=>{
           console.log(res.data);
