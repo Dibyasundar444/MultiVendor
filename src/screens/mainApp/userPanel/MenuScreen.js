@@ -38,6 +38,7 @@ export default function Menu({navigation}){
     const getBanner=()=>{
         axios.get(`${API}/banner`)
         .then(resp=>{
+            console.log(resp.data);
             resp.data.map(item=>{
                 var innerObj = {img: item.imgUrl};
                 IMAGES.push(innerObj);
