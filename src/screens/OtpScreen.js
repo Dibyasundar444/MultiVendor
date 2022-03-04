@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { 
     View, 
     Text, 
@@ -13,6 +13,7 @@ import {
 import AsyncStorage  from "@react-native-async-storage/async-storage";
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+import { StackActions } from "@react-navigation/native";
 import axios from "axios";
 
 import { API_USER, API_VENDOR } from "../../config";
@@ -39,7 +40,7 @@ export default function OtpVerify({route,navigation}){
         if(prevData.user === "user"){
             axios.post(`${API_USER}/register/verify`,postData)
             .then(async res => {
-                console.log(res.data);
+                // console.log(res.data);
                 setError(false);
                 setLoading(false);
                 console.log("OTP verified");
@@ -47,7 +48,9 @@ export default function OtpVerify({route,navigation}){
                     const jsonValue = JSON.stringify(res.data);
                     await AsyncStorage.setItem("jwt",jsonValue);
                     await AsyncStorage.setItem("userRole","0");
-                    navigation.navigate("UserPanel");
+                    navigation.dispatch(
+                        StackActions.replace('UserPanel')
+                    )
                 }
                 catch(e){
                     console.log(e);

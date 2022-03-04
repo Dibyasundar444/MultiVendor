@@ -14,11 +14,11 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Octicons from "react-native-vector-icons/Octicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsFocused } from "@react-navigation/native";
+import { StackActions, useIsFocused } from "@react-navigation/native";
 
 import axios from "axios";
 
-import { API_USER } from "../../../../config";
+import { API, API_USER } from "../../../../config";
 import ProfileHeader from "./utils/ProfileHeader";
 
 
@@ -35,13 +35,25 @@ export default function ProfileScreen({navigation}){
     const [name, setName] = useState("");
     const isFocused = useIsFocused();
     
-    const link = "link/will/be/here";
+    // const link = "link/will/be/here";
 
     useEffect(()=>{
         if(isFocused){
             getUser();
-        }
+        };
+        getShareLink();
     },[isFocused]);
+
+    const getShareLink=()=>{
+        axios.get(`${API}/sharelink`)
+        .then(resp=>{
+            const link = (resp.data[0].link);
+            global.link = link;
+        })
+        .catch(err=>{
+            console.log("share link error:",err);
+        })
+    };
 
     const logOut_alert=()=>{
         Alert.alert(
@@ -58,34 +70,43 @@ export default function ProfileScreen({navigation}){
         )
     };
 
-    const logOut=()=> {
-        axios.get(`${API_USER}/logout`)
-        .then(async res=>{
-            if(res.status===200){
-                try{
-                    await AsyncStorage.removeItem("jwt");
-                    navigation.navigate("SignIn");
-                }
-                catch(e){
-                    console.log("logout error: ",e);
-                }
+    const logOut=async()=> {
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+            headers:{
+                Authorization: parsed.token
             }
-            else console.log("Status: ",res.status);
+        };
+        axios.get(`${API_USER}/logout`,axiosConfig)
+        .then(async res=>{   
+            try{
+                await AsyncStorage.removeItem("jwt");
+                navigation.dispatch(
+                    StackActions.replace('SignIn')
+                )
+            }
+            catch(e){
+                console.log("logout error: ",e);
+            } 
         })
-        .catch(err=>console.log(err))
     };
 
-    const getUser=()=>{
-        axios.get(`${API_USER}/userdetail`)
-        .then(res=>{
-            if(res.status===200){
-                console.log("user",res.data);
-                setPhoneNo(res.data.phoneNo);
-                setName(res.data.name);
-                setImg(res.data.profileImg);
-                // setAddress(res.data.address);
+    const getUser=async()=>{
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+            headers:{
+                Authorization: parsed.token
             }
-            else console.log("Status error: ",res.status);
+        };
+        axios.get(`${API_USER}/userdetail`,axiosConfig)
+        .then(res=>{
+            console.log("user",res.data);
+            setPhoneNo(res.data.phoneNo);
+            setName(res.data.name);
+            setImg(res.data.profileImg);
+            // setAddress(res.data.address);
         })
         .catch(err=>{
             console.log(err);

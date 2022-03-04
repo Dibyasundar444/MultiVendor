@@ -70,7 +70,7 @@ export default function Services({route,navigation}){
                                     onPress={()=>_details(item)}
                                 >
                                     <Image style={styles.images}
-                                        source={{uri: item.images}}
+                                        source={{uri: item.images[0]}}
                                     />
                                     <View style={{marginLeft:10,marginTop:5}}>
                                         <Text style={{

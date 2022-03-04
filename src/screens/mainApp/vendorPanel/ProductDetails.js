@@ -8,13 +8,20 @@ import {
   Image,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {API} from '../../../../config';
 import axios from 'axios';
 import Header from './utils/header';
+import { ImageSlider } from '../userPanel/utils/img-slider';
 
 export default function ProductDetailsVendor({route, navigation}) {
   const preData = route.params;
+  const IMAGES = [];
+  preData.images.forEach(elemet=>{
+    var innerObj = {img: elemet};
+    IMAGES.push(innerObj);
+  });
   const [commentList, setCommentList] = useState([]);
   const [isVisible2, setIsvisible2] = useState(false);
 
@@ -23,12 +30,18 @@ export default function ProductDetailsVendor({route, navigation}) {
   }, []);
 
 
-  const getCommentList = () => {
+  const getCommentList = async() => {
+    const json_Val = await AsyncStorage.getItem("jwt");
+    const parsed = JSON.parse(json_Val);
+    let axiosConfig = {
+        headers:{
+            Authorization: parsed.token
+        }
+    };
     axios
-      .get(`${API}/commentofprod/${preData._id}`)
+      .get(`${API}/commentofprod/${preData._id}`,axiosConfig)
       .then(resp => {
         setCommentList(resp.data);
-        console.log('ok');
       })
       .catch(err => {
         console.log('server err: ', err);
@@ -84,10 +97,13 @@ export default function ProductDetailsVendor({route, navigation}) {
           />
         </View>
         <View style={styles.banner}>
-          <Image
-            style={styles.img}
-            source={{uri: preData.images}}
-            resizeMode="stretch"
+          <ImageSlider 
+            data={IMAGES}
+            autoPlay={true}
+            closeIconColor="#fff"
+            showIndicator={false}
+            caroselImageContainerStyle={styles.img}
+            timer={5000}
           />
         </View>
         <View style={styles.body}>
@@ -144,7 +160,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   img: {
-    width: '100%',
     height: '100%',
   },
   body: {

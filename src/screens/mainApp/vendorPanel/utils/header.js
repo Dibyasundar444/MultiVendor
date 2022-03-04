@@ -3,7 +3,8 @@ import {
     View, 
     Text, 
     StyleSheet, 
-    TouchableOpacity, 
+    TouchableOpacity,
+    ActivityIndicator, 
 } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -16,9 +17,19 @@ export default function Header(props){
             <View style={styles.header}>
                 <View style={{flexDirection:"row",alignItems:"center"}}>
                 {
-                    props.isBack ? <Feather name="chevron-left" color="#000" size={32} onPress={props.back} style={{marginRight:20}} /> : null
+                    props.isBack 
+                    ? 
+                    <Feather name="chevron-left" color="#000" size={32} onPress={props.back} style={{marginRight:20}} />
+                    : 
+                    null
                 }
-                <Text style={{color:"#000",fontSize: 16,textTransform:"capitalize"}}>{props.title}</Text>
+                    {
+                        props.isLoading 
+                        ? 
+                        <ActivityIndicator style={{marginHorizontal:20}} /> 
+                        :
+                        <Text style={{color:"#000",textTransform:"capitalize",letterSpacing:1}}>{props.title}</Text>
+                    }
                 </View>
                 <View style={{flexDirection:"row",alignItems:"center"}}>
                     <Ionicons name="person-outline" color="#000" size={24} onPress={props.profile} />

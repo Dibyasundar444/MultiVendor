@@ -11,7 +11,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Bubble, GiftedChat} from 'react-native-gifted-chat';
 import firestore from '@react-native-firebase/firestore';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import ChatRoomHeader from './utils/chatRoomHeader';
 import { API } from '../../../../config';
@@ -79,9 +79,15 @@ export default function ChatRoom({route, navigation}) {
       .doc(docId)
       .collection('MSG')
       .add({...myMsg, createdAt: firestore.FieldValue.serverTimestamp()})
-      .then(()=>{
-        console.log("msg", myMsg);
-        axios.post(`${API}/firebasemessage`,myMsg)
+      .then(async()=>{
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+            headers:{
+                Authorization: parsed.token
+            }
+        };
+        axios.post(`${API}/firebasemessage`,myMsg,axiosConfig)
         .then(res=>{
           console.log(res.data);
         })

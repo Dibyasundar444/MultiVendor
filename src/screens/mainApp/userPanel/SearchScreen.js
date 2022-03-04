@@ -15,7 +15,7 @@ import { BottomSheet } from "react-native-btr";
 import axios from "axios";
 
 import SearchHeader from "./utils/searchHeader";
-import { API } from "../../../../config";
+import { API, API_USER } from "../../../../config";
 import VendorsNearby from "./utils/VendorsNearby";
 
 
@@ -34,12 +34,34 @@ export default function SearchScreen({navigation}){
     const [isVisible, setIsVisible] = useState(false);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [userData, setUserData] = useState({});
+    const [isHeaderReady, setIsHeaderReady] = useState(false);
+    const [isExpand, setIsExpand] = useState(false);
 
     useEffect(()=>{
         getCategories();
         getServices();
         getLocation();
+        getUser();
     },[]);
+
+    const getUser=async()=>{
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+            headers:{
+                Authorization: parsed.token
+            }
+        };
+        axios.get(`${API_USER}/userdetail`,axiosConfig)
+        .then(res=>{
+            setUserData(res.data);
+            setIsHeaderReady(true);
+        })
+        .catch(err=>{
+            console.log(err);
+        })
+    };
 
     const getLocation=async()=>{
         try{
@@ -140,9 +162,20 @@ export default function SearchScreen({navigation}){
         setIsVisible(visble => !visble)
     };
 
-    const sendRequest=()=>{
+    const sendRequest=async()=>{
         setIndicator3(true);
-        axios.post(`${API}/customorder`,{title:title,description:description})
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+            headers:{
+                Authorization: parsed.token
+            }
+        };
+        let postData = {
+            title:title,
+            description:description
+        };
+        axios.post(`${API}/customorder`,postData,axiosConfig)
         .then(resp=>{
             console.log(resp.data);
             setIndicator3(false);
@@ -172,6 +205,11 @@ export default function SearchScreen({navigation}){
                 city={location.city}
                 state={location.state}
                 country={location.country}
+                U_NAME={userData.name}
+                expand={isExpand}
+                SET_Expand={()=>setIsExpand(expand => !expand)}
+                isU_Name={userData.name ? true : false}
+                ready={isHeaderReady}
             />
             <View style={styles.textInputDiv}>
                 <Feather name="search" size={22} style={{marginLeft:10,color:"#000"}} />

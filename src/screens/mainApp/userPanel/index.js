@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     View,
     Text,
@@ -45,7 +45,7 @@ export default function UserPanel(){
                         <View style={{flex:1,width:width/4,justifyContent:"center"}}>
                             <View style={[styles.btn1_inActiveStyle, focused && styles.btn1_activeStyle]}>
                                 <AntDesign name="menufold" color={focused?"#fff":"#000"} size={26} style={focused && {right:-10}} />
-                                <Text style={[{fontSize:12,color:"#000"},focused && {color:"#fff",right:-10}]}>Menu</Text>
+                                <Text style={[{fontSize:12,color:"#000"},focused && {color:"#fff",right:-10}]}>Home</Text>
                             </View>
                         </View>
                     )

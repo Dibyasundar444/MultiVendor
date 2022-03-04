@@ -16,8 +16,10 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import {API} from '../../../../config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {height, width} = Dimensions.get('window');
 
@@ -56,9 +58,16 @@ export default function VendorProfile({navigation, route}) {
     vendorId: item._id,
   };
 
-  const _sendMsg = () => {
+  const _sendMsg = async() => {
+    const json_Val = await AsyncStorage.getItem("jwt");
+    const parsed = JSON.parse(json_Val);
+    let axiosConfig = {
+      headers:{
+        Authorization: parsed.token
+      }
+    };
     axios
-      .post(`${API}/contactvendors`, MESSAGE)
+      .post(`${API}/contactvendors`,MESSAGE,axiosConfig)
       .then(resp => {
         console.log(resp.data);
         navigation.navigate('Chat');
@@ -66,6 +75,10 @@ export default function VendorProfile({navigation, route}) {
       .catch(err => {
         console.log('Error from server MSG: ', err);
       });
+  };
+
+  const _openWhatsapp=()=>{
+    Linking.openURL('http://api.whatsapp.com/send?phone=91'+item.phoneNo)
   };
 
   const services = () =>
@@ -135,7 +148,7 @@ export default function VendorProfile({navigation, route}) {
                 }
                 {
                   item.locality ? 
-                  <Text style={{fontSize: 10}}>{item.locality}, {item.state} ({item.country})</Text>
+                  <Text style={{fontSize: 12,color:"#fff"}}>{item.locality}, {item.state} ({item.country})</Text>
                   :
                   null
                 }
@@ -153,11 +166,14 @@ export default function VendorProfile({navigation, route}) {
             <View style={styles.btnRound}>
               <AntDesign name="star" color="#fc9d28" size={18} />
               <Text style={{fontSize: 8, color: '#000', fontWeight: '500'}}>
-                {item.ratings}/5
+                {item.ratings.toString().split('',3)}/5
               </Text>
             </View>
             <TouchableOpacity style={styles.btnRound} onPress={_sendMsg}>
               <MaterialIcons name="chat" color="#000" size={20} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btnRound} onPress={_openWhatsapp}>
+              <FontAwesome name="whatsapp" color="green" size={26} />
             </TouchableOpacity>
           </View>
         </View>
@@ -186,7 +202,7 @@ export default function VendorProfile({navigation, route}) {
                       width: '100%',
                       borderRadius: 10,
                     }}
-                    source={{uri: item.images}}
+                    source={{uri: item.images[0]}}
                   />
                   <View style={{marginLeft: 10, marginTop: 5}}>
                     <Text
@@ -198,7 +214,7 @@ export default function VendorProfile({navigation, route}) {
                       {item.title}
                     </Text>
                     <Text style={{color: '#000', fontSize: 12}}>
-                      {item.description}
+                      {item.content.replace(/\s/g, '')}
                     </Text>
                   </View>
                   <View
@@ -260,9 +276,11 @@ const styles = StyleSheet.create({
   des: {
     marginHorizontal: 20,
     flexWrap: 'wrap',
+    color:"#fff",
+    fontWeight:"500"
   },
   box: {
-    height: width / 2,
+    minHeight: width / 2,
     width: '48%',
     backgroundColor: '#fff',
     elevation: 5,

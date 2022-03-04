@@ -13,6 +13,7 @@ import { useIsFocused } from "@react-navigation/native";
 
 import Header from "./utils/header";
 import { API_VENDOR } from "../../../../config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const { height, width } = Dimensions.get("window");
 
@@ -28,8 +29,15 @@ export default function VendorChat({navigation}){
         }
     },[isFocused]);
 
-    const getChatList=()=>{
-        axios.get(`${API_VENDOR}/vendordetail`)
+    const getChatList=async()=>{
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+            headers:{
+                Authorization: parsed.token
+            }
+        };
+        axios.get(`${API_VENDOR}/vendordetail`,axiosConfig)
         .then(resp=>{
             console.log(resp.data);
             setChatList(resp.data.customercontact);

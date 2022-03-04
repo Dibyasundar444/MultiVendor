@@ -3,21 +3,50 @@ import {
     View, 
     Text, 
     StyleSheet, 
+    TouchableOpacity,
+    ActivityIndicator
 } from "react-native";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
 
 
-export default function SearchHeader({nav,city,state,country}){
+export default function SearchHeader({nav,city,state,country,U_NAME,expand,SET_Expand,isU_Name,ready}){
 
     return(
         <View style={styles.header}>
-            <View style={{flexDirection:"row",alignItems:"center"}}>
+            <TouchableOpacity 
+                style={{flexDirection:"row",alignItems:"flex-start"}}
+                activeOpacity={0.8}
+                onPress={SET_Expand}
+            >
                 <EvilIcons name="location" color="#000" size={24} />
-                <Text style={{color:"#000",fontSize:12,marginRight:10,fontWeight:"600"}}>{city}, {state} ({country})</Text>
-                <Entypo name="chevron-thin-down" color="#000" size={16} />
-            </View>
+                {
+                    !ready ?
+                    <ActivityIndicator style={{marginHorizontal:20}} />
+                    :
+                    expand 
+                    ? 
+                    <View>
+                        <Text style={styles.text1}>{U_NAME}</Text>
+                        <Text style={styles.text2}>{city}, {state} ({country})</Text>
+                    </View>
+                    :
+                    <View>
+                        {
+                            isU_Name ? 
+                            <Text style={styles.text3}>{U_NAME}</Text>
+                            :
+                            <Text style={styles.text4}>{city}, {state} ({country})</Text>
+                        }
+                    </View>
+                }
+                <Entypo 
+                    name={expand ? "chevron-thin-up" : "chevron-thin-down"} 
+                    color="#000" 
+                    style={{marginTop:2}} size={16} 
+                />
+            </TouchableOpacity>
             <Fontisto name="bell" color="#000" size={24} onPress={nav} />
         </View>
     );
@@ -30,4 +59,32 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center"
     },
+    text1: {
+        color:"#000",
+        fontSize:12,
+        marginLeft:10,
+        fontWeight:"600",
+        letterSpacing:1,
+        textTransform: 'capitalize'
+    },
+    text2: {
+        color:"#000",
+        fontSize:12,
+        marginLeft:10,
+        fontWeight:"600"
+    },
+    text3: {
+        color:"#000",
+        fontSize:12,
+        marginHorizontal:10,
+        fontWeight:"600",
+        letterSpacing:1,
+        textTransform: 'capitalize'
+    },
+    text4: {
+        color:"#000",
+        fontSize:12,
+        marginHorizontal:10,
+        fontWeight:"600"
+    }
 })

@@ -8,17 +8,22 @@ import {
   ScrollView,
   Button,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-crop-picker';
 import axios from 'axios';
 import storage from '@react-native-firebase/storage';
-import {API} from '../../../../config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {API, API_VENDOR} from '../../../../config';
 import Header from './utils/header';
 
-export default function AddProduct({navigation}) {
+export default function AddProduct({navigation,route}) {
+
+  const preData = route.params;
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const [cost, setCost] = useState('');
@@ -37,16 +42,19 @@ export default function AddProduct({navigation}) {
   const [selectedService_name, setSelectedService_name] = useState('');
   const [loading2, setLoading2] = useState(false);
 
-  const [imgURL, setImgURL] = useState('');
+  const [imgURL, setImgURL] = useState([]);
+  // const [downloadURL, setDownladURL] = useState([]);
   const [process, setProcess] = useState('');
   const [indicator1, setIndicator1] = useState(false);
   const [productAdded, setProductAdded] = useState(false);
   const [error1, setError1] = useState(false);
   const [error2, setError2] = useState(false);
+  const [numberOfProducts, setNumberOfProducts] = useState('');
 
   useEffect(() => {
     getCategories();
     getServices();
+    getProducts();
   }, []);
 
   // console.log("Path: ", file.uri);
@@ -93,32 +101,140 @@ export default function AddProduct({navigation}) {
   //     else return true;
   // };
 
-  const openCamera = async () => {
-    const options = {
-      storageOptions: {
-        path: 'images',
-        mediaType: 'photo',
-      },
-      includeBase64: true,
+  const getProducts=async()=>{
+    const json_Val = await AsyncStorage.getItem("jwt");
+    const parsed = JSON.parse(json_Val);
+    let axiosConfig = {
+        headers:{
+            Authorization: parsed.token
+        }
     };
-    // let isCameraPermitted = await requestCameraPermission();
-    // let isStoragePermitted = await requestLibraryPermission();
+    axios.get(`${API}/products/vendor/${preData}`,axiosConfig)
+    .then(resp => {
+      setNumberOfProducts(resp.data.length);
+    })
+    .catch(err => {
+      console.log('server error: ', err);
+    });
+  }
 
-    // if(isCameraPermitted && isStoragePermitted){
-    launchCamera(options, resp => {
-      if (resp.didCancel) {
-        console.log('Canceled');
-        setIsVisible1(false);
-      } else if (resp.error) {
-        console.log('Error: ', resp.error);
-        setIsVisible1(false);
-      } else {
-        const imgData = resp.assets[0];
-        console.log(imgData.fileName);
+  // const openCamera = async () => {
+  //   const options = {
+  //     storageOptions: {
+  //       path: 'images',
+  //       mediaType: 'photo',
+  //     },
+  //     includeBase64: true,
+  //   };
+  //   // let isCameraPermitted = await requestCameraPermission();
+  //   // let isStoragePermitted = await requestLibraryPermission();
+
+  //   // if(isCameraPermitted && isStoragePermitted){
+  //   launchCamera(options, resp => {
+  //     if (resp.didCancel) {
+  //       console.log('Canceled');
+  //       setIsVisible1(false);
+  //     } else if (resp.error) {
+  //       console.log('Error: ', resp.error);
+  //       setIsVisible1(false);
+  //     } else {
+  //       const imgData = resp.assets[0];
+  //       try {
+  //         const task = storage()
+  //           .ref('VENDOR/product/img' + imgData.fileName)
+  //           .putString(imgData.base64, 'base64');
+  //         task.on(
+  //           'state_changed',
+  //           function (snapshot) {
+  //             const rate = Math.floor(
+  //               (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+  //             );
+  //             setProcess(`${rate}%`);
+  //             console.log(rate);
+  //           },
+  //           function (err) {
+  //             console.log(err);
+  //           },
+  //           function () {
+  //             task.snapshot.ref.getDownloadURL().then(function (url) {
+  //               setImgURL(url);
+  //             });
+  //           },
+  //         );
+  //         task.then(() => {
+  //           console.log('PDF uploaded to the bucket!');
+  //         });
+  //       } catch (e) {
+  //         console.log(e);
+  //       }
+  //       setIsVisible1(false);
+  //     }
+  //   });
+  //   // }
+  // };
+  // const openLibrary = async () => {
+  //   const options = {
+  //     storageOptions: {
+  //       path: 'images',
+  //       mediaType: 'photo',
+  //     },
+  //     includeBase64: true,
+  //   };
+  //   launchImageLibrary(options, resp => {
+  //     if (resp.didCancel) {
+  //       console.log('Canceled');
+  //       setIsVisible1(false);
+  //     } else if (resp.error) {
+  //       console.log('Error: ', resp.error);
+  //       setIsVisible1(false);
+  //     } else {
+  //       const imgData = resp.assets[0];
+  //       try {
+  //         const task = storage()
+  //           .ref('VENDOR/product/img' + imgData.fileName)
+  //           .putString(imgData.base64, 'base64');
+  //         task.on(
+  //           'state_changed',
+  //           function (snapshot) {
+  //             const rate = Math.floor(
+  //               (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+  //             );
+  //             setProcess(`${rate}%`);
+  //             console.log(rate);
+  //           },
+  //           function (err) {
+  //             console.log(err);
+  //           },
+  //           function () {
+  //             task.snapshot.ref.getDownloadURL().then(function (url) {
+  //               setImgURL(url);
+  //             });
+  //           },
+  //         );
+  //         task.then(() => {
+  //           console.log('PDF uploaded to the bucket!');
+  //         });
+  //       } catch (e) {
+  //         console.log(e);
+  //       }
+  //       setIsVisible1(false);
+  //     }
+  //   });
+  // };
+
+  const openLibrary=async()=>{
+    ImagePicker.openPicker({
+      multiple: true,
+      includeBase64: true,
+      mediaType: 'photo'
+    })
+    .then(image=>{
+      image.forEach(x=>{
+        let fileName = x.path.substring(x.path.lastIndexOf('/') + 1);
         try {
           const task = storage()
-            .ref('VENDOR/product/img' + imgData.fileName)
-            .putString(imgData.base64, 'base64');
+            .ref('VENDOR/product/img' + fileName)
+            .putString(x.data, 'base64');
           task.on(
             'state_changed',
             function (snapshot) {
@@ -133,7 +249,7 @@ export default function AddProduct({navigation}) {
             },
             function () {
               task.snapshot.ref.getDownloadURL().then(function (url) {
-                setImgURL(url);
+                setImgURL((prev) => [...prev, url])
               });
             },
           );
@@ -144,91 +260,36 @@ export default function AddProduct({navigation}) {
           console.log(e);
         }
         setIsVisible1(false);
-      }
-    });
-    // }
-  };
-  const openLibrary = async () => {
-    const options = {
-      storageOptions: {
-        path: 'images',
-        mediaType: 'photo',
-      },
-      includeBase64: true,
-    };
-    // let isCameraPermitted = await requestCameraPermission();
-    // let isStoragePermitted = await requestLibraryPermission();
-
-    // if(isCameraPermitted && isStoragePermitted){
-    launchImageLibrary(options, resp => {
-      if (resp.didCancel) {
-        console.log('Canceled');
-        setIsVisible1(false);
-      } else if (resp.error) {
-        console.log('Error: ', resp.error);
-        setIsVisible1(false);
-      } else {
-        const imgData = resp.assets[0];
-        try {
-          const task = storage()
-            .ref('VENDOR/product/img' + imgData.fileName)
-            .putString(imgData.base64, 'base64');
-          task.on(
-            'state_changed',
-            function (snapshot) {
-              const rate = Math.floor(
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
-              );
-              setProcess(`${rate}%`);
-              console.log(rate);
-            },
-            function (err) {
-              console.log(err);
-            },
-            function () {
-              task.snapshot.ref.getDownloadURL().then(function (url) {
-                setImgURL(url);
-              });
-            },
-          );
-          task.then(() => {
-            console.log('PDF uploaded to the bucket!');
-          });
-        } catch (e) {
-          console.log(e);
-        }
-        setIsVisible1(false);
-      }
-    });
-    // }
+      })
+    })
   };
 
-  const upload = () => (
-    <View style={styles.absAlert}>
-      <View style={styles.alertBox}>
-        <Text style={styles.select}>Select Photo...</Text>
-        <View style={styles.line} />
-        <View style={{alignItems: 'center', marginTop: 20}}>
-          <TouchableOpacity style={styles.content} onPress={openCamera}>
-            <Text style={{color: '#fff'}}>launch camera</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{marginVertical: 8}} />
-        <View style={{alignItems: 'center'}}>
-          <TouchableOpacity style={styles.content} onPress={openLibrary}>
-            <Text style={{color: '#fff'}}>select from storage</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.lastView}>
-          <TouchableOpacity
-            style={styles.cancel}
-            onPress={() => setIsVisible1(false)}>
-            <Text style={{color: '#fff'}}>cancel</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  );
+  // const upload = () => (
+  //   <View style={styles.absAlert}>
+  //     <View style={styles.alertBox}>
+  //       <Text style={styles.select}>Select Photo...</Text>
+  //       <View style={styles.line} />
+  //       <View style={{alignItems: 'center', marginTop: 20}}>
+  //         <TouchableOpacity style={styles.content} onPress={openCamera}>
+  //           <Text style={{color: '#fff'}}>launch camera</Text>
+  //         </TouchableOpacity>
+  //       </View>
+  //       <View style={{marginVertical: 8}} />
+  //       <View style={{alignItems: 'center'}}>
+  //         <TouchableOpacity style={styles.content} onPress={openLibrary}>
+  //           <Text style={{color: '#fff'}}>select from storage</Text>
+  //         </TouchableOpacity>
+  //       </View>
+  //       <View style={styles.lastView}>
+  //         <TouchableOpacity
+  //           style={styles.cancel}
+  //           onPress={() => setIsVisible1(false)}>
+  //           <Text style={{color: '#fff'}}>cancel</Text>
+  //         </TouchableOpacity>
+  //       </View>
+  //     </View>
+  //   </View>
+  // );
 
   const getCategories = () => {
     axios
@@ -351,33 +412,44 @@ export default function AddProduct({navigation}) {
     service: selectedService_ID,
   };
 
-  const createProduct = () => {
+  const createProduct = async() => {
     setIndicator1(true);
+    const json_Val = await AsyncStorage.getItem("jwt");
+    const parsed = JSON.parse(json_Val);
+    let axiosConfig = {
+        headers:{
+            Authorization: parsed.token
+        }
+    };
     if(
-      name===""|| cost==="" 
-      || desc==="" || content==="" 
-      || imgURL==="" || selectedCategory_ID===""
-      || selectedService_ID===""
+      name===""|| cost==="" || desc==="" || 
+      content==="" || imgURL.length === 0 || 
+      selectedCategory_ID==="" || selectedService_ID===""
       ){
       setError2(true);
       setIndicator1(false);
     }
     else{
       setError2(false);
-      axios
-      .post(`${API}/products`, postData)
-      .then(resp => {
-        // console.log(resp.data);
-        setError1(false);
+      if(numberOfProducts >= 10){
         setIndicator1(false);
-        setProductAdded(true);
-      })
-      .catch(err => {
-        console.log('server error: ', err);
-        setIndicator1(false);
-        setProductAdded(false);
-        setError1(true);
-      });
+        Alert.alert("You cann't add more than 10 Products");
+        console.log(postData);
+      }
+      else{
+        axios.post(`${API}/products`, postData,axiosConfig)
+        .then(resp => {
+          setError1(false);
+          setIndicator1(false);
+          setProductAdded(true);
+        })
+        .catch(err => {
+          console.log('server error: ', err);
+          setIndicator1(false);
+          setProductAdded(false);
+          setError1(true);
+        });
+      }
     }
   };
 
@@ -392,9 +464,17 @@ export default function AddProduct({navigation}) {
           profile={() => navigation.navigate('ProfileScreen')}
           bellColor="#000"
         />
+        <Text 
+          style={{
+            color:"gray",
+            fontSize:12,
+            textAlign:"center"
+          }}
+        >** Maximum 10 Products can be added **</Text>
         <ScrollView
-          contentContainerStyle={{marginTop: 60}}
-          style={{marginBottom: 80}}>
+          style={{marginTop:10}}
+          contentContainerStyle={{paddingTop:20}}
+        >
           <TouchableOpacity
             style={styles.input1}
             activeOpacity={0.6}
@@ -437,7 +517,6 @@ export default function AddProduct({navigation}) {
               ]}
               placeholder="Content (upto 22 letters)"
               placeholderTextColor="gray"
-              // multiline={true}
               value={content}
               onChangeText={val => setContent(val)}
               maxLength={22}
@@ -462,7 +541,9 @@ export default function AddProduct({navigation}) {
           <TouchableOpacity
             style={[styles.textInput1, styles.image]}
             activeOpacity={0.8}
-            onPress={() => setIsVisible1(true)}>
+            // onPress={() => setIsVisible1(true)}
+            onPress={openLibrary}
+          >
             <Text style={{color: 'gray'}}>Images</Text>
             {
                 !process ? <Feather name="upload" color="#000" size={18} /> : 
@@ -505,7 +586,7 @@ export default function AddProduct({navigation}) {
           </View>
         </ScrollView>
       </View>
-      {isVisible1 && upload()}
+      {/* {isVisible1 && upload()} */}
       {isVisible2 && showModalToSelect()}
       {isVisible3 && showModalToSelect()}
     </>

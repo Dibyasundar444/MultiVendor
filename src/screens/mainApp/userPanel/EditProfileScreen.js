@@ -15,6 +15,8 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import axios from "axios";
 import storage from '@react-native-firebase/storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { API, API_USER } from "../../../../config";
 
 
@@ -187,8 +189,15 @@ export default function EditProfile({navigation}){
         </View>
     );
 
-    const getUser=()=>{
-        axios.get(`${API_USER}/userdetail`)
+    const getUser=async()=>{
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+            headers:{
+                Authorization: parsed.token
+            }
+        };
+        axios.get(`${API_USER}/userdetail`,axiosConfig)
         .then(res=>{
             setPhoneNo(res.data.phoneNo);
             setName(res.data.name);
@@ -226,17 +235,19 @@ export default function EditProfile({navigation}){
         "email": email
     };
 
-    const update=()=>{
+    const update=async()=>{
         setIndicator(true);
-        axios.patch(`${API_USER}/updateuser`,updateData)
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+          headers:{
+            Authorization: parsed.token
+          }
+        };
+        axios.patch(`${API_USER}/updateuser`,updateData,axiosConfig)
         .then(res=>{
-            if(res.status===200){
-                setIndicator(false);
-                setIsUpdated(true);
-            }
-            else {
-                setIndicator(false);
-            }
+            setIndicator(false);
+            setIsUpdated(true);
         })
         .catch(err=>{
             console.log(err);

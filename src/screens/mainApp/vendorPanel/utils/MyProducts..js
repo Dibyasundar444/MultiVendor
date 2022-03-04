@@ -17,6 +17,7 @@ import axios from 'axios';
 import Header from './header';
 import { height } from '../ChatScreen';
 import { API, API_VENDOR } from '../../../../../config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 let clickBoxHeight = height / 4;
 
@@ -28,7 +29,7 @@ export default function MyProduct() {
   const preData = route.params;
   const isFocused = useIsFocused();
   const [data, setData] = useState([]);
-  //   const [vendorId, setVendorId] = useState('');
+  const [vendorId, setVendorId] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,26 +38,34 @@ export default function MyProduct() {
     }
   }, [isFocused]);
 
-  const getProducts = () => {
+  const getProducts = async() => {
+    const json_Val = await AsyncStorage.getItem("jwt");
+    const parsed = JSON.parse(json_Val);
+    let axiosConfig = {
+        headers:{
+            Authorization: parsed.token
+        }
+    };
     preData ? 
     (
       axios
-        .get(`${API}/products/service/${preData._id}`)
+        .get(`${API}/products/service/${preData._id}`,axiosConfig)
         .then(resp => {
-          console.log(resp.data);
+          // console.log(resp.data);
           setData(resp.data);
           setLoading(false);
         })
         .catch(err => {
           console.log('server error: ', err);
+          setLoading(false);
         })
     )
     :
     (
       axios
-      .get(`${API_VENDOR}/vendordetail`)
+      .get(`${API_VENDOR}/vendordetail`,axiosConfig)
       .then(res => {
-        // setVendorId(res.data._id);
+        setVendorId(res.data._id);
         axios
           .get(`${API}/products/vendor/${res.data._id}`)
           .then(resp => {
@@ -66,6 +75,7 @@ export default function MyProduct() {
           })
           .catch(err => {
             console.log('server error: ', err);
+            setLoading(false);
           });
       })
       .catch(err => {
@@ -85,25 +95,36 @@ export default function MyProduct() {
         bellColor="#000"
       />
       <View style={styles.body}>
-        <View style={styles.bodyTitle}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={styles.subTitle}>{preData ? preData.name : "All Products"}</Text>
-            <AntDesign name="down" size={16} color="#000" />
+        {
+          loading ? null
+          :
+          <View style={styles.bodyTitle}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={styles.subTitle}>{preData ? preData.name : "All Products"}</Text>
+              <AntDesign name="down" size={16} color="#000" />
+            </View>
+            {
+              !preData ? 
+              <TouchableOpacity
+                onPress={() => navigation.navigate('addProductScreen',vendorId)}>
+                <Text style={{color: '#000', fontSize: 12}}>+Add Product</Text>
+                <View style={{width: 90, borderWidth: 0.5, borderColor: '#000'}} />
+              </TouchableOpacity>
+              :
+              null
+            }
           </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('addProductScreen')}>
-            <Text style={{color: '#000', fontSize: 12}}>+Add Product</Text>
-            <View style={{width: 90, borderWidth: 0.5, borderColor: '#000'}} />
-          </TouchableOpacity>
-        </View>
-        <View style={{}}>
+        }
+        <>
           {loading ? (
-            <ActivityIndicator size={40} style={{marginTop: 80}} />
+            <View style={{height:"70%",justifyContent:"center"}}>
+              <ActivityIndicator size={40} />
+            </View>
           ) : data.length === 0 ? (
             <Text style={{color: '#000', marginTop: 40, textAlign: "center"}}>No Product found</Text>
           ) : (
             <FlatList
-              style={{marginBottom: height / 6.1}}
+              contentContainerStyle={{paddingBottom:150}}
               data={data}
               numColumns={2}
               showsVerticalScrollIndicator={false}
@@ -117,7 +138,7 @@ export default function MyProduct() {
                   <View style={styles.boxSubView}>
                     <Image
                       style={styles.img}
-                      source={{uri: item.images}}
+                      source={{uri: item.images[0]}}
                       resizeMode="stretch"
                     />
                   </View>
@@ -154,7 +175,7 @@ export default function MyProduct() {
               )}
             />
           )}
-        </View>
+        </>
       </View>
     </View>
   );

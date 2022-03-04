@@ -9,6 +9,7 @@ import {
     ActivityIndicator
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Header from "./utils/header";
 import axios from "axios";
 import { API_VENDOR } from "../../../../config";
@@ -26,9 +27,16 @@ export default function AlertScreen({navigation}){
         getVendor();
     },[]);
 
-    const getVendor=()=>{
+    const getVendor=async()=>{
         setIndicator(true);
-        axios.get(`${API_VENDOR}/vendordetail`)
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+            headers:{
+                Authorization: parsed.token
+            }
+        };
+        axios.get(`${API_VENDOR}/vendordetail`,axiosConfig)
         .then(async res=>{
             console.log(res.data.reviews);
             setData(res.data.reviews);

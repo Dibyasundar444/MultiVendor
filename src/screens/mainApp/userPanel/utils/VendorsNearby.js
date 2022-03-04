@@ -12,7 +12,7 @@ import axios from 'axios';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import {API_VENDOR} from '../../../../../config';
 
-export default function VendorsNearby({vendorProfile,login}) {
+export default function VendorsNearby({vendorProfile,login,isLoading}) {
   const [vendors, setVendors] = useState([]);
   const [indicator, setIndicator] = useState(true);
 
@@ -49,7 +49,11 @@ export default function VendorsNearby({vendorProfile,login}) {
           >
               <View style={{flexDirection:"row",alignItems:"flex-end"}}>
                 <MaterialCommunityIcons name='account-switch-outline' color="#fff" size={18} />
-                <Text style={{fontWeight:"500",color:"#fff",marginLeft:5}}>Sell</Text>
+                {
+                  isLoading ? <ActivityIndicator color="#fff" size={20} style={{marginHorizontal:5,marginVertical:2}} />
+                  :
+                  <Text style={{fontWeight:"500",color:"#fff",marginLeft:5}}>Sell</Text>
+                }
               </View>
           </TouchableOpacity>
         </View>
@@ -120,10 +124,10 @@ const styles = StyleSheet.create({
   vendor: {
     alignItems:"center",
     justifyContent:"center",
-    backgroundColor:"#ff1493",
+    backgroundColor:"#d95448",
     marginVertical:10,
     paddingVertical:2,
     paddingHorizontal:8,
     borderRadius:4
-}
+  }
 });

@@ -7,19 +7,20 @@ import {
     Image,
     Alert,
     Share,
-    ActivityIndicator
+    ActivityIndicator,
+    TextInput
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsFocused } from "@react-navigation/native";
+import { StackActions, useIsFocused } from "@react-navigation/native";
 import { BottomSheet } from "react-native-btr";
 import axios from "axios";
 
 
-import { API_VENDOR } from "../../../../config";
+import { API, API_VENDOR } from "../../../../config";
 import ProfileHeader from "./utils/profileHeader";
 
 
@@ -33,16 +34,29 @@ export default function ProfileScreen({navigation}){
     const [isUpdated, setIsUpdated] = useState(false);
     const [indicator, setIndicator] = useState(false);
     const [visible, setVisible] = useState(false);
+    const [area, setArea] = useState('');
 
     
-    const link = "link/will/be/here";
+    // const link = "link/will/be/here";
 
     useEffect(()=>{
         if(isFocused){
             getVendor();
         }
         getLocation();
+        getShareLink();
     },[isFocused]);
+
+    const getShareLink=()=>{
+        axios.get(`${API}/sharelink`)
+        .then(resp=>{
+            const link = (resp.data[0].link);
+            global.link = link;
+        })
+        .catch(err=>{
+            console.log("share link error:",err);
+        })
+    };
 
     const logOut_alert=()=>{
         Alert.alert(
@@ -60,23 +74,44 @@ export default function ProfileScreen({navigation}){
     };
 
     const logOut=async()=> {
-        // axios.get(`${API_VENDOR}/logout`)
-        // .then(async res=>{
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+            headers:{
+                Authorization: parsed.token
+            }
+        };
+        axios.get(`${API_VENDOR}/logout`,axiosConfig)
+        .then(async res=>{
             try{
                 await AsyncStorage.removeItem("jwt");
-                navigation.navigate("SignIn");
+                navigation.dispatch(
+                    StackActions.replace('SignIn')
+                )
             }
             catch(e){
                 console.log("logout error: ",e);
             }
-        // })
-        // .catch(err=>console.log(err))
+        })
+        .catch(err=>console.log(err))
     };
 
-    const getVendor=()=>{
-        axios.get(`${API_VENDOR}/vendordetail`)
+    // let axiosConfig = {
+    //     headers: {
+    //         Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyYXRpbmdzIjozLCJudW1PZlJldmlld3MiOjMsInJvbGUiOjEsInN0YXR1cyI6ImFjdGl2ZSIsInByb2ZpbGVJbWciOiJodHRwczovL2ZpcmViYXNlc3RvcmFnZS5nb29nbGVhcGlzLmNvbS92MC9iL211bHRpdmVuZG9yLTVkMDI3LmFwcHNwb3QuY29tL28vVkVORE9SJTJGcHJvZmlsZV9pbWFnZSUyRnJuX2ltYWdlX3BpY2tlcl9saWJfdGVtcF9iZDNhNWM5Ny0wOWUxLTRkYjEtODlkNi05NzRlY2NkNTBlMDYuanBnP2FsdD1tZWRpYSZ0b2tlbj00Mzg5ZGRiOC05MGVkLTRiODYtOWE0Ny01Njc0YWM0MzRjZTkiLCJzZXJ2aWNlcyI6WyI2MjE2MzFiZTE5YTZjODAwMTY2ZjNlZDEiLCI2MjFlZmZhNmIxYjNmMjAwMTY1ZGRiYjQiLCI2MjFmNWM1NjgxNzE4NjAwMTYzOWFkY2MiXSwiYWN0aXZlIjp0cnVlLCJjdXN0b21lcmNvbnRhY3QiOlsiNjIwZmFmOWJmNjA0ZDUwMDE2N2RlZjE2IiwiNjIxMDhmZWU5OTQyMGMwMDE2YzQ0Yjk2IiwiNjIxM2M5YWNkYTA2Y2IwMDE2Y2M3NTgyIiwiNjIxMTI2MGQ2Njg5YTIwMDE2ZGVlYTdlIl0sIl9pZCI6IjYyMGY5Y2ViYTQ0YzQ2MDAxNmU5YTNjZiIsInBob25lTm8iOjc0MDc2NjgwNDUsInJldmlld3MiOlt7Il9pZCI6IjYyMTA5MmJkOTk0MjBjMDAxNmM0NGJjMCIsInVzZXIiOiI2MjEwOGZlZTk5NDIwYzAwMTZjNDRiOTYiLCJyYXRpbmciOjN9LHsiX2lkIjoiNjIxNGE1NjEyY2E3ZDUwMDE2M2YxZDM5IiwidXNlciI6IjYyMGZhZjliZjYwNGQ1MDAxNjdkZWYxNiIsInJhdGluZyI6MX0seyJfaWQiOiI2MjFlZmY1Y2IxYjNmMjAwMTY1ZGRiN2UiLCJ1c2VyIjoiNjIxM2M5YWNkYTA2Y2IwMDE2Y2M3NTgyIiwicmF0aW5nIjo1fV0sImNyZWF0ZWRBdCI6IjIwMjItMDItMThUMTM6MTk6MzkuNzQ2WiIsInVwZGF0ZWRBdCI6IjIwMjItMDMtMDJUMTM6NTk6MTUuNDYxWiIsIl9fdiI6MywiY291bnRyeSI6IklOIiwibGF0aXR1ZGUiOiIyMS44MjY0MjE2IiwibG9jYWxpdHkiOiJCaXJiaGFkcmFwdXIiLCJsb25naXR1ZGUiOiI4Ny4yOTA1NzQ3Iiwic3RhdGUiOiJXZXN0IEJlbmdhbCIsIm5hbWUiOiJEaWJ5YXN1bmRhcl92ZW5kb3IiLCJlbWFpbCI6InB1cnBvc2V0ZXN0aW5nNTJAZ21haWwuY29tIiwiaWF0IjoxNjQ2Mjk2NjQxfQ.P93HYA1Rtt5Uj81NP1xBtvTFcUQKZ88Rn2UJyh20l4s"
+    //     }
+    // };
+
+    const getVendor=async()=>{
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+            headers:{
+                Authorization: parsed.token
+            }
+        };
+        axios.get(`${API_VENDOR}/vendordetail`,axiosConfig)
         .then(async res=>{
-            // console.log(res.data.reviews);
             setPhoneNo(res.data.phoneNo);
             setName(res.data.name);
             setImg(res.data.profileImg);
@@ -109,7 +144,7 @@ export default function ProfileScreen({navigation}){
         try{
             const JSON_OBJ = await AsyncStorage.getItem('location');
             const Parsed = JSON.parse(JSON_OBJ);
-            console.log(Parsed);
+            // console.log(Parsed);
             Parsed !== null ? setLocation(Parsed) : setLocation({});
         }
         catch(err){
@@ -117,12 +152,8 @@ export default function ProfileScreen({navigation}){
         }
     };
 
-    let updateData={
-        locality: location.city,
-        state: location.state,
-        country: location.country,
-        latitude: location.lat,
-        longitude:  location.long
+    const toggle=()=>{
+    setVisible((visible) => !visible)
     };
 
     if(isUpdated){
@@ -131,17 +162,29 @@ export default function ProfileScreen({navigation}){
         },3000)
     };
 
-    const toggle=()=>{
-    setVisible((visible) => !visible)
+    let updateData={
+        locality: location.city,
+        state: location.state,
+        country: location.country,
+        latitude: location.lat,
+        longitude:  location.long,
+        serviceArea: Number(area)
     };
 
-    const updateLocation=()=>{
+    const updateLocation=async()=>{
         setIndicator(true);
-        axios.patch(`${API_VENDOR}/updatevendor`,updateData)
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+            headers:{
+                Authorization: parsed.token
+            }
+        };
+        axios.patch(`${API_VENDOR}/updatevendor`,updateData,axiosConfig)
         .then(res=>{
+            console.log(res.data);
             setIndicator(false);
             setIsUpdated(true);
-            console.log(res.data);
         })
         .catch(err=>{
             console.log(err);
@@ -219,81 +262,109 @@ export default function ProfileScreen({navigation}){
             >
                 <View style={styles.card}>
                     <Text 
-                    style={{
-                        color:"#000",
-                        fontWeight:"500",
-                        marginVertical:10
-                    }}
+                        style={{
+                            color:"#000",
+                            fontWeight:"500",
+                            marginVertical:10
+                        }}
                     >My Location</Text>
                     <View 
-                    style={{
-                        width:"80%",
-                        borderWidth: 0.5,
-                        marginBottom:5
-                    }} 
+                        style={{
+                            width:"80%",
+                            borderWidth: 0.5,
+                            marginBottom:5
+                        }} 
                     />
                     <Text 
-                    style={{color:"gray",fontSize:12}}
+                        style={{color:"gray",fontSize:12}}
                     >
                         *** this will automatically fetch your current location***
                     </Text>
-                    <View>
+                    <View style={{right:-10}}>
                         <View
-                        style={{flexDirection:"row",alignItems:"center",marginVertical:20}}
+                            style={{flexDirection:"row",alignItems:"center",marginVertical:20}}
                         >
                             <Text
-                            style={{
-                                color:"#000",
-                                fontWeight:"500"
-                            }}
+                                style={{
+                                    color:"#000",
+                                    fontWeight:"500"
+                                }}
                             >City :</Text>
                             <Text
-                            style={{
-                                color:"gray",
-                                fontWeight:"500",
-                                marginHorizontal:10
-                            }}
-                        >{location.city}</Text>
+                                style={{
+                                    color:"gray",
+                                    fontWeight:"500",
+                                    marginHorizontal:10
+                                }}
+                            >{location.city}</Text>
                         </View>
                         <View
-                        style={{flexDirection:"row",alignItems:"center"}}
+                            style={{flexDirection:"row",alignItems:"center"}}
                         >
                             <Text
-                            style={{
-                                color:"#000",
-                                fontWeight:"500"
-                            }}
+                                style={{
+                                    color:"#000",
+                                    fontWeight:"500"
+                                }}
                             >State :</Text>
                             <Text
-                            style={{
-                                color:"gray",
-                                fontWeight:"500",
-                                marginHorizontal:10
-                            }}
-                        >{location.state}</Text>
+                                style={{
+                                    color:"gray",
+                                    fontWeight:"500",
+                                    marginHorizontal:10
+                                }}
+                            >{location.state}</Text>
                         </View>
                         <View
-                        style={{
-                            flexDirection:"row",
-                            alignItems:"center",
-                            marginVertical:20
-                        }}
+                            style={{
+                                flexDirection:"row",
+                                alignItems:"center",
+                                marginVertical:20
+                            }}
                         >
                             <Text
-                            style={{
-                                color:"#000",
-                                fontWeight:"500"
-                            }}
+                                style={{
+                                    color:"#000",
+                                    fontWeight:"500"
+                                }}
                             >Country :</Text>
                             <Text
-                            style={{
-                                color:"gray",
-                                fontWeight:"500",
-                                marginHorizontal:10
-                            }}
-                        >{location.country}</Text>
+                                style={{
+                                    color:"gray",
+                                    fontWeight:"500",
+                                    marginHorizontal:10
+                                }}
+                            >{location.country}</Text>
+                        </View>
+                        <View style={{flexDirection:"row",alignItems:"center"}}>
+                            <TextInput 
+                                placeholder="service area"
+                                placeholderTextColor="gray"
+                                style={{
+                                    borderRadius:5,
+                                    color:"#000",
+                                    width:150,
+                                    textAlign:"center",
+                                    backgroundColor:"#ffe4e1"
+                                }}
+                                value={area}
+                                onChangeText={(val)=>setArea(val)}
+                                keyboardType="numeric"
+                            />
+                            <Text style={{color:"#000",right:-20}}>(km)</Text>
                         </View>
                     </View>
+                    <Text 
+                        style={{
+                            color:'#000',
+                            fontSize:12,
+                            marginHorizontal:20,
+                            textAlign:"center",
+                            marginVertical:10
+                        }}
+                    >
+                        service area have to be calculated from above location
+                    </Text>
                     {
                         indicator ? 
                         <View style={{marginVertical:20}}>
@@ -407,7 +478,7 @@ const styles = StyleSheet.create({
     },
     card: {
         backgroundColor: "#fff",
-        height: 350,
+        // height: 400,
         borderTopLeftRadius:10,
         borderTopRightRadius:10,
         alignItems:"center"

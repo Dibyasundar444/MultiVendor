@@ -15,6 +15,7 @@ import axios from "axios";
 import { useIsFocused } from "@react-navigation/native";
 
 import { API_USER } from "../../../../config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ChatScreen({navigation}){
 
@@ -48,10 +49,16 @@ export default function ChatScreen({navigation}){
         }
     };
 
-    const getChatList=()=>{
-        axios.get(`${API_USER}/userdetail`)
+    const getChatList=async()=>{
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+        headers:{
+            Authorization: parsed.token
+        }
+        };
+        axios.get(`${API_USER}/userdetail`,axiosConfig)
         .then(resp=>{
-            console.log(resp.data);
             setChatList(resp.data.vendorcontact);
             setFilterData(resp.data.vendorcontact);
             setUserData(resp.data);

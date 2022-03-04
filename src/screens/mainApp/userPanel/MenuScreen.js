@@ -11,10 +11,10 @@ import {
 } from "react-native";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import {StackActions, useIsFocused} from '@react-navigation/native';
 import axios from "axios";
 import MenuHeader from "./utils/menuHeader";
-import { API } from "../../../../config";
+import { API, API_USER, API_VENDOR } from "../../../../config";
 import VendorsNearby from "./utils/VendorsNearby";
 import { ImageSlider } from "./utils/img-slider";
 
@@ -27,18 +27,28 @@ export default function Menu({navigation}){
     const [indicator, setIndicator] = useState(true);
     const [location, setLocation] = useState({});
     const [bannerImg, setBannerImg] = useState([]);
-    const IMAGES = [];
+    const [userData, setUserData] = useState({});
+    const [isExpand, setIsExpand] = useState(false);
+    const [isHeaderReady, setIsHeaderReady] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const IMAGES = [];    
+
+    const isFocused = useIsFocused();
 
     useEffect(()=>{
         getProducts();
         getLocation();
         getBanner();
-    },[]);
+        if(isFocused){
+            getUser();
+        }
+    },[isFocused]);
 
     const getBanner=()=>{
         axios.get(`${API}/banner`)
         .then(resp=>{
-            console.log(resp.data);
+            // console.log(resp.data);
             resp.data.map(item=>{
                 var innerObj = {img: item.imgUrl};
                 IMAGES.push(innerObj);
@@ -72,12 +82,65 @@ export default function Menu({navigation}){
         }
     };
 
+    const getUser=async()=>{
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+            headers:{
+                Authorization: parsed.token
+            }
+        };
+        axios.get(`${API_USER}/userdetail`,axiosConfig)
+        .then(res=>{
+            // console.log("user",res.data);
+            setUserData(res.data);
+            setIsHeaderReady(true);
+        })
+        .catch(err=>{
+            console.log(err);
+        })
+    };
+
     const vendorLogin=async()=>{
-        // const SWITCH = await AsyncStorage.getItem('switch');
-        // SWITCH !== null ?  navigation.navigate("VendorPanel")
-        // :
-        navigation.navigate("SignIn","vendor");
-    }
+        setLoading(true);
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+          headers:{
+            Authorization: parsed.token
+          }
+        };
+        axios.get(`${API_USER}/logout`,axiosConfig)
+        .then(resp=>{
+            console.log(resp.data);
+            axios.post(`${API_VENDOR}/switch/register`,{phoneNo:userData.phoneNo},axiosConfig)
+            .then( async resp => {
+                try{
+                    const jsonValue = JSON.stringify(resp.data);
+                    await AsyncStorage.setItem("jwt",jsonValue);
+                    await AsyncStorage.setItem("userRole","1");
+                    setLoading(false);
+                    navigation.dispatch(
+                        StackActions.replace("VendorPanel")
+                    )
+                }
+                catch(e){
+                    console.log(e);
+                    setLoading(false);
+                }
+            })
+            .catch(err=>{
+                console.log("error switching user: ",err);
+                setLoading(false);
+            })
+        })
+        .catch(err=>{
+            console.log("error logging out: ",err);
+            setLoading(false);
+        })
+    };
+
+
     return(
         <View style={styles.container}>
             <MenuHeader 
@@ -85,6 +148,11 @@ export default function Menu({navigation}){
                 city={location.city}
                 state={location.state}
                 country={location.country}
+                U_NAME={userData.name}
+                expand={isExpand}
+                SET_Expand={()=>setIsExpand(expand => !expand)}
+                isU_Name={userData.name ? true : false}
+                ready={isHeaderReady}
             />
             
             <ScrollView 
@@ -112,6 +180,7 @@ export default function Menu({navigation}){
                 <VendorsNearby 
                     vendorProfile={(item)=>navigation.navigate("VendorProfile",item)}
                     login={vendorLogin}
+                    isLoading={loading}
                 />
                 <View style={{marginLeft:20,marginTop:20}}>
                     <Text style={styles.products}>Latest Products</Text>
@@ -131,7 +200,7 @@ export default function Menu({navigation}){
                                         onPress={()=>navigation.navigate("ProductDetails", item)}
                                     >
                                         <Image style={styles.img}
-                                            source={{uri: item.images}}
+                                            source={{uri: item.images[0]}}
                                         />
                                         <View style={{marginLeft:10,marginTop:5}}>
                                             <Text style={styles.title}>{item.title}</Text>

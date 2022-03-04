@@ -16,6 +16,7 @@ import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import axios from "axios";
 import storage from '@react-native-firebase/storage';
 import { API_VENDOR } from "../../../../config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default function EditProfile({navigation}){
@@ -185,8 +186,15 @@ export default function EditProfile({navigation}){
         </View>
     );
 
-    const getVendor=()=>{
-        axios.get(`${API_VENDOR}/vendordetail`)
+    const getVendor=async()=>{
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+            headers:{
+                Authorization: parsed.token
+            }
+        };
+        axios.get(`${API_VENDOR}/vendordetail`,axiosConfig)
         .then(res=>{
             // console.log(res.data);
             setPhoneNo(res.data.phoneNo);
@@ -221,13 +229,19 @@ export default function EditProfile({navigation}){
         "name": name,
         "address": address,
         "profileImg": url,
-        "role": 1,
         "email": email
     };
 
-    const update=()=>{
+    const update=async()=>{
         setIndicator(true);
-        axios.patch(`${API_VENDOR}/updatevendor`,updateData)
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+            headers:{
+                Authorization: parsed.token
+            }
+        };
+        axios.patch(`${API_VENDOR}/updatevendor`,updateData,axiosConfig)
         .then(res=>{
             setIndicator(false);
             setIsUpdated(true);

@@ -15,6 +15,7 @@ import SelectDropdown from "react-native-select-dropdown";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import axios from "axios";
 import { API_USER, API_VENDOR } from "../../config";
+import { StackActions } from "@react-navigation/native";
 
 
 const { height, width } = Dimensions.get("window");
@@ -64,7 +65,10 @@ export default function SignIn({navigation,route}){
                 .then(res=>{
                     if(res.status === 200){
                         setLoading(false);
-                        navigation.navigate("OtpVerify",navData);
+                        navigation.dispatch(
+                            StackActions.replace("OtpVerify",navData)
+                        )
+                        // navigation.navigate("OtpVerify",navData);
                     }
                     else {
                         console.log(res.status);
@@ -85,7 +89,10 @@ export default function SignIn({navigation,route}){
                 .then(res=>{
                     if(res.status === 200){
                         setLoading(false);
-                        navigation.navigate("OtpVerify",navData);
+                        navigation.dispatch(
+                            StackActions.replace("OtpVerify",navData)
+                        )
+                        // navigation.navigate("OtpVerify",navData);
                     }
                     else {
                         console.log(res.status);

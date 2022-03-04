@@ -10,17 +10,21 @@ import {
   Image,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useIsFocused} from '@react-navigation/native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {StackActions, useIsFocused} from '@react-navigation/native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
-import {API} from '../../../../config';
+
+import {API, API_USER, API_VENDOR} from '../../../../config';
 import Header from './utils/header';
 
 const {height, width} = Dimensions.get('window');
@@ -33,12 +37,15 @@ export default function HomeScreen({navigation}) {
   const [loading1, setloading1] = useState(true);
   const [loading2, setloading2] = useState(true);
   const [loading3, setloading3] = useState(false);
+  const [loading4, setloading4] = useState(true);
+  const [loading5, setloading5] = useState(false);
   const [serviceAdded, setServiceAdded] = useState(false);
   const [isVisible1, setIsvisible1] = useState(false);
   const [process, setProcess] = useState('');
   // const [location, setLocation] = useState({});
   const [addNewService, setAddNewService] = useState('');
   const [url, setUrl] = useState('');
+  const [vendorData, setVendorData] = useState({});
 
   let tempDate = new Date();
   let year = tempDate.getFullYear();
@@ -54,6 +61,7 @@ export default function HomeScreen({navigation}) {
     // getLocation();
     if (isFocused) {
       getServices();
+      getVendor();
     }
   }, [isFocused]);
 
@@ -68,6 +76,25 @@ export default function HomeScreen({navigation}) {
 //     }
 // };
 
+  const getVendor=async()=>{
+    const json_Val = await AsyncStorage.getItem("jwt");
+    const parsed = JSON.parse(json_Val);
+    let axiosConfig = {
+        headers:{
+            Authorization: parsed.token
+        }
+    };
+    axios.get(`${API_VENDOR}/vendordetail`,axiosConfig)
+    .then(async res=>{
+      setVendorData(res.data);
+      setloading4(false);
+    })
+    .catch(err=>{
+      setloading4(false);
+      console.log(err);
+    })
+  };
+
   const getServices = () => {
     axios
       .get(`${API}/service`)
@@ -79,6 +106,7 @@ export default function HomeScreen({navigation}) {
         console.log('server error: ', err);
       });
   };
+  
   const getLatestProductList = () => {
     axios
       .get(`${API}/products`)
@@ -97,22 +125,34 @@ export default function HomeScreen({navigation}) {
     },3000)
   };
 
-  const createService=()=>{
+  const createService=async()=>{
+    const json_Val = await AsyncStorage.getItem("jwt");
+    const parsed = JSON.parse(json_Val);
+    let axiosConfig = {
+        headers:{
+            Authorization: parsed.token
+        }
+    };
     if(addNewService !== ""){
       setloading3(true);
-      axios.patch(`${API}/service`,{name: addNewService,imgUrl: url})
-      .then(resp=>{
-        console.log(resp.data);
+      if(serviceData.length > 0){
         setloading3(false);
-        setServiceAdded(true);
-      })
-      .catch(err=>{
-        console.log("err add Service: ",err);
-        setloading3(false);
-      })
+        Alert.alert("You cann't add more than One Service");
+      }
+      else{
+        axios.patch(`${API}/service`,{name: addNewService,imgUrl: url},axiosConfig)
+        .then(resp=>{
+          setloading3(false);
+          setServiceAdded(true);
+        })
+        .catch(err=>{
+          console.log("err add Service: ",err);
+          setloading3(false);
+        })
+      }
     }
     else{
-      // setloading3(false);
+      null;
     }
   };
 
@@ -172,6 +212,7 @@ export default function HomeScreen({navigation}) {
     <View style={styles.absService}>
       <View style={styles.addServiceModal}>
         <View style={{alignItems:"center"}}>
+          <Text style={{color:"gray",fontSize:12,marginVertical:10}}>** Only 1 service can be added **</Text>
           <TextInput 
             style={styles.serviceInput}
             placeholder="add your service here..."
@@ -223,23 +264,77 @@ export default function HomeScreen({navigation}) {
     </View>
   );
 
+  const switchUser=async()=>{
+    setloading5(true);
+    const json_Val = await AsyncStorage.getItem("jwt");
+    const parsed = JSON.parse(json_Val);
+    let axiosConfig = {
+        headers:{
+            Authorization: parsed.token
+        }
+    };
+    axios.get(`${API_VENDOR}/logout`,axiosConfig)
+    .then(resp=>{
+        console.log(resp.data);
+        axios.post(`${API_USER}/switch/register`,{phoneNo:vendorData.phoneNo},axiosConfig)
+        .then( async resp => {
+            try{
+              const jsonValue = JSON.stringify(resp.data);
+              await AsyncStorage.setItem("jwt",jsonValue);
+              setloading5(false);
+              await AsyncStorage.setItem("userRole","0");
+              navigation.dispatch(
+                StackActions.replace("UserPanel")
+              )
+            }
+            catch(e){
+              console.log(e);
+              setloading5(false);
+            }
+        })
+        .catch(err=>{
+            console.log("error switching user: ",err);
+            setloading5(false);
+        })
+    })
+    .catch(err=>{
+        console.log("error logging out: ",err);
+        setloading5(false);
+    })
+  };
+
   return (
     <View style={styles.container}>
       <Header
-        title="Hi, Vendor"
+        title={vendorData.name ? `Hi, ${vendorData.name}` : `Hi, Vendor`}
         notify={() => navigation.navigate('AlertScreen')}
         profile={() => navigation.navigate('ProfileScreen')}
         bellColor="#000"
         date={fDate}
+        isLoading={loading4}
       />
       <ScrollView
         style={styles.body}
         showsVerticalScrollIndicator={false}
-        // stickyHeaderIndices={[2]}
       >
-        <Text style={{color: '#000', fontSize: 16, fontWeight: '600'}}>
-          This Month
-        </Text>
+        <View style={{flexDirection:"row",alignItems:"center",justifyContent:"space-between",marginRight:20}}>
+          <Text style={{color: '#000', fontSize: 16, fontWeight: '600'}}>
+            This Month
+          </Text>
+          <TouchableOpacity 
+            style={styles.user}
+            onPress={switchUser}
+          >
+              <View style={{flexDirection:"row",alignItems:"flex-end"}}>
+                <MaterialCommunityIcons name='account-switch-outline' color="#fff" size={18} />
+                {
+                  loading5 ? <ActivityIndicator color="#fff" size={20} style={{marginHorizontal:5,marginVertical:2}} />
+                  :
+                  <Text style={{fontWeight:"500",color:"#fff",marginLeft:5}}>User</Text>
+                }
+              </View>
+          </TouchableOpacity>
+        </View>
         <View>
           {loading1 ? (
             <ActivityIndicator style={{marginVertical: 40}} size={30} />
@@ -255,27 +350,11 @@ export default function HomeScreen({navigation}) {
                   onPress={()=>navigation.navigate("ProductDetailsVendor",item)} 
                 >
                   <View style={styles.boxSubView}>
-                    {item.images ? (
-                      <Image
-                        style={styles.img}
-                        source={{uri: item.images}}
-                        resizeMode="stretch"
-                      />
-                    ) : (
-                      <View style={styles.img}>
-                        <Text
-                          style={{
-                            color: 'gray',
-                            fontSize: 12,
-                            flexWrap: 'wrap',
-                            marginTop: 30,
-                            textAlign: 'center',
-                            marginHorizontal: 5,
-                          }}>
-                          No Image available
-                        </Text>
-                      </View>
-                    )}
+                    <Image
+                      style={styles.img}
+                      source={{uri: item.images[0]}}
+                      resizeMode="stretch"
+                    />
                   </View>
                   <View style={{marginLeft: 5, marginTop: 5}}>
                     <Text style={{fontSize: 12, color: '#000'}}>
@@ -304,12 +383,12 @@ export default function HomeScreen({navigation}) {
         <View style={styles.body2}>
           <View style={styles.body1}>
             <Text style={{color: '#000', fontSize: 16, fontWeight: '600'}}>
-              My Services
+              All Services
             </Text>
-            <TouchableOpacity onPress={() => setIsvisible1(true)}>
-              <Text style={{color: '#000', fontSize: 12}}>+Add Services</Text>
+            <TouchableOpacity onPress={() => setIsvisible1(true)} style={{alignItems:"center"}}>
+              <Text style={{color: '#000', fontSize: 12}}>+Add Service</Text>
               <View
-                style={{width: 90, borderWidth: 0.5, borderColor: '#000'}}
+                style={{width: "105%", borderWidth: 0.5, borderColor: '#000'}}
               />
             </TouchableOpacity>
           </View>
@@ -410,7 +489,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 50 / 2,
-    backgroundColor: '#aaa',
+    backgroundColor: '#d95448',
     marginRight: 10,
     borderWidth: 0.2,
     borderColor:"#aaa"
@@ -454,7 +533,7 @@ const styles = StyleSheet.create({
     color: "#000",
     paddingLeft: 10,
     backgroundColor:"#ffe4e1",
-    marginTop:30,
+    // marginTop:20,
     width:"80%"
   },
   serviceBtn: {
@@ -496,4 +575,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
   },
+  user: {
+    alignItems:"center",
+    justifyContent:"center",
+    backgroundColor:"#d95448",
+    marginVertical:10,
+    paddingVertical:2,
+    paddingHorizontal:8,
+    borderRadius:4
+}
 });

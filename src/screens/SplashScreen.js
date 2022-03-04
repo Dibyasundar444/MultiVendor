@@ -10,7 +10,7 @@ export default function SplashScreen(){
     // starting animation by updating opacity in 5 sec
     Animated.timing(fadeValue,{
         toValue: 1,
-        duration: 5000,
+        duration: 3500,
         useNativeDriver: false
     }).start();         // important for starting the animation
 

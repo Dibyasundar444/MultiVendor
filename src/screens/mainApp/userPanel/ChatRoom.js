@@ -19,6 +19,7 @@ import ChatRoomHeader from './utils/chatRoomHeader';
 import axios from 'axios';
 import {API, API_USER} from '../../../../config';
 import Rating from './utils/Rating';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ChatRoom({route, navigation}) {
   const preData = route.params;
@@ -153,9 +154,15 @@ export default function ChatRoom({route, navigation}) {
       .doc(docId)
       .collection('MSG')
       .add({...myMsg, createdAt: firestore.FieldValue.serverTimestamp()})
-      .then(()=>{
-        // console.log("msg", myMsg);
-        axios.post(`${API}/firebasemessage`,myMsg)
+      .then(async()=>{
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+          headers:{
+            Authorization: parsed.token
+          }
+        };
+        axios.post(`${API}/firebasemessage`,myMsg,axiosConfig)
         .then(res=>{
           console.log(res.data);
         })
@@ -177,9 +184,16 @@ export default function ChatRoom({route, navigation}) {
   };
   // console.log(ratingData);
 
-  const _submitRating=()=>{
+  const _submitRating=async()=>{
     setIndicator(true);
-    axios.patch(`${API_USER}/vendorreview`,ratingData)
+    const json_Val = await AsyncStorage.getItem("jwt");
+    const parsed = JSON.parse(json_Val);
+    let axiosConfig = {
+      headers:{
+        Authorization: parsed.token
+      }
+    };
+    axios.patch(`${API_USER}/vendorreview`,ratingData,axiosConfig)
     .then(resp=>{
       console.log(resp.data);
       setIndicator(false);
