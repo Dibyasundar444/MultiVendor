@@ -5,12 +5,12 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
+  FlatList,
   Dimensions,
   Image,
   TextInput,
   ActivityIndicator,
-  Alert,
+  ScrollView,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -40,12 +40,14 @@ export default function HomeScreen({navigation}) {
   const [loading4, setloading4] = useState(true);
   const [loading5, setloading5] = useState(false);
   const [serviceAdded, setServiceAdded] = useState(false);
-  const [isVisible1, setIsvisible1] = useState(false);
+  const [isVisible2, setIsVisible2] = useState(false);
   const [process, setProcess] = useState('');
   // const [location, setLocation] = useState({});
   const [addNewService, setAddNewService] = useState('');
   const [url, setUrl] = useState('');
   const [vendorData, setVendorData] = useState({});
+
+  // const reverseServiceData = latestProducts.reverse();
 
   let tempDate = new Date();
   let year = tempDate.getFullYear();
@@ -53,15 +55,13 @@ export default function HomeScreen({navigation}) {
   let day = ('0' + tempDate.getDate()).slice(-2);             // to get 0 before a single day   (i.e 3 -> 03)
   let fDate = `${day}-${month}-${year}`;
 
-
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    getLatestProductList();
+    // getLatestProductList();
     // getLocation();
     if (isFocused) {
-      getServices();
-      getVendor();
+      getVendor_and_Products();
     }
   }, [isFocused]);
 
@@ -76,7 +76,7 @@ export default function HomeScreen({navigation}) {
 //     }
 // };
 
-  const getVendor=async()=>{
+  const getVendor_and_Products=async()=>{
     const json_Val = await AsyncStorage.getItem("jwt");
     const parsed = JSON.parse(json_Val);
     let axiosConfig = {
@@ -87,182 +87,24 @@ export default function HomeScreen({navigation}) {
     axios.get(`${API_VENDOR}/vendordetail`,axiosConfig)
     .then(async res=>{
       setVendorData(res.data);
+      setServiceData(res.data.services);
       setloading4(false);
+      axios.get(`${API}/products/vendor/${res.data._id}`)
+      .then(resp=>{
+        setLatestProducts(resp.data);
+        setloading1(false);
+      })
+      .catch(err=>{
+        console.log('server error: ', err);
+        setloading1(false);
+      })
     })
     .catch(err=>{
       setloading4(false);
       console.log(err);
     })
   };
-
-  const getServices = () => {
-    axios
-      .get(`${API}/service`)
-      .then(resp => {
-        setServiceData(resp.data);
-        setloading2(false);
-      })
-      .catch(err => {
-        console.log('server error: ', err);
-      });
-  };
   
-  const getLatestProductList = () => {
-    axios
-      .get(`${API}/products`)
-      .then(resp => {
-        setLatestProducts(resp.data.products);
-        setloading1(false);
-      })
-      .catch(err => {
-        console.log('server error: ', err);
-      });
-  };
-
-  if(serviceAdded){
-    setTimeout(()=>{
-      setServiceAdded(false);
-    },3000)
-  };
-
-  const createService=async()=>{
-    const json_Val = await AsyncStorage.getItem("jwt");
-    const parsed = JSON.parse(json_Val);
-    let axiosConfig = {
-        headers:{
-            Authorization: parsed.token
-        }
-    };
-    if(addNewService !== ""){
-      setloading3(true);
-      if(serviceData.length > 0){
-        setloading3(false);
-        Alert.alert("You cann't add more than One Service");
-      }
-      else{
-        axios.patch(`${API}/service`,{name: addNewService,imgUrl: url},axiosConfig)
-        .then(resp=>{
-          setloading3(false);
-          setServiceAdded(true);
-        })
-        .catch(err=>{
-          console.log("err add Service: ",err);
-          setloading3(false);
-        })
-      }
-    }
-    else{
-      null;
-    }
-  };
-
-  const openLibrary = async () => {
-    const options = {
-      storageOptions: {
-        path: 'images',
-        mediaType: 'photo',
-      },
-      includeBase64: true,
-    };
-    // let isCameraPermitted = await requestCameraPermission();
-    // let isStoragePermitted = await requestLibraryPermission();
-
-    // if(isCameraPermitted && isStoragePermitted){
-    launchImageLibrary(options, resp => {
-      if (resp.didCancel) {
-        console.log('Canceled');
-      } else if (resp.error) {
-        console.log('Error: ', resp.error);
-      } else {
-        const imgData = resp.assets[0];
-        try {
-          const task = storage()
-            .ref('VENDOR/service/img' + imgData.fileName)
-            .putString(imgData.base64, 'base64');
-          task.on(
-            'state_changed',
-            function (snapshot) {
-              const rate = Math.floor(
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
-              );
-              setProcess(`${rate}%`);
-              console.log(rate);
-            },
-            function (err) {
-              console.log(err);
-            },
-            function () {
-              task.snapshot.ref.getDownloadURL().then(function (url) {
-                setUrl(url);
-              });
-            },
-          );
-          task.then(() => {
-            console.log('PDF uploaded to the bucket!');
-          });
-        } catch (e) {
-          console.log(e);
-        }
-      }
-    });
-    // }
-  };
-
-  const addService=()=>(
-    <View style={styles.absService}>
-      <View style={styles.addServiceModal}>
-        <View style={{alignItems:"center"}}>
-          <Text style={{color:"gray",fontSize:12,marginVertical:10}}>** Only 1 service can be added **</Text>
-          <TextInput 
-            style={styles.serviceInput}
-            placeholder="add your service here..."
-            placeholderTextColor="gray"
-            value={addNewService}
-            onChangeText={(val)=>setAddNewService(val)}
-          />
-          <TouchableOpacity
-              style={[styles.textInput1, styles.image]}
-              activeOpacity={0.8}
-              onPress={openLibrary}>
-              <Text style={{color: 'gray'}}>Images</Text>
-              {
-                  !process ? <Feather name="upload" color="#000" size={18} /> : 
-                  process == "100%" ? <MaterialIcons name='done' color="green" size={20} /> :
-                  <Text style={{color:"gray",fontSize:12}}>{process}</Text>
-              }
-          </TouchableOpacity>
-        </View>
-        {
-          loading3 ? 
-          <View style={{marginVertical:25}}>
-            <ActivityIndicator size={30} />
-          </View>
-          :
-          <View style={styles.btnView}>
-            <TouchableOpacity style={styles.serviceBtn}
-              activeOpacity={0.6}
-              onPress={createService}
-              disabled={loading3 ? true : false}
-            >
-              <Text style={{color:"#fff",fontWeight:"600"}}>+Add Service</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.cancelBtn}
-              activeOpacity={0.6}
-              onPress={()=>{
-                setAddNewService('');
-                setIsvisible1(false);
-              }}
-            >
-            <Text style={{color:"#fff",fontWeight:"600"}}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-        }
-        {
-          serviceAdded ? <Text style={{color:"green",textAlign:"center",marginBottom:10,fontSize:12}}>service added</Text> : null
-        }
-      </View>
-    </View>
-  );
 
   const switchUser=async()=>{
     setloading5(true);
@@ -313,16 +155,43 @@ export default function HomeScreen({navigation}) {
         date={fDate}
         isLoading={loading4}
       />
-      <ScrollView
-        style={styles.body}
+      <ScrollView style={styles.body}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingBottom:150,paddingTop:10}}
       >
-        <View style={{flexDirection:"row",alignItems:"center",justifyContent:"space-between",marginRight:20}}>
+        <View style={{
+          flexDirection:"row",
+          alignItems:"center",
+          justifyContent:"space-between",
+          marginHorizontal:20
+        }}>
+          <TouchableOpacity
+            style={[styles.user,{width:"48%"}]}
+            onPress={()=>navigation.navigate("MyProduct")}
+          >
+            <Text style={{color:"#fff",fontWeight:"500"}}>Products</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.user,{width:'48%'}]}
+            onPress={()=>navigation.navigate("MyService")}
+          >
+            <Text style={{color:"#fff",fontWeight:"500"}}>Services</Text>
+          </TouchableOpacity>
+        </View>
+        <View 
+          style={{
+            flexDirection:"row",
+            alignItems:"center",
+            justifyContent:"space-between",
+            marginHorizontal:20,
+            marginTop:10
+          }}
+        >
           <Text style={{color: '#000', fontSize: 16, fontWeight: '600'}}>
-            This Month
+            My Products
           </Text>
           <TouchableOpacity 
-            style={styles.user}
+            style={[styles.user,{width:'48%'}]}
             onPress={switchUser}
           >
               <View style={{flexDirection:"row",alignItems:"flex-end"}}>
@@ -330,19 +199,24 @@ export default function HomeScreen({navigation}) {
                 {
                   loading5 ? <ActivityIndicator color="#fff" size={20} style={{marginHorizontal:5,marginVertical:2}} />
                   :
-                  <Text style={{fontWeight:"500",color:"#fff",marginLeft:5}}>User</Text>
+                  <Text style={{fontWeight:"500",color:"#fff",marginLeft:5}}>Switch to user</Text>
                 }
               </View>
           </TouchableOpacity>
         </View>
-        <View>
-          {loading1 ? (
-            <ActivityIndicator style={{marginVertical: 40}} size={30} />
-          ) : (
-            <ScrollView
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}>
-              {latestProducts.map(item => (
+        <ScrollView 
+          contentContainerStyle={{paddingHorizontal:20}}
+          horizontal={true}
+          // style={{marginRight:20}}
+          showsHorizontalScrollIndicator={false}
+        >
+          <View style={{flexDirection:"row",}}>
+            {loading1 ? (
+              <View style={{width:width,left:-20}}>
+                <ActivityIndicator style={{marginVertical: 40}} size={30} />
+              </View>
+            ) : (
+              latestProducts.map(item=>(
                 <TouchableOpacity
                   key={item._id}
                   activeOpacity={0.6}
@@ -376,27 +250,20 @@ export default function HomeScreen({navigation}) {
                     </View>
                   </View>
                 </TouchableOpacity>
-              ))}
-            </ScrollView>
-          )}
-        </View>
-        <View style={styles.body2}>
-          <View style={styles.body1}>
-            <Text style={{color: '#000', fontSize: 16, fontWeight: '600'}}>
-              All Services
-            </Text>
-            <TouchableOpacity onPress={() => setIsvisible1(true)} style={{alignItems:"center"}}>
-              <Text style={{color: '#000', fontSize: 12}}>+Add Service</Text>
-              <View
-                style={{width: "105%", borderWidth: 0.5, borderColor: '#000'}}
-              />
-            </TouchableOpacity>
+              ))
+            )}
           </View>
-          <ScrollView style={{}} showsVerticalScrollIndicator={false}>
-            {loading2 ? (
-              <ActivityIndicator style={{marginTop: 80}} size={40} />
-            ) : (
-              serviceData.map(item => (
+        </ScrollView>
+        <View style={{marginHorizontal:20,marginTop:20}}>
+          <Text 
+            style={{
+              color: '#000', 
+              fontSize: 16, 
+              fontWeight: '600'
+            }}
+          >My Services</Text>
+          {
+            serviceData.map(item => (
                 <TouchableOpacity
                   key={item._id}
                   activeOpacity={0.7}
@@ -423,13 +290,50 @@ export default function HomeScreen({navigation}) {
                     <AntDesign name="right" size={16} color="#000" />
                   </View>
                 </TouchableOpacity>
-              ))
-            )}
-          </ScrollView>
+            ))
+          }
         </View>
       </ScrollView>
+      <View style={styles.contact}>
+        <TouchableOpacity
+          style={{
+            height: 50,
+            width: 50,
+            borderRadius: 25,
+            backgroundColor:"#fff",
+            justifyContent:"center",
+            alignItems:"center",
+            elevation: 9
+          }}
+          activeOpacity={1}
+          onPress={()=>setIsVisible2(isVisible => !isVisible)}
+        >
+          <AntDesign name='customerservice' color="#000" size={30} />
+        </TouchableOpacity>
+      </View>
       {
-        isVisible1 && addService()
+        isVisible2 && 
+        <View
+          style={{
+            position:"absolute",
+            bottom: 100,
+            right: 75
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              backgroundColor:"#fff",
+              paddingHorizontal:10,
+              paddingVertical: 5,
+              elevation: 9,
+              borderTopRightRadius:20,
+              borderBottomLeftRadius:20
+            }}
+            // activeOpacity={0.9}
+          >
+            <Text style={{color:'#000'}}>Contact to admin</Text>
+          </TouchableOpacity>
+        </View>
       }
     </View>
   );
@@ -440,18 +344,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffe4e1',
   },
+  contact: {
+    position: "absolute",
+    bottom: 90,
+    right: 20
+  },
   body: {
-    marginLeft: 20,
-    marginTop: 40,
+    // marginLeft: 20,
+    marginTop: 10,
     // marginBottom:height/2.5,
   },
   box: {
     minHeight: clickBoxHeight,
-    width: width / 3,
+    width: width / 2.3,
     borderRadius: 10,
-    marginRight: 10,
     marginTop: 20,
     backgroundColor: '#f2f2f2',
+    marginRight:10
   },
   body1: {
     flexDirection: 'row',
@@ -468,7 +377,7 @@ const styles = StyleSheet.create({
   },
   img: {
     height: clickBoxHeight / 2 + 20,
-    width: width / 3,
+    width: width / 2.3,
     // resizeMode: "contain",
     // borderTopRightRadius: 10,
     // borderTopLeftRadius: 10,
@@ -579,9 +488,9 @@ const styles = StyleSheet.create({
     alignItems:"center",
     justifyContent:"center",
     backgroundColor:"#d95448",
-    marginVertical:10,
+    // marginVertical:10,
     paddingVertical:2,
-    paddingHorizontal:8,
+    // paddingHorizontal:8,
     borderRadius:4
 }
 });

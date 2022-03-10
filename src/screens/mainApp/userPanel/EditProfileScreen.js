@@ -259,7 +259,7 @@ export default function EditProfile({navigation}){
         <View style={styles.container}>
             <View style={styles.header}>
                 <AntDesign name="left" color="#000" size={24} onPress={()=>navigation.goBack()} />
-                <Text style={{color:"#000",marginLeft:30,fontSize:16,fontWeight:"500"}}>Profile</Text>
+                <Text style={{color:"#000",marginLeft:10,fontSize:16,fontWeight:"500"}}>Account</Text>
             </View>
             <ScrollView style={styles.body}>
                 {loading ? 

@@ -81,7 +81,7 @@ export default function UserPanel(){
                         <View style={{flex:1,width:width/4,justifyContent:"center"}}>
                             <View style={[styles.btn4_inActiveStyle, focused && styles.btn4_activeStyle]}>
                                 <Ionicons name="person-outline" color={focused?"#fff":"#000"} size={24} style={focused && {left:-10}} />
-                                <Text style={[{fontSize:12,color:"#000"},focused && {color:"#fff",left:-10}]}>Profile</Text>
+                                <Text style={[{fontSize:12,color:"#000"},focused && {color:"#fff",left:-10}]}>Account</Text>
                             </View>
                         </View>
                     )
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
         // flex:1
     },
     btn1_activeStyle: {
-        backgroundColor:"#ff1493",
+        backgroundColor:"#d95448",
         borderTopRightRadius:10,
         borderBottomRightRadius:10,
         paddingVertical:5
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
         // backgroundColor:"gray"
     },
     btn4_activeStyle: {
-        backgroundColor:"#ff1493",
+        backgroundColor:"#d95448",
         borderTopLeftRadius:10,
         borderBottomLeftRadius:10,
         paddingVertical:5
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
         alignItems:"center",
     },
     btn2SubView: {
-        backgroundColor:"#ff1493",
+        backgroundColor:"#d95448",
         flex:1,
         justifyContent:"center",
         alignItems:"center",

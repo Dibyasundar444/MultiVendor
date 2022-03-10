@@ -218,7 +218,7 @@ export default function ProfileScreen({navigation}){
                 >
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
                         <Ionicons name="person-outline" color="#000" size={18}/>
-                        <Text style={{color:"#000",marginLeft: 20}}>Profile</Text>
+                        <Text style={{color:"#000",marginLeft: 20}}>Edit Profile</Text>
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
                 </TouchableOpacity>
@@ -239,7 +239,7 @@ export default function ProfileScreen({navigation}){
                 >
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
                         <EvilIcons name="location" color="#000" size={24} />
-                        <Text style={{color:"#000",marginLeft:10}}>Update location</Text>
+                        <Text style={{color:"#000",marginLeft:15}}>Update location</Text>
                     </View>
                     <MaterialIcons name="my-location" color="#000" size={18} style={{marginRight: 20}} />
                 </TouchableOpacity>
@@ -248,9 +248,9 @@ export default function ProfileScreen({navigation}){
                     activeOpacity={0.8}
                     onPress={logOut_alert}
                 >
-                    <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
+                    <View style={{flexDirection:"row",alignItems:"center",marginLeft:25}}>
                         <MaterialIcons name="logout" color="#000" size={20}/>
-                        <Text style={{color:"#000",marginLeft: 20}}>Logout</Text>
+                        <Text style={{color:"#000",marginLeft: 15}}>Logout</Text>
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
                 </TouchableOpacity>
@@ -306,7 +306,7 @@ export default function ProfileScreen({navigation}){
                                     color:"#000",
                                     fontWeight:"500"
                                 }}
-                            >State :</Text>
+                            >District :</Text>
                             <Text
                                 style={{
                                     color:"gray",
@@ -327,7 +327,7 @@ export default function ProfileScreen({navigation}){
                                     color:"#000",
                                     fontWeight:"500"
                                 }}
-                            >Country :</Text>
+                            >State :</Text>
                             <Text
                                 style={{
                                     color:"gray",

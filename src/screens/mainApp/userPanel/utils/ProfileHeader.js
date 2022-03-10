@@ -12,7 +12,7 @@ export default function ProfileHeader({nav}){
     return(
         <View style={styles.header}>
             <View style={styles.headerSub}>
-                <Text style={{color:"#000",fontSize:16,fontWeight:"500"}}>Profile</Text>
+                <Text style={{color:"#000",fontSize:16,fontWeight:"500"}}>Account</Text>
                 <Fontisto name="bell" color="#000" size={24} onPress={nav} />
             </View>
         </View>

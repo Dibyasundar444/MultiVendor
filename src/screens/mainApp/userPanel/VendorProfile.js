@@ -16,10 +16,10 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import axios from 'axios';
-import {API} from '../../../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+
+import {API} from '../../../../config';
 
 const {height, width} = Dimensions.get('window');
 
@@ -75,10 +75,6 @@ export default function VendorProfile({navigation, route}) {
       .catch(err => {
         console.log('Error from server MSG: ', err);
       });
-  };
-
-  const _openWhatsapp=()=>{
-    Linking.openURL('http://api.whatsapp.com/send?phone=91'+item.phoneNo)
   };
 
   const services = () =>
@@ -160,6 +156,7 @@ export default function VendorProfile({navigation, route}) {
           <View style={styles.btns}>
             <TouchableOpacity
               style={styles.btnRound}
+              activeOpacity={0.9}
               onPress={() => openDialer()}>
               <Feather name="phone-call" color="#000" size={16} />
             </TouchableOpacity>
@@ -169,11 +166,11 @@ export default function VendorProfile({navigation, route}) {
                 {item.ratings.toString().split('',3)}/5
               </Text>
             </View>
-            <TouchableOpacity style={styles.btnRound} onPress={_sendMsg}>
+            <TouchableOpacity
+             style={styles.btnRound} 
+             activeOpacity={0.9}
+             onPress={_sendMsg}>
               <MaterialIcons name="chat" color="#000" size={20} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btnRound} onPress={_openWhatsapp}>
-              <FontAwesome name="whatsapp" color="green" size={26} />
             </TouchableOpacity>
           </View>
         </View>

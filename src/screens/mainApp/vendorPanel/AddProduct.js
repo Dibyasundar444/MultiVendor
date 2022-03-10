@@ -49,12 +49,10 @@ export default function AddProduct({navigation,route}) {
   const [productAdded, setProductAdded] = useState(false);
   const [error1, setError1] = useState(false);
   const [error2, setError2] = useState(false);
-  const [numberOfProducts, setNumberOfProducts] = useState('');
 
   useEffect(() => {
     getCategories();
     getServices();
-    getProducts();
   }, []);
 
   // console.log("Path: ", file.uri);
@@ -100,23 +98,6 @@ export default function AddProduct({navigation,route}) {
   //     }
   //     else return true;
   // };
-
-  const getProducts=async()=>{
-    const json_Val = await AsyncStorage.getItem("jwt");
-    const parsed = JSON.parse(json_Val);
-    let axiosConfig = {
-        headers:{
-            Authorization: parsed.token
-        }
-    };
-    axios.get(`${API}/products/vendor/${preData}`,axiosConfig)
-    .then(resp => {
-      setNumberOfProducts(resp.data.length);
-    })
-    .catch(err => {
-      console.log('server error: ', err);
-    });
-  }
 
   // const openCamera = async () => {
   //   const options = {
@@ -406,10 +387,10 @@ export default function AddProduct({navigation,route}) {
     title: name,
     price: Number(cost),
     description: desc,
-    content: content,
+    // content: content,
     images: imgURL,
     category: selectedCategory_ID,
-    service: selectedService_ID,
+    // service: selectedService_ID,
   };
 
   const createProduct = async() => {
@@ -423,34 +404,55 @@ export default function AddProduct({navigation,route}) {
     };
     if(
       name===""|| cost==="" || desc==="" || 
-      content==="" || imgURL.length === 0 || 
-      selectedCategory_ID==="" || selectedService_ID===""
+      imgURL.length === 0 || 
+      selectedCategory_ID===""
       ){
       setError2(true);
       setIndicator1(false);
     }
     else{
       setError2(false);
-      if(numberOfProducts >= 10){
-        setIndicator1(false);
-        Alert.alert("You cann't add more than 10 Products");
-        console.log(postData);
-      }
-      else{
-        axios.post(`${API}/products`, postData,axiosConfig)
-        .then(resp => {
-          setError1(false);
+      axios.get(`${API}/products/vendor/${preData}`,axiosConfig)
+      .then(resp => {
+        if(resp.data.length >= 10){
           setIndicator1(false);
-          setProductAdded(true);
-        })
-        .catch(err => {
-          console.log('server error: ', err);
-          setIndicator1(false);
-          setProductAdded(false);
-          setError1(true);
-        });
-      }
+          Alert.alert("You cann't add more than 10 Products");
+          console.log(postData);
+        }
+        else{
+          axios.post(`${API}/products`, postData,axiosConfig)
+          .then(resp => {
+            setError1(false);
+            setIndicator1(false);
+            setProductAdded(true);
+            setName('');
+            setCost('');
+            setDesc('');
+            setContent('');
+            setImgURL('');
+            setSelectedCategory_name('');
+            setSelectedCategory_ID('');
+            setSelectedService_ID('');
+            setSelectedService_name('');
+          })
+          .catch(err => {
+            console.log('server error: ', err);
+            setIndicator1(false);
+            setProductAdded(false);
+            setError1(true);
+          });
+        }
+      })
+      .catch(err => {
+        console.log('server error: ', err);
+      });
     }
+  };
+
+  if(productAdded){
+    setTimeout(()=>{
+      setProductAdded(false);
+    },3000)
   };
 
   return (
@@ -486,7 +488,7 @@ export default function AddProduct({navigation,route}) {
               <AntDesign name="down" size={18} color="#000" />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[styles.input1]}
             activeOpacity={0.6}
             onPress={() => setIsVisible3(true)}>
@@ -496,7 +498,7 @@ export default function AddProduct({navigation,route}) {
               </Text>
               <AntDesign name="down" size={18} color="#000" />
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <View style={[styles.textInput1]}>
             <TextInput
               style={styles.Name}
@@ -506,7 +508,7 @@ export default function AddProduct({navigation,route}) {
               onChangeText={val => setName(val)}
             />
           </View>
-          <View style={styles.Content}>
+          {/* <View style={styles.Content}>
             <TextInput
               style={[
                 styles.Name,
@@ -521,7 +523,7 @@ export default function AddProduct({navigation,route}) {
               onChangeText={val => setContent(val)}
               maxLength={22}
             />
-          </View>
+          </View> */}
           <View style={styles.desc}>
             <TextInput
               style={[
@@ -641,7 +643,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     alignItems: 'center',
-    backgroundColor: '#ff1493',
+    backgroundColor: '#d95448',
     paddingVertical: 13,
     paddingHorizontal: 20,
     borderRadius: 10,

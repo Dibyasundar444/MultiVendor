@@ -6,10 +6,13 @@ import {
     TouchableOpacity,
     FlatList,
     Dimensions, 
-    Image
+    Image,
+    Linking,
+    ActivityIndicator
 } from "react-native";
 import axios from "axios";
 import { useIsFocused } from "@react-navigation/native";
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import Header from "./utils/header";
 import { API_VENDOR } from "../../../../config";
@@ -20,6 +23,7 @@ export const { height, width } = Dimensions.get("window");
 export default function VendorChat({navigation}){
 
     const [chatList, setChatList] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [vendorData, setVendorData] = useState(null);
     const isFocused = useIsFocused();
 
@@ -39,14 +43,19 @@ export default function VendorChat({navigation}){
         };
         axios.get(`${API_VENDOR}/vendordetail`,axiosConfig)
         .then(resp=>{
-            console.log(resp.data);
+            setLoading(false);
             setChatList(resp.data.customercontact);
             setVendorData(resp.data);
         })
         .catch(err=>{
+            setLoading(false);
             console.log("server error: ",err);
         })
     };
+
+    const _openWhatsapp=(item)=>{
+        Linking.openURL('http://api.whatsapp.com/send?phone=91'+item.phoneNo)
+      };
    
 
     return(
@@ -58,55 +67,63 @@ export default function VendorChat({navigation}){
                 bellColor="#000"
             />
             <View style={{
-                backgroundColor:"#fff",flex:1,
+                backgroundColor:"#fff",
+                flex:1,
                 borderTopRightRadius:10,
-                borderTopLeftRadius:10,bottom:-10
+                borderTopLeftRadius:10,
+                bottom:-10
                 }}
             >
                 <View>
-                    <FlatList 
-                        data={chatList}
-                        keyExtractor={item=>item._id}
-                        contentContainerStyle={{paddingBottom:150}}
-                        showsVerticalScrollIndicator={false}
-                        renderItem={({item})=>(
-                            <TouchableOpacity key={item._id} 
-                                style={styles.mainView} 
-                                onPress={()=>navigation.navigate("ChatRoom",{totalData: vendorData,customerData:item})}
-                            >
-                                <View style={styles.subView}>
-                                    <View style={{alignItems:"center"}}>
-                                        {
-                                            item.profileImg ? 
-                                            <Image style={styles.bgCircle} 
-                                            source={{uri: item.profileImg}}
-                                            />
-                                            :
-                                            <Image style={styles.bgCircle} 
-                                            source={require("../../../assets/profile.png")}
-                                            />
-                                        }
-                                        {/* <View style={styles.smCircle}>
-                                            <Text style={{color:"#000",fontSize:12}}>1</Text>
-                                        </View> */}
+                    {
+                        loading ? <ActivityIndicator style={{marginTop:100}} size={30} />
+                        :
+                        <FlatList 
+                            data={chatList}
+                            keyExtractor={item=>item._id}
+                            contentContainerStyle={{paddingBottom:150}}
+                            showsVerticalScrollIndicator={false}
+                            renderItem={({item})=>(
+                                <TouchableOpacity key={item._id} 
+                                    style={styles.mainView} 
+                                    activeOpacity={0.8}
+                                    onPress={()=>navigation.navigate("ChatRoom",{totalData: vendorData,customerData:item})}
+                                >
+                                    <View style={styles.subView}>
+                                        <View style={{flexDirection:"row",alignItems:"center"}}>
+                                            <View style={{alignItems:"center"}}>
+                                                {
+                                                    item.profileImg ? 
+                                                    <Image style={styles.bgCircle} 
+                                                    source={{uri: item.profileImg}}
+                                                    />
+                                                    :
+                                                    <Image style={styles.bgCircle} 
+                                                    source={require("../../../assets/profile.png")}
+                                                    />
+                                                }
+                                            </View>
+                                            <View style={styles.texts}>
+                                            {
+                                                item.name ? 
+                                                <Text style={{color:"#000",top:0,fontWeight:"500"}}>{item.name}</Text>
+                                                :
+                                                <Text style={{color:"#000",top:0,fontWeight:"500"}}>User{item._id.split("",2)}**</Text>
+                                            }
+                                            </View>
+                                        </View>
+                                        {/* <TouchableOpacity 
+                                            style={styles.btnRound} 
+                                            onPress={()=>_openWhatsapp(item)}
+                                            activeOpacity={0.8}
+                                        >
+                                            <FontAwesome name="whatsapp" color="green" size={26} />
+                                        </TouchableOpacity> */}
                                     </View>
-                                    <View style={styles.texts}>
-                                    {
-                                        item.name ? 
-                                        <Text style={{color:"#000",top:0,fontWeight:"500"}}>{item.name}</Text>
-                                        :
-                                        <Text style={{color:"#000",top:0,fontWeight:"500"}}>User{item._id.split("",2)}**</Text>
-                                    }
-                                        {/* <Text style={{color:"#000",fontSize:11,}}>{item.duration}</Text> */}
-                                        {/* <Text style={styles.msg}>{item.msg}</Text> */}
-                                    </View>
-                                    {/* <View style={styles.time}>
-                                        <Text style={{color:"#000"}}>{item.time}</Text>
-                                    </View> */}
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                    />
+                                </TouchableOpacity>
+                            )}
+                        />
+                    }
                 </View>
             </View>
         </View>
@@ -159,9 +176,9 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     time: {
-        position: "absolute",
-        right: 0,
-        top: 3
+        // position: "absolute",
+        // right: 0,
+        // top: 3
     },
     body: {
         backgroundColor:"#fff",
@@ -174,7 +191,8 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         alignItems:"center",
         marginHorizontal:20,
-        marginVertical:10
+        marginVertical:10,
+        justifyContent:"space-between"
     },
     msg: {
         color:"#aaa",
@@ -195,7 +213,17 @@ const styles = StyleSheet.create({
     duration: {
         color:"#000",
         fontSize:11,
-    }
+    },
+    btnRound: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 40,
+        width: 40,
+        borderRadius: 20,
+        backgroundColor: '#fff',
+        marginRight: 10,
+        elevation: 9,
+      }
 })
 
 

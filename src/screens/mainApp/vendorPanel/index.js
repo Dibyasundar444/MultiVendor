@@ -9,12 +9,14 @@ import {
 import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Foundation from "react-native-vector-icons/Foundation";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
 import HomeStack from "./stackNavigator/HomeStack";
 import ProductStack from "./stackNavigator/ProductStack";
 import ChatStack from "./stackNavigator/ChatStack";
+import ServiceStack from "./stackNavigator/ServiceStack";
 
 
 
@@ -57,6 +59,18 @@ export default function VendorPanel({navigation}){
                         <View style={[styles.default2,focused && styles.active]}>
                             <Foundation name="clipboard-notes" color={focused?"#fff":"#000"} size={26} />
                             <Text style={{fontSize:12,color:focused?"#fff":"#000"}}>Products</Text>
+                        </View>
+                    )
+                })}
+            />
+            <Tab.Screen name="MyService"
+                component={ServiceStack}
+                options={({route})=>({
+                    tabBarStyle: [styles.bottomTab,{display: getTabBarVisibility(route)}],
+                    tabBarIcon: ({focused})=>(
+                        <View style={[styles.default2,focused && styles.active]}>
+                            <MaterialIcons name="miscellaneous-services" color={focused?"#fff":"#000"} size={26} />
+                            <Text style={{fontSize:12,color:focused?"#fff":"#000"}}>Services</Text>
                         </View>
                     )
                 })}
@@ -108,7 +122,7 @@ const styles = StyleSheet.create({
         
     },
     active: {
-        backgroundColor: "#ff1493",
+        backgroundColor: "#d95448",
         borderRadius: 15
     }
 })

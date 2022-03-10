@@ -3,27 +3,33 @@ import { Button, View, Text, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import AddProduct from '../AddProduct';
+import HomeScreen from '../HomeScreen';
 import AlertScreen from '../AlertScreen';
 import ProfileScreen from '../ProfileScreen';
 import EditProfile from '../EditProfileScreen';
-import ProductScreen from '../ProductScreen';
+import MyProduct from '../utils/MyProducts.';
+import AddProduct from '../AddProduct';
+import Services from '../ServiceScreen';
+import AddService from '../AddService';
 
 
 
-export default function ProductStack(){
+export default function ServiceStack(){
 
   
   const Stack = createNativeStackNavigator();
 
   return (
     <View style={styles.container}>
-        <Stack.Navigator screenOptions={{headerShown:false}} initialRouteName="ProductScreen">
-            <Stack.Screen name='ProductScreen' component={ProductScreen} />
-            <Stack.Screen name="addProductScreen" component={AddProduct} />
+        <Stack.Navigator 
+            screenOptions={{headerShown:false}}
+            initialRouteName="ServiceScreen"
+        >
             <Stack.Screen name='AlertScreen' component={AlertScreen} />
             <Stack.Screen name='ProfileScreen' component={ProfileScreen} />
             <Stack.Screen name='EditProfile' component={EditProfile} />
+            <Stack.Screen name='ServiceScreen' component={Services} />
+            <Stack.Screen name='addServiceScreen' component={AddService} />
         </Stack.Navigator>
     </View>
   );

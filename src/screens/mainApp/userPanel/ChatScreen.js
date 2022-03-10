@@ -82,7 +82,6 @@ export default function ChatScreen({navigation}){
                     <Fontisto name="bell" color="#000" size={24} onPress={()=>navigation.navigate("Alert")} />
                 </View>
                 <View style={styles.textInputDiv}>
-                    <Feather name="search" size={22} style={{marginLeft:10,color:"#000"}} />
                     <TextInput 
                         style={styles.textInput}
                         placeholder="Search"
@@ -90,6 +89,7 @@ export default function ChatScreen({navigation}){
                         value={text}
                         onChangeText={(val)=>searchFilter(val)}
                     />
+                    <Feather name="search" size={22} style={{color:"#000"}} />
                 </View>
             </View>
             <View style={{

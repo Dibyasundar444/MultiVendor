@@ -15,8 +15,9 @@ import { BottomSheet } from "react-native-btr";
 import axios from "axios";
 
 import SearchHeader from "./utils/searchHeader";
-import { API, API_USER } from "../../../../config";
+import { API, API_USER, API_VENDOR } from "../../../../config";
 import VendorsNearby from "./utils/VendorsNearby";
+import { StackActions } from "@react-navigation/native";
 
 
 
@@ -37,6 +38,7 @@ export default function SearchScreen({navigation}){
     const [userData, setUserData] = useState({});
     const [isHeaderReady, setIsHeaderReady] = useState(false);
     const [isExpand, setIsExpand] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(()=>{
         getCategories();
@@ -192,6 +194,45 @@ export default function SearchScreen({navigation}){
             setSuccess(false);
         },3000)
     };
+    
+    const userLogin=async()=>{
+        setLoading(true);
+        const json_Val = await AsyncStorage.getItem("jwt");
+        const parsed = JSON.parse(json_Val);
+        let axiosConfig = {
+          headers:{
+            Authorization: parsed.token
+          }
+        };
+        axios.get(`${API_USER}/logout`,axiosConfig)
+        .then(resp=>{
+            console.log(resp.data);
+            axios.post(`${API_VENDOR}/switch/register`,{phoneNo:userData.phoneNo},axiosConfig)
+            .then( async resp => {
+                try{
+                    const jsonValue = JSON.stringify(resp.data);
+                    await AsyncStorage.setItem("jwt",jsonValue);
+                    await AsyncStorage.setItem("userRole","1");
+                    setLoading(false);
+                    navigation.dispatch(
+                        StackActions.replace("VendorPanel")
+                    )
+                }
+                catch(e){
+                    console.log(e);
+                    setLoading(false);
+                }
+            })
+            .catch(err=>{
+                console.log("error switching user: ",err);
+                setLoading(false);
+            })
+        })
+        .catch(err=>{
+            console.log("error logging out: ",err);
+            setLoading(false);
+        })
+    };
 
 
     return(
@@ -212,7 +253,6 @@ export default function SearchScreen({navigation}){
                 ready={isHeaderReady}
             />
             <View style={styles.textInputDiv}>
-                <Feather name="search" size={22} style={{marginLeft:10,color:"#000"}} />
                 <TextInput 
                     style={styles.textInput}
                     placeholder="Find your products..."
@@ -220,17 +260,19 @@ export default function SearchScreen({navigation}){
                     value={text}
                     onChangeText={(val)=>searchFilter(val)}
                 />
+                <Feather name="search" size={22} style={{color:"#000",right:-10}} />
             </View>
             <VendorsNearby 
                 vendorProfile={(item)=>navigation.navigate("VendorProfile",item)}
-                login={()=>navigation.navigate("SignIn")}
+                login={userLogin}
+                isLoading={loading}
             />
             <View style={{marginHorizontal:20}}>
                 <View style={{flexDirection:"row", alignItems:"center",justifyContent:"space-between",marginVertical:20}}>
                     <Text style={styles.subHeader}>Browse Categories</Text>   
                     <TouchableOpacity
                         style={{
-                            backgroundColor:"#ff1493",
+                            backgroundColor:"#d95448",
                             paddingHorizontal:10,
                             paddingVertical:3,
                             borderRadius:5
@@ -256,9 +298,9 @@ export default function SearchScreen({navigation}){
                 }             
             </View>
             <BottomSheet
-            visible={isVisible}
-            onBackButtonPress={toggle}
-            onBackdropPress={toggle}
+                visible={isVisible}
+                onBackButtonPress={toggle}
+                onBackdropPress={toggle}
             >
                 <View style={styles.sheet}>
                     <Text style={{
@@ -283,7 +325,7 @@ export default function SearchScreen({navigation}){
                             color:"#000",
                             paddingLeft: 10
                         }}
-                        placeholder="Title"
+                        placeholder="Category"
                         placeholderTextColor="gray"
                         value={title}
                         onChangeText={(val)=>setTitle(val)}
@@ -319,7 +361,7 @@ export default function SearchScreen({navigation}){
                         :
                         <TouchableOpacity 
                             style={{
-                                backgroundColor:"#ff1493",
+                                backgroundColor:"#d95448",
                                 marginTop:40,
                                 paddingVertical:5,
                                 paddingHorizontal:10,
@@ -362,7 +404,7 @@ const styles = StyleSheet.create({
         fontWeight:"bold",
         fontSize:16
     },
-    smImg: {
+    smImg: { 
         height:30,
         width:30,
         borderRadius:15,

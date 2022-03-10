@@ -12,7 +12,7 @@ import {
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import Octicons from "react-native-vector-icons/Octicons";
+import Entypo from "react-native-vector-icons/Entypo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackActions, useIsFocused } from "@react-navigation/native";
 
@@ -156,8 +156,8 @@ export default function ProfileScreen({navigation}){
                     activeOpacity={0.8}
                 >
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
-                        <Ionicons name="person-outline" color="#000" size={18}/>
-                        <Text style={{color:"#000",marginLeft: 20}}>Profile</Text>
+                        <Ionicons name="person-outline" color="#000" size={18} />
+                        <Text style={{color:"#000",marginLeft: 20}}>Edit Profile</Text>
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
                 </TouchableOpacity>
@@ -167,7 +167,7 @@ export default function ProfileScreen({navigation}){
                     onPress={()=>navigation.navigate("WishList")}
                 >
                     <View style={{flexDirection:"row",alignItems:"center",marginLeft:20}}>
-                        <Octicons name="tasklist" color="#000" size={16}/>
+                        <Entypo name="list" color="#000" size={18} />
                         <Text style={{color:"#000",marginLeft: 20}}>Wishlist</Text>
                     </View>
                     <AntDesign name="right" color="#000" size={18} style={{marginRight: 20}} />
