@@ -131,7 +131,7 @@ export default function OtpVerify({route,navigation}){
         <View style={styles.container}>
             <View style={styles.heading}>
                 <Image style={{height:"30%",resizeMode:"contain"}} source={require("../assets/logo.jpg")} />
-                <Text style={{color:"#000",fontSize: 20,fontWeight:"600"}}>Joyayog</Text>
+                <Text style={{color:"#fff",fontSize: 20,fontWeight:"600"}}>Jogayog</Text>
             </View>
             <View style={styles.modal}>
                 <ScrollView style={{marginTop: 20, marginHorizontal: 30}}>
@@ -145,7 +145,7 @@ export default function OtpVerify({route,navigation}){
                             pinCount={4}
                             code={num}
                             onCodeChanged={(code)=>setNum(code)}
-                            autoFocusOnLoad
+                            autoFocusOnLoad={false}
                             codeInputFieldStyle={styles.underlineStyleBase}
                             codeInputHighlightStyle={styles.underlineStyleHighLighted}
                             onCodeFilled = {(code) => setNum(code)}
@@ -179,7 +179,7 @@ export default function OtpVerify({route,navigation}){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#ffe4e1"
+        backgroundColor: "#dc494e"
     },
     heading: {
         marginTop: height/6,
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     },
     otp: {
         borderRadius: 10,
-        backgroundColor: "#ff1493",
+        backgroundColor: "#d95448",
         elevation: 5,
         marginHorizontal: width/6,
         justifyContent: "center",

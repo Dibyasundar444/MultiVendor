@@ -9,9 +9,9 @@ import {
     Image,
     ActivityIndicator
 } from "react-native";
+import axios from "axios";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import CategoryHeader from "./utils/CategoryHeader";
-import axios from "axios";
 import { API } from "../../../../config";
 
 
@@ -70,12 +70,13 @@ export default function Categories({route,navigation}){
                                 activeOpacity={0.7}
                                 onPress={()=>_details(item)}
                             >
-                                <Image style={styles.images}
+                                <Image 
+                                    style={styles.images}
                                     source={{uri: item.images[0]}}
                                 />
                                 <View style={{marginLeft:10,marginTop:5}}>
                                     <Text style={{color:"#000",fontSize:12,textTransform:"capitalize"}}>{item.title}</Text>
-                                    <Text style={{color:"#000",fontSize:12}}>{item.content.replace(/\s/g, '')}</Text>
+                                    {/* <Text style={{color:"#000",fontSize:12}}>{item.content.replace(/\s/g, '')}</Text> */}
                                 </View>
                                 <View style={styles.enquire}>
                                     <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
         marginLeft: 20
     },
     box: {
-        minHeight: width/2,
+        paddingBottom:10,
         width: "48%",
         backgroundColor: "#fff",
         elevation: 5,
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
     },
     images: {
         height: width/3.5,
-        backgroundColor:"pink",
+        backgroundColor:"#dc494e",
         width:"100%",
         borderRadius:10
     },

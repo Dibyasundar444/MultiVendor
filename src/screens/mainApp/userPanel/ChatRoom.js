@@ -197,6 +197,9 @@ export default function ChatRoom({route, navigation}) {
     .then(resp=>{
       console.log(resp.data);
       setIndicator(false);
+      setTimeout(()=>{
+        setVisible(false);
+      },1500)
     })
     .catch(err=>{
       console.log("err",err);

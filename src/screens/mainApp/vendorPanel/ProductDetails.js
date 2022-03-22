@@ -117,9 +117,9 @@ export default function ProductDetailsVendor({route, navigation}) {
             }
           </View>
           <View style={{marginBottom: 20}}>
-            <Text style={{color: '#000', fontSize: 13, marginVertical: 10}}>
+            {/* <Text style={{color: '#000', fontSize: 13, marginVertical: 10}}>
               {preData.content}
-            </Text>
+            </Text> */}
             <Text style={{color: '#000', fontSize: 11, flexWrap: 'wrap'}}>
               {preData.description}
             </Text>

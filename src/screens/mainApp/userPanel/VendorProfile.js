@@ -88,7 +88,7 @@ export default function VendorProfile({navigation, route}) {
             textTransform: 'capitalize',
             marginRight: 5,
           }}>
-          {service.name},
+          {service.title},
         </Text>
       </View>
     ));
@@ -151,7 +151,8 @@ export default function VendorProfile({navigation, route}) {
                 </View>
             </View>
             <Text style={styles.des}>Services :</Text>
-            <View style={{flexDirection: 'row',alignItems:"center",marginHorizontal:20}}>{services()}</View>
+            <View style={{flexDirection: 'row',alignItems:"center",marginHorizontal:20,flexWrap:"wrap"}}>{services()}</View>
+            <Text style={styles.des}>Service Area : {item.serviceArea} KM</Text>
           </ScrollView>
           <View style={styles.btns}>
             <TouchableOpacity
@@ -195,7 +196,7 @@ export default function VendorProfile({navigation, route}) {
                   <Image
                     style={{
                       height: width / 3.5,
-                      backgroundColor: 'pink',
+                      backgroundColor: '#dc494e',
                       width: '100%',
                       borderRadius: 10,
                     }}
@@ -210,9 +211,9 @@ export default function VendorProfile({navigation, route}) {
                       }}>
                       {item.title}
                     </Text>
-                    <Text style={{color: '#000', fontSize: 12}}>
-                      {item.content.replace(/\s/g, '')}
-                    </Text>
+                    {/* <Text style={{color: '#000', fontSize: 12}}>
+                      {item.content}
+                    </Text> */}
                   </View>
                   <View
                     style={{
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    backgroundColor: '#ff1493',
+    backgroundColor: '#d95448',
     height: 280,
     width: '100%',
     borderBottomLeftRadius: 20,
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
     fontWeight:"500"
   },
   box: {
-    minHeight: width / 2,
+    paddingBottom:10,
     width: '48%',
     backgroundColor: '#fff',
     elevation: 5,

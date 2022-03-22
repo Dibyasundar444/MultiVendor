@@ -19,6 +19,7 @@ import SplashScreen from './src/screens/SplashScreen';
 import ProductDetailsVendor from './src/screens/mainApp/vendorPanel/ProductDetails';
 
 const App = () => {
+  
   const Stack = createNativeStackNavigator();
 
   const [token, setToken] = useState(null);

@@ -1730,6 +1730,11 @@
   "resolved" "https://registry.npmjs.org/@react-native-community/geolocation/-/geolocation-2.0.2.tgz"
   "version" "2.0.2"
 
+"@react-native-firebase/analytics@^14.5.1":
+  "integrity" "sha512-kYKoQWLUTWC0e8weKrRv4vXNB2beCAvrdZVFFrheiFrztfcoXK6XFPmSHdziSuBcfbc13NmQiT7aSyqOZnKn7w=="
+  "resolved" "https://registry.npmjs.org/@react-native-firebase/analytics/-/analytics-14.5.1.tgz"
+  "version" "14.5.1"
+
 "@react-native-firebase/app@^14.5.1", "@react-native-firebase/app@14.5.1":
   "integrity" "sha512-PmoiKU3DBnuaMZ5Nw71qCmDbJMJQJoYknm5gTI+j09iF0PDzzF0t+Qe/lCWEKMrDs6TuYpJvxFoocSFlAF6BHg=="
   "resolved" "https://registry.npmjs.org/@react-native-firebase/app/-/app-14.5.1.tgz"
@@ -1738,6 +1743,11 @@
     "@expo/config-plugins" "^4.0.18"
     "opencollective-postinstall" "^2.0.1"
     "superstruct" "^0.6.2"
+
+"@react-native-firebase/dynamic-links@^14.5.1":
+  "integrity" "sha512-VV3u/o4dafWDEjohE4MSjW7NPi8iLPWhmVPlm6DGcnAVbgeRIhdQCOemOvbXEmDeGY+BLb6RWAclQwLaertAJw=="
+  "resolved" "https://registry.npmjs.org/@react-native-firebase/dynamic-links/-/dynamic-links-14.5.1.tgz"
+  "version" "14.5.1"
 
 "@react-native-firebase/firestore@^14.5.1":
   "integrity" "sha512-7DYFLA3XYxKGkkKxBaEKGKV/p6lsC6ODOwChCAN6ILHKK3gUlSxIPRkr4AKgFjedqzYWZLceMSH6AgOjeSOSyA=="
@@ -6973,6 +6983,11 @@
   "resolved" "https://registry.npmjs.org/punycode/-/punycode-2.1.1.tgz"
   "version" "2.1.1"
 
+"qs@~6.9.1":
+  "integrity" "sha512-IhMFgUmuNpyRfxA90umL7ByLlgRXu6tIfKPpF5TmcfRLlLCckfP/g3IQmju6jjpu+Hh8rA+2p6A27ZSPOOHdKw=="
+  "resolved" "https://registry.npmjs.org/qs/-/qs-6.9.7.tgz"
+  "version" "6.9.7"
+
 "query-string@^5.0.1":
   "integrity" "sha512-gjWOsm2SoGlgLEdAGt7a6slVOk9mGiXmPFMqrEhLQ68rhQuBnpfs3+EmlvqKyxnCo9/PPlF+9MtY02S1aFg+Jw=="
   "resolved" "https://registry.npmjs.org/query-string/-/query-string-5.1.1.tgz"
@@ -7098,6 +7113,15 @@
     "react-native-parsed-text" "0.0.22"
     "react-native-typing-animation" "^0.1.7"
     "uuid" "3.4.0"
+
+"react-native-google-places-autocomplete@^2.4.1":
+  "integrity" "sha512-NJrzZ5zsguhTqe0C5tIW9PfxOn2wkWDiGYIBFksHzFOIIURxFPUlO0cJmfOjs5CBIDtMampgNXBdgADExBen5w=="
+  "resolved" "https://registry.npmjs.org/react-native-google-places-autocomplete/-/react-native-google-places-autocomplete-2.4.1.tgz"
+  "version" "2.4.1"
+  dependencies:
+    "lodash.debounce" "^4.0.8"
+    "prop-types" "^15.7.2"
+    "qs" "~6.9.1"
 
 "react-native-image-crop-picker@^0.37.3":
   "integrity" "sha512-ih+0pWWRUNEFQyaHwGbH9rqJNOb7EBYMwKJhTY0VmsKIA9E+usfwMmQXAFIfOnee7fTn0A2vOXkBCPQZwyvnQw=="
@@ -7230,7 +7254,7 @@
     "prop-types" "^15.7.2"
     "yargs" "^16.1.1"
 
-"react-native@*", "react-native@^0.0.0-0 || 0.60 - 0.67 || 1000.0.0", "react-native@>=0.40.0", "react-native@>=0.42.0", "react-native@>=0.57", "react-native@>=0.57.0", "react-native@0.66.4":
+"react-native@*", "react-native@^0.0.0-0 || 0.60 - 0.67 || 1000.0.0", "react-native@>= 0.59", "react-native@>=0.40.0", "react-native@>=0.42.0", "react-native@>=0.57", "react-native@>=0.57.0", "react-native@0.66.4":
   "integrity" "sha512-9vx5dlSfQlKbbDtr8+xMon6qsmSu7jvjdXWZpEKh3XVKpUidbbODv7048gwVKX8YAel1egeR7hN8vzSeI6ssTw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.66.4.tgz"
   "version" "0.66.4"

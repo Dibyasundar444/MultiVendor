@@ -204,7 +204,7 @@ export default function Menu({navigation}){
                                         />
                                         <View style={{marginLeft:10,marginTop:5}}>
                                             <Text style={styles.title}>{item.title}</Text>
-                                            <Text style={{color:"#000",fontSize:12}}>{item.content}</Text>
+                                            {/* <Text style={{color:"#000",fontSize:12}}>{item.content}</Text> */}
                                         </View>
                                         <View style={styles.enquire}>
                                             <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffe4e1",
     },
     box: {
-        minHeight: width/2,
+        paddingBottom:10,
         width: width/2.4,
         backgroundColor: "#fff",
         marginHorizontal:5,
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     },
     img: {
         height: width/3.5,
-        backgroundColor:"pink",
+        backgroundColor:"#dc494e",
         width:"100%",
         borderRadius:10
     },

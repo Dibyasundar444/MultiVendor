@@ -7,9 +7,11 @@ import {
     ScrollView,
     ActivityIndicator,
     TextInput,
-    Image
+    Image,
+    Button
 } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BottomSheet } from "react-native-btr";
 import axios from "axios";
@@ -28,6 +30,7 @@ export default function SearchScreen({navigation}){
     const [indicator1, setIndicator1] = useState(true);
     const [indicator2, setIndicator2] = useState(true);
     const [indicator3, setIndicator3] = useState(false);
+    const [indicator4, setIndicator4] = useState(false);
     const [success, setSuccess] = useState(false);
     const [text, setText] = useState("");
     const [filterData, setFilterData] = useState([]);
@@ -39,12 +42,20 @@ export default function SearchScreen({navigation}){
     const [isHeaderReady, setIsHeaderReady] = useState(false);
     const [isExpand, setIsExpand] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [isVisible2, setIsVisible2] = useState(false);
+    const [selectedCategory_name, setSelectedCategory_name] = useState('');
+    const [selectedCategory_ID, setSelectedCategory_ID] = useState('');
+    const [productsData, setProductsData] = useState([]);
+    const [filterProductsData, setFilterProductsData] = useState([]);
+
+
 
     useEffect(()=>{
         getCategories();
         getServices();
         getLocation();
         getUser();
+        getProducts();
     },[]);
 
     const getUser=async()=>{
@@ -80,7 +91,7 @@ export default function SearchScreen({navigation}){
         axios.get(`${API}/category`)
         .then(resp=>{
             setCatData(resp.data);
-            setFilterData(resp.data);
+            // setFilterData(resp.data);
             setIndicator1(false);
         })
         .catch(e=>{
@@ -98,10 +109,51 @@ export default function SearchScreen({navigation}){
         })
     };
 
+    const getProducts=()=>{
+        axios.get(`${API}/allproducts`)
+        .then(resp=>{
+            setProductsData(resp.data);
+            setFilterProductsData(resp.data);
+            setIndicator4(false);
+        })
+        .catch(e=>{
+            console.log("server error: ",e);
+        })
+    };
+
+    const Products=()=>(
+        <>
+        {
+            filterProductsData.length === 0 ? 
+            <Text style={{color:"gray",fontWeight:"500",textAlign:"center"}}>No Product found</Text>
+            :
+            <View style={styles.boxContainer}>
+            {
+                filterProductsData.map((item,index)=>{
+                    for(let i=index;i<10;i++){
+                        return(
+                            <TouchableOpacity 
+                                style={styles.cat} key={item._id}
+                                onPress={()=>navigation.navigate("ProductDetails",item)}
+                            >
+                                <View style={styles.subView}>
+                                    <Image style={styles.smImg} source={{uri: item.images[0]}} />
+                                    <Text style={styles.name}>{item.title}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        )
+                    }
+                })
+            }
+            </View>
+        }
+        </>
+    );
+
     const Categories=()=>(
         <View style={styles.boxContainer}>
             {
-                filterData.map(item=>(
+                catData.map(item=>(
                     <TouchableOpacity
                         style={styles.cat} 
                         key={item._id}
@@ -122,40 +174,48 @@ export default function SearchScreen({navigation}){
         </View>
     );
     const Services=()=>(
-        <View style={styles.boxContainer}>
+        <>
+        {
+            serviceData.length === 0 ?
+            <Text style={{color:"gray",fontWeight:"500",textAlign:"center",marginTop:40}}>No Service found</Text>
+            :
+            <View style={styles.boxContainer}>
             {
                 serviceData.map(item=>(
                     <TouchableOpacity 
                         style={styles.cat} key={item._id}
                         onPress={()=>navigation.navigate("Services",{"title": item.name,"id": item._id})}
+                        disabled
                     >
                         <View style={styles.subView}>
                         {
-                                item.imgUrl ?
-                                <Image style={styles.smImg} source={{uri: item.imgUrl}} />
+                                item.images ?
+                                <Image style={styles.smImg} source={{uri: item.images}} />
                                 :
                                 <View style={styles.smImg} />
                             }
-                            <Text style={styles.name}>{item.name}</Text>
+                            <Text style={styles.name}>{item.title}</Text>
                         </View>
                     </TouchableOpacity>
                 ))
             }
         </View>
+        }
+        </>
     );
 
     const searchFilter=(val)=>{
         if(val){
-            const newData =  catData.filter((item)=>{
-                const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
+            const newData =  productsData.filter((item)=>{
+                const itemData = item.title ? item.title.toUpperCase() : ''.toUpperCase();
                 const textData  = val.toUpperCase();
                 return itemData.indexOf(textData) > -1;
             })
-            setFilterData(newData);
+            setFilterProductsData(newData);
             setText(val);
         }
         else{
-            setFilterData(catData);
+            setFilterProductsData(productsData);
             setText(val);
         }
     };
@@ -175,6 +235,7 @@ export default function SearchScreen({navigation}){
         };
         let postData = {
             title:title,
+            category: selectedCategory_ID,
             description:description
         };
         axios.post(`${API}/customorder`,postData,axiosConfig)
@@ -182,6 +243,10 @@ export default function SearchScreen({navigation}){
             console.log(resp.data);
             setIndicator3(false);
             setSuccess(true);
+            setSelectedCategory_name('');
+            setSelectedCategory_ID('');
+            setTitle('');
+            setDescription('');
         })
         .catch(err=>{
             console.log(err);
@@ -234,8 +299,70 @@ export default function SearchScreen({navigation}){
         })
     };
 
+    const showModalToSelect = () => {
+        return(
+            <View style={styles.absCat}>
+                <View style={styles.catContainer}>
+                    <Text
+                    style={{
+                        color: '#000',
+                        textAlign: 'center',
+                        marginVertical: 10,
+                        fontWeight: '700',
+                    }}>Select Category</Text>
+                    <View
+                    style={{
+                        width: '80%',
+                        backgroundColor: 'gray',
+                        borderWidth: 1,
+                        alignSelf: 'center',
+                    }}
+                    />
+                    <ScrollView
+                        style={{marginTop: 20}}
+                        showsVerticalScrollIndicator={false}
+                    >
+                    {
+                        catData.map((item, index) => {
+                            let SL_NO = index + 1;
+                            return (
+                            <TouchableOpacity
+                                style={styles.catContents}
+                                key={item._id}
+                                onPress={() => {
+                                setSelectedCategory_ID(item._id);
+                                setSelectedCategory_name(item.name);
+                                setIsVisible2(false);
+                                }}>
+                                <Text
+                                style={{
+                                    color: '#000',
+                                    textTransform: 'capitalize',
+                                    marginVertical: 10,
+                                }}>
+                                {SL_NO}. {item.name}
+                                </Text>
+                            </TouchableOpacity>
+                            );
+                        })
+                    }
+                    </ScrollView>
+                    <Button
+                    title="Cancel"
+                    color="#dc494e"
+                    onPress={() => {
+                        setIsVisible2(false);
+                    }}
+                    />
+                </View>
+            </View>
+        )
+    };
+    
+
 
     return(
+        <>
         <ScrollView 
             style={styles.container} 
             showsVerticalScrollIndicator={false}
@@ -262,11 +389,19 @@ export default function SearchScreen({navigation}){
                 />
                 <Feather name="search" size={22} style={{color:"#000",right:-10}} />
             </View>
-            <VendorsNearby 
+            {/* <VendorsNearby 
                 vendorProfile={(item)=>navigation.navigate("VendorProfile",item)}
                 login={userLogin}
                 isLoading={loading}
-            />
+            /> */}
+            <View style={{marginHorizontal:20}}>
+                <View style={{marginBottom:10}}>
+                    <Text style={styles.subHeader}>Browse Products</Text>
+                </View>          
+                {
+                    indicator4 ? <ActivityIndicator /> : <Products />
+                }             
+            </View>
             <View style={{marginHorizontal:20}}>
                 <View style={{flexDirection:"row", alignItems:"center",justifyContent:"space-between",marginVertical:20}}>
                     <Text style={styles.subHeader}>Browse Categories</Text>   
@@ -316,6 +451,27 @@ export default function SearchScreen({navigation}){
                             borderWidth:0.5,
                         }}
                     />
+                    <TouchableOpacity
+                        style={styles.input1}
+                        activeOpacity={0.6}
+                        onPress={() => {
+                            // setIsVisible(false);
+                            setIsVisible2(true);
+                        }}
+                    >
+                        <View 
+                            style={{
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                alignItems: "center"
+                            }}
+                        >
+                            <Text style={{color: 'gray', textTransform: 'capitalize'}}>
+                                {!selectedCategory_name ? 'Category' : selectedCategory_name}
+                            </Text>
+                        <AntDesign name="down" size={18} color="#000" />
+                        </View>
+                    </TouchableOpacity>
                     <TextInput 
                         style={{
                             backgroundColor:"#ffe4e1",
@@ -323,9 +479,9 @@ export default function SearchScreen({navigation}){
                             marginTop:20,
                             borderRadius:5,
                             color:"#000",
-                            paddingLeft: 10
+                            paddingLeft: 20
                         }}
-                        placeholder="Category"
+                        placeholder="Product name"
                         placeholderTextColor="gray"
                         value={title}
                         onChangeText={(val)=>setTitle(val)}
@@ -337,7 +493,7 @@ export default function SearchScreen({navigation}){
                             marginTop:20,
                             borderRadius:5,
                             color:"#000",
-                            paddingLeft: 10,
+                            paddingLeft: 20,
                             textAlignVertical:"top",
                             paddingTop:10,
                             height:80
@@ -369,12 +525,14 @@ export default function SearchScreen({navigation}){
                             }}
                             onPress={sendRequest}
                         >
-                            <Text style={{color:"#fff"}}>send request</Text>
+                            <Text style={{color:"#fff",fontWeight:"500"}}>Send Request</Text>
                         </TouchableOpacity>
                     }
                 </View>
+                {isVisible2 && showModalToSelect()}
             </BottomSheet>
         </ScrollView>
+    </>
     )
 };
 
@@ -408,14 +566,15 @@ const styles = StyleSheet.create({
         height:30,
         width:30,
         borderRadius:15,
-        backgroundColor:"pink",
+        backgroundColor:"#dc494e",
         marginRight:10
     },
     name: {
         color:"#000",
         fontSize:12,
         flexWrap:"wrap",
-        textTransform: "capitalize"
+        textTransform: "capitalize",
+        marginRight:30
     },
     subView: {
         flexDirection:"row",
@@ -454,10 +613,40 @@ const styles = StyleSheet.create({
         width: "85%"
     },
     sheet: {
-        height:350,
+        height:"55%",
         backgroundColor:"#fff",
         borderTopRightRadius:10,
         borderTopLeftRadius:10,
         alignItems:"center"
-    }
+    },
+    input1: {
+        height: 45,
+        backgroundColor: '#ffe4e1',
+        // marginHorizontal: 30,
+        borderRadius: 10,
+        marginTop: 20,
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+        width:"80%"
+    },
+    absCat: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        alignItems: 'center',
+    },
+    catContainer: {
+        backgroundColor: '#fff',
+        height: '80%',
+        width: '80%',
+        marginTop: 20,
+        borderRadius: 5,
+    },
+    catContents: {
+        marginLeft: 20,
+        borderBottomWidth: 0.5,
+    },
 })

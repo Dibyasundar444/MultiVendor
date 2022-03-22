@@ -46,6 +46,8 @@ export default function ProductDetails({route, navigation}) {
   const [rating, setRating] = useState([]);
   const [loading, setLoading] = useState(true);
   const [getRating, setGetRating] = useState(Number);
+  // const [token, setToken] = useState("");
+  // console.log(token);
   
   useEffect(() => {
     views();
@@ -55,7 +57,14 @@ export default function ProductDetails({route, navigation}) {
     getOneVendor();
     getWishlist();
     getCommentList();
+    // getToken();
   }, []);
+
+  // const getToken=async()=>{
+  //   const json_Val = await AsyncStorage.getItem("jwt");
+  //   const parsed = JSON.parse(json_Val);
+  //   setToken(parsed.token);
+  // };
 
   const openDialer = () => {
     let number = oneVendor.phoneNo;
@@ -70,19 +79,23 @@ export default function ProductDetails({route, navigation}) {
     const parsed = JSON.parse(json_Val);
     let axiosConfig = {
         headers:{
-            Authorization: parsed.token
+          Authorization: parsed.token
         }
     };
-    axios
-      .patch(`${API_USER}/products/views/${preData._id}`,axiosConfig)
+    console.log(axiosConfig);
+    setTimeout(()=>{
+      axios
+      .patch(`${API_USER}/products/views/${preData._id}`,{},axiosConfig)
       .then(resp => {
-        console.log('New view added: ', resp.data.products.views);
+        console.log('New view added: ',resp.data.products.views);
       })
       .catch(err => {
         console.log('Server error: ', err);
       });
+    },2000)
   };
 
+  // console.log(preData);
 
   const _sendMsg = async() => {
     const json_Val = await AsyncStorage.getItem("jwt");
@@ -170,8 +183,8 @@ export default function ProductDetails({route, navigation}) {
       wishlist.push(preData);
       await AsyncStorage.setItem('MyWishList', JSON.stringify(wishlist));
     } else if (heartPressed) {
-      const removeItem = wishlist.filter(item => item._id !== preData._id);
-      await AsyncStorage.setItem('MyWishList', JSON.stringify(removeItem));
+      const filterItem = wishlist.filter(item => item._id !== preData._id);
+      await AsyncStorage.setItem('MyWishList', JSON.stringify(filterItem));
     }
   };
 
@@ -268,10 +281,12 @@ export default function ProductDetails({route, navigation}) {
     axios.patch(`${API_USER}/vendorreview`,ratingData,axiosConfig)
     .then(resp=>{
       setIndicator2(false);
+      setVisible(false);
+      getOneVendor();
     })
     .catch(err=>{
       console.log("err",err);
-      setIndicator2(false);
+      alert('Error from server. Please try again later');
     })
   };
 
@@ -318,7 +333,7 @@ export default function ProductDetails({route, navigation}) {
                   <Text style={{color: 'red', fontSize: 10}}>Not available</Text>
                 }
               </View>
-              <Text style={{color: '#000', fontSize: 12}}>{preData.content}</Text>
+              {/* <Text style={{color: '#000', fontSize: 12}}>{preData.content}</Text> */}
               <View style={{marginBottom: 20}}>
                 <Text style={{color: '#000', fontSize: 13, marginVertical: 10}}>
                   {preData.description}

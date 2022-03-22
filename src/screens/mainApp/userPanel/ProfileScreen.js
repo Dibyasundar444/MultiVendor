@@ -15,7 +15,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Entypo from "react-native-vector-icons/Entypo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StackActions, useIsFocused } from "@react-navigation/native";
-
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 import axios from "axios";
 
 import { API, API_USER } from "../../../../config";
@@ -41,18 +41,18 @@ export default function ProfileScreen({navigation}){
         if(isFocused){
             getUser();
         };
-        getShareLink();
+        const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
+        return unsubscribe();
     },[isFocused]);
 
-    const getShareLink=()=>{
-        axios.get(`${API}/sharelink`)
-        .then(resp=>{
-            const link = (resp.data[0].link);
-            global.link = link;
-        })
-        .catch(err=>{
-            console.log("share link error:",err);
-        })
+    
+    const handleDynamicLink = link => {
+        if(link){
+            console.log("OK");
+        }
+        else{
+            console.log("NOT OK");
+        }
     };
 
     const logOut_alert=()=>{
@@ -102,7 +102,7 @@ export default function ProfileScreen({navigation}){
         };
         axios.get(`${API_USER}/userdetail`,axiosConfig)
         .then(res=>{
-            console.log("user",res.data);
+            // console.log("user",res.data);
             setPhoneNo(res.data.phoneNo);
             setName(res.data.name);
             setImg(res.data.profileImg);

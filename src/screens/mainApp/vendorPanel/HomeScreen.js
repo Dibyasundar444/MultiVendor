@@ -5,7 +5,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
+  Linking,
   Dimensions,
   Image,
   TextInput,
@@ -15,7 +15,7 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {StackActions, useIsFocused} from '@react-navigation/native';
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -41,6 +41,7 @@ export default function HomeScreen({navigation}) {
   const [loading5, setloading5] = useState(false);
   const [serviceAdded, setServiceAdded] = useState(false);
   const [isVisible2, setIsVisible2] = useState(false);
+  const [isVisible3, setIsVisible3] = useState(false);
   const [process, setProcess] = useState('');
   // const [location, setLocation] = useState({});
   const [addNewService, setAddNewService] = useState('');
@@ -145,6 +146,10 @@ export default function HomeScreen({navigation}) {
     })
   };
 
+  const _openWhatsapp=(item)=>{
+    Linking.openURL('http://api.whatsapp.com/send?phone=91'+"1234567890")
+  };
+  
   return (
     <View style={styles.container}>
       <Header
@@ -159,7 +164,7 @@ export default function HomeScreen({navigation}) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom:150,paddingTop:10}}
       >
-        <View style={{
+        {/* <View style={{
           flexDirection:"row",
           alignItems:"center",
           justifyContent:"space-between",
@@ -177,7 +182,20 @@ export default function HomeScreen({navigation}) {
           >
             <Text style={{color:"#fff",fontWeight:"500"}}>Services</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
+        <TouchableOpacity 
+            style={[styles.user,{width:'44%',marginLeft:20}]}
+            onPress={switchUser}
+        >
+            <View style={{flexDirection:"row",alignItems:"flex-end"}}>
+              <MaterialCommunityIcons name='account-switch-outline' color="#fff" size={18} />
+              {
+                loading5 ? <ActivityIndicator color="#fff" size={20} style={{marginHorizontal:5,marginVertical:2}} />
+                :
+                <Text style={{fontWeight:"500",color:"#fff",marginLeft:5}}>Switch to user</Text>
+              }
+            </View>
+        </TouchableOpacity>
         <View 
           style={{
             flexDirection:"row",
@@ -190,7 +208,7 @@ export default function HomeScreen({navigation}) {
           <Text style={{color: '#000', fontSize: 16, fontWeight: '600'}}>
             My Products
           </Text>
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
             style={[styles.user,{width:'48%'}]}
             onPress={switchUser}
           >
@@ -202,7 +220,7 @@ export default function HomeScreen({navigation}) {
                   <Text style={{fontWeight:"500",color:"#fff",marginLeft:5}}>Switch to user</Text>
                 }
               </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <ScrollView 
           contentContainerStyle={{paddingHorizontal:20}}
@@ -234,9 +252,9 @@ export default function HomeScreen({navigation}) {
                     <Text style={{fontSize: 12, color: '#000'}}>
                       {item.title}
                     </Text>
-                    <Text style={{fontSize: 11, color: '#000'}}>
+                    {/* <Text style={{fontSize: 11, color: '#000'}}>
                       {item.content}
-                    </Text>
+                    </Text> */}
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                       <Entypo
                         name="eye"
@@ -269,12 +287,13 @@ export default function HomeScreen({navigation}) {
                   activeOpacity={0.7}
                   style={{borderBottomWidth: 1}}
                   onPress={()=>navigation.navigate("VendorProducts",item)}
+                  disabled={true}
                 >
                   <View style={styles.subView}>
                     <View style={{alignItems: 'center', flexDirection: 'row'}}>
                       {
-                        item.imgUrl ?
-                        <Image style={styles.bgCircle} source={{uri:item.imgUrl}} />
+                        item.images ?
+                        <Image style={styles.bgCircle} source={{uri:item.images}} />
                         :
                         <View style={styles.bgCircle} />
                       }
@@ -284,10 +303,23 @@ export default function HomeScreen({navigation}) {
                           color: '#000',
                           textTransform: 'capitalize',
                         }}>
-                        {item.name}
+                        {item.title}
                       </Text>
                     </View>
-                    <AntDesign name="right" size={16} color="#000" />
+                    {/* <MaterialCommunityIcons name="dots-vertical" size={24} color="#000" /> */}
+                    <TouchableOpacity
+                      style={{
+                        elevation:5,
+                        backgroundColor:"#d95448",
+                        paddingHorizontal:10,
+                        paddingVertical:2,
+                        borderRadius:4
+                      }}
+                      activeOpacity={0.7}
+                      onPress={()=>navigation.navigate("editService",item)}
+                    >
+                      <Text style={{color:"#fff",fontSize:12}}>Edit</Text>
+                    </TouchableOpacity>
                   </View>
                 </TouchableOpacity>
             ))
@@ -300,7 +332,7 @@ export default function HomeScreen({navigation}) {
             height: 50,
             width: 50,
             borderRadius: 25,
-            backgroundColor:"#fff",
+            backgroundColor:"#d95448",
             justifyContent:"center",
             alignItems:"center",
             elevation: 9
@@ -308,7 +340,12 @@ export default function HomeScreen({navigation}) {
           activeOpacity={1}
           onPress={()=>setIsVisible2(isVisible => !isVisible)}
         >
-          <AntDesign name='customerservice' color="#000" size={30} />
+          {
+            !isVisible2 ? 
+            <AntDesign name='customerservice' color="#fff" size={30} />
+            :
+            <Entypo name='cross' color="#fff" size={34} />
+          }
         </TouchableOpacity>
       </View>
       {
@@ -323,15 +360,19 @@ export default function HomeScreen({navigation}) {
           <TouchableOpacity
             style={{
               backgroundColor:"#fff",
-              paddingHorizontal:10,
+              paddingHorizontal:15,
               paddingVertical: 5,
               elevation: 9,
               borderTopRightRadius:20,
-              borderBottomLeftRadius:20
+              borderBottomLeftRadius:20,
+              flexDirection:"row",
+              alignItems:"center"
             }}
             // activeOpacity={0.9}
+            onPress={_openWhatsapp}
           >
-            <Text style={{color:'#000'}}>Contact to admin</Text>
+            <FontAwesome name="whatsapp" color="green" size={18} />
+            <Text style={{color:'#000',marginLeft:5}}>Admin</Text>
           </TouchableOpacity>
         </View>
       }
@@ -355,7 +396,7 @@ const styles = StyleSheet.create({
     // marginBottom:height/2.5,
   },
   box: {
-    minHeight: clickBoxHeight,
+    paddingBottom: 10,
     width: width / 2.3,
     borderRadius: 10,
     marginTop: 20,

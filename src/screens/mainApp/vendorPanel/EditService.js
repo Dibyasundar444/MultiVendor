@@ -9,6 +9,7 @@ import {
   Button,
   ActivityIndicator,
   Alert,
+  Image
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
@@ -21,18 +22,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API, API_VENDOR} from '../../../../config';
 import Header from './utils/header';
 
-export default function AddService({navigation,route}) {
+export default function EditService({navigation,route}) {
 
-  const [addNewService, setAddNewService] = useState('');
+  const preData = route.params;
+  const priceString = preData.price.toString();
+
+  const [addNewService, setAddNewService] = useState(preData.title);
   const [process, setProcess] = useState('');
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState(preData.images);
   const [loading3, setloading3] = useState(false);
   const [serviceAdded, setServiceAdded] = useState(false);
   const [categoriesData, setCategoriesData] = useState([]);
   const [selectedCategory_ID, setSelectedCategory_ID] = useState('');
   const [selectedCategory_name, setSelectedCategory_name] = useState('');
-  const [desc, setDesc] = useState('');
-  const [cost, setCost] = useState('');
+  const [desc, setDesc] = useState(preData.description);
+  const [cost, setCost] = useState(priceString);
   const [loading1, setLoading1] = useState(false);
   const [isVisible2, setIsVisible2] = useState(false);
 
@@ -114,7 +118,10 @@ export default function AddService({navigation,route}) {
             Authorization: parsed.token
         }
     };
-    if(addNewService !== ""){
+    if(addNewService !== "" || 
+        selectedCategory_ID !== "" ||
+        url !== "" || cost !== ""
+    ){
         setloading3(true);
         let postData = {
           title: addNewService,
@@ -123,6 +130,7 @@ export default function AddService({navigation,route}) {
           images: url,
           category: selectedCategory_ID,
         };
+        // console.log(postData);
         axios.get(`${API_VENDOR}/vendordetail`,axiosConfig)
         .then(resp=>{
             if(resp.data.services.length > 0){
@@ -225,7 +233,7 @@ export default function AddService({navigation,route}) {
         <Header
           isBack={true}
           back={() => navigation.goBack()}
-          title="Add Service"
+          title="Edit Service"
           notify={() => navigation.navigate('AlertScreen')}
           profile={() => navigation.navigate('ProfileScreen')}
           bellColor="#000"
@@ -240,7 +248,7 @@ export default function AddService({navigation,route}) {
                 fontSize:12,
                 textAlign:"center",
             }}
-            >** Only 1 Service can be added **</Text>
+            >Edit Your Service - ({preData.title})</Text>
             <View
             style={{marginTop:20,alignItems:"center"}}
             >
@@ -257,7 +265,7 @@ export default function AddService({navigation,route}) {
             </TouchableOpacity>
             <TextInput 
                 style={styles.serviceInput}
-                placeholder="add your service here..."
+                placeholder={preData.title}
                 placeholderTextColor="gray"
                 value={addNewService}
                 onChangeText={(val)=>setAddNewService(val)}
@@ -271,7 +279,7 @@ export default function AddService({navigation,route}) {
                     textAlignVertical: 'top',
                   },
                 ]}
-                placeholder="Description"
+                placeholder={preData.description? desc : "Description..."}
                 placeholderTextColor="gray"
                 multiline={true}
                 value={desc}
@@ -282,7 +290,16 @@ export default function AddService({navigation,route}) {
                 style={[styles.textInput1, styles.image]}
                 activeOpacity={0.8}
                 onPress={openLibrary}>
-                <Text style={{color: 'gray'}}>Images</Text>
+                <View style={{flexDirection:"row",alignItems:"center"}}>
+                    <View style={{height:30,width:30,borderRadius:20,overflow:"hidden",borderWidth:0.2}}>
+                        <Image 
+                            source={{uri:url}}
+                            style={{height:"100%",width:"100%"}}
+                            resizeMode="contain"
+                        />
+                    </View>
+                    <Text style={{color: 'gray',marginLeft:10}}>Image</Text>
+                </View>
                 {
                     !process ? <Feather name="upload" color="#000" size={18} /> : 
                     process == "100%" ? <MaterialIcons name='done' color="green" size={20} /> :
@@ -292,7 +309,7 @@ export default function AddService({navigation,route}) {
             <View style={styles.textInput1}>
               <TextInput
                 style={styles.Name}
-                placeholder="Costs"
+                placeholder={cost}
                 placeholderTextColor="gray"
                 value={cost}
                 onChangeText={val => setCost(val)}
@@ -312,12 +329,12 @@ export default function AddService({navigation,route}) {
                     onPress={createService}
                     disabled={loading3 ? true : false}
                 >
-                    <Text style={{color:"#fff",fontWeight:"600"}}>+Add Service</Text>
+                    <Text style={{color:"#fff",fontWeight:"600"}}>Update Service</Text>
                 </TouchableOpacity>
             </View>
             }
             {
-            serviceAdded ? <Text style={{color:"green",textAlign:"center",marginBottom:10,fontSize:12}}>service added</Text> : null
+            serviceAdded ? <Text style={{color:"green",textAlign:"center",marginBottom:10,fontSize:12}}>service updated</Text> : null
             }
         </ScrollView>
       </View>

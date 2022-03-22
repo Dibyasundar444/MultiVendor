@@ -87,12 +87,13 @@ export default function Services() {
                       activeOpacity={0.7}
                       style={{borderBottomWidth: 1}}
                       onPress={()=>navigation.navigate("VendorProducts",item)}
+                      disabled={true}
                     >
                       <View style={styles.subView}>
                         <View style={{alignItems: 'center', flexDirection: 'row'}}>
                           {
-                            item.imgUrl ?
-                            <Image style={styles.bgCircle} source={{uri:item.imgUrl}} />
+                            item.images ?
+                            <Image style={styles.bgCircle} source={{uri:item.images}} />
                             :
                             <View style={styles.bgCircle} />
                           }
@@ -102,10 +103,10 @@ export default function Services() {
                               color: '#000',
                               textTransform: 'capitalize',
                             }}>
-                            {item.name}
+                            {item.title}
                           </Text>
                         </View>
-                        <AntDesign name="right" size={16} color="#000" />
+                        {/* <AntDesign name="right" size={16} color="#000" /> */}
                       </View>
                     </TouchableOpacity>
                 ))

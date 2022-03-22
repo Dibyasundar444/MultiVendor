@@ -11,8 +11,6 @@ import {
     ActivityIndicator,
     Image
 } from "react-native";
-import SelectDropdown from "react-native-select-dropdown";
-import Fontisto from "react-native-vector-icons/Fontisto";
 import axios from "axios";
 import { API_USER, API_VENDOR } from "../../config";
 import { StackActions } from "@react-navigation/native";
@@ -111,7 +109,7 @@ export default function SignIn({navigation,route}){
         <View style={styles.container}>
             <View style={styles.heading}>
                 <Image style={{height:"30%",resizeMode:"contain"}} source={require("../assets/logo.jpg")} />
-                <Text style={{color:"#000",fontSize: 20,fontWeight:"600"}}>Joyayog</Text>
+                <Text style={{color:"#fff",fontSize: 20,fontWeight:"600"}}>Jogayog</Text>
             </View>
             <View style={styles.modal}>
                 <ScrollView style={{marginHorizontal: 30}}contentContainerStyle={{paddingVertical:20}} >
@@ -166,7 +164,7 @@ export default function SignIn({navigation,route}){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#ffe4e1"
+        backgroundColor: "#dc494e"
     },
     heading: {
         marginTop: height/6,
@@ -204,7 +202,7 @@ const styles = StyleSheet.create({
     },
     otp: {
         borderRadius: 10,
-        backgroundColor: "#ff1493",
+        backgroundColor: "#d95448",
         elevation: 5,
         marginHorizontal: width/6,
         justifyContent: "center",

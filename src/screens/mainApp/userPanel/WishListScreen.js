@@ -22,6 +22,7 @@ export default function WishListScreen({navigation}) {
   const [indicator, setIndicator] = useState(true);
   const [isData, setIsData] = useState(false);
   const [wishlist, setWishlist] = useState([]);
+  // console.log(wishlist);
 
   useEffect(() => {
     if (isFocused) {
@@ -108,7 +109,7 @@ export default function WishListScreen({navigation}) {
                     style={styles.box}
                     activeOpacity={0.6}
                     onPress={() => _details(item)}>
-                    {item.images === '' ? (
+                    {item.images.length === 0 ? (
                       <View style={styles.images}>
                         <Text
                           style={{
@@ -123,7 +124,7 @@ export default function WishListScreen({navigation}) {
                     ) : (
                       <Image
                         style={styles.images}
-                        source={{uri: item.images}}
+                        source={{uri: item.images[0]}}
                       />
                     )}
                     <View style={{marginLeft: 10, marginTop: 5}}>
@@ -134,9 +135,6 @@ export default function WishListScreen({navigation}) {
                           textTransform: 'capitalize',
                         }}>
                         {item.title}
-                      </Text>
-                      <Text style={{color: '#000', fontSize: 12}}>
-                        {item.content}
                       </Text>
                     </View>
                     <View style={styles.enquire}>
@@ -177,12 +175,12 @@ const styles = StyleSheet.create({
   },
   images: {
     height: width / 3.5,
-    backgroundColor: 'pink',
+    backgroundColor: '#dc494e',
     width: '100%',
     borderRadius: 10,
   },
   box: {
-    minHeight: width / 2,
+    paddingBottom:10,
     width: '48%',
     backgroundColor: '#fff',
     elevation: 5,

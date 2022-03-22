@@ -11,6 +11,7 @@ import MyProduct from '../utils/MyProducts.';
 import AddProduct from '../AddProduct';
 import Services from '../ServiceScreen';
 import ProductScreen from '../ProductScreen';
+import EditService from '../EditService';
 
 
 
@@ -28,6 +29,7 @@ export default function HomeStack(){
             <Stack.Screen name='EditProfile' component={EditProfile} />
             <Stack.Screen name='VendorProducts' component={MyProduct} />
             <Stack.Screen name='addProductScreen' component={AddProduct} />
+            <Stack.Screen name='editService' component={EditService} />
             {/* <Stack.Screen name='ProductScreen' component={ProductScreen} /> */}
         </Stack.Navigator>
     </View>

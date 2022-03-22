@@ -9,17 +9,20 @@ import {
   Image,
 } from 'react-native';
 import axios from 'axios';
+import { useIsFocused } from "@react-navigation/native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import {API_VENDOR} from '../../../../../config';
 
 export default function VendorsNearby({vendorProfile,login,isLoading}) {
   const [vendors, setVendors] = useState([]);
   const [indicator, setIndicator] = useState(true);
-
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    getVendors();
-  }, []);
+    if(isFocused){
+      getVendors();
+    }
+  }, [isFocused]);
 
   const getVendors = () => {
     axios

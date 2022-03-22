@@ -13,7 +13,6 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import axios from 'axios';
 import storage from '@react-native-firebase/storage';
@@ -209,8 +208,8 @@ export default function AddProduct({navigation,route}) {
       includeBase64: true,
       mediaType: 'photo'
     })
-    .then(image=>{
-      image.forEach(x=>{
+    .then(images=>{
+      images.forEach(x=>{
         let fileName = x.path.substring(x.path.lastIndexOf('/') + 1);
         try {
           const task = storage()
@@ -373,7 +372,7 @@ export default function AddProduct({navigation,route}) {
         </ScrollView>
         <Button
           title="Cancel"
-          color="#ff1493"
+          color="#dc494e"
           onPress={() => {
             setIsVisible2(false);
             setIsVisible3(false);
@@ -403,9 +402,9 @@ export default function AddProduct({navigation,route}) {
         }
     };
     if(
-      name===""|| cost==="" || desc==="" || 
+      name === ""|| cost === "" ||
       imgURL.length === 0 || 
-      selectedCategory_ID===""
+      selectedCategory_ID === ""
       ){
       setError2(true);
       setIndicator1(false);

@@ -34,6 +34,7 @@ export default function ProfileScreen({navigation}){
     const [isUpdated, setIsUpdated] = useState(false);
     const [indicator, setIndicator] = useState(false);
     const [visible, setVisible] = useState(false);
+    const [visible2, setVisible2] = useState(false);
     const [area, setArea] = useState('');
 
     
@@ -153,7 +154,7 @@ export default function ProfileScreen({navigation}){
     };
 
     const toggle=()=>{
-    setVisible((visible) => !visible)
+        setVisible((visible) => !visible)
     };
 
     if(isUpdated){
@@ -191,6 +192,304 @@ export default function ProfileScreen({navigation}){
             setIndicator(false);
         })
     };
+
+    const AutoLocation=()=>(
+        <View style={styles.card}>
+            <View
+                style={{
+                    position:"absolute",
+                    right:15,
+                    top:10,
+                }}
+            >
+                <TouchableOpacity
+                    style={{
+                        backgroundColor:"#d95448",
+                        paddingVertical:5,
+                        paddingHorizontal:5,
+                        borderRadius:5
+                    }}
+                    activeOpacity={0.7}
+                    onPress={()=>setVisible2(true)}
+                >
+                    <Text style={{color:"#fff",fontWeight:"500",fontSize:10}}>Update Manually</Text>
+                </TouchableOpacity>
+            </View>
+            <Text 
+                style={{
+                    color:"#000",
+                    fontWeight:"500",
+                    marginVertical:10
+                }}
+            >My Location</Text>
+            <View 
+                style={{
+                    width:"80%",
+                    borderWidth: 0.5,
+                    marginBottom:5
+                }} 
+            />
+            <Text 
+                style={{color:"gray",fontSize:12}}
+            >
+                *** this will automatically fetch your current location***
+            </Text>
+            <View style={{right:-10}}>
+                <View
+                    style={{flexDirection:"row",alignItems:"center",marginVertical:20}}
+                >
+                    <Text
+                        style={{
+                            color:"#000",
+                            fontWeight:"500"
+                        }}
+                    >City :</Text>
+                    <Text
+                        style={{
+                            color:"gray",
+                            fontWeight:"500",
+                            marginHorizontal:10
+                        }}
+                    >{location.city}</Text>
+                </View>
+                <View
+                    style={{flexDirection:"row",alignItems:"center"}}
+                >
+                    <Text
+                        style={{
+                            color:"#000",
+                            fontWeight:"500"
+                        }}
+                    >District :</Text>
+                    <Text
+                        style={{
+                            color:"gray",
+                            fontWeight:"500",
+                            marginHorizontal:10
+                        }}
+                    >{location.state}</Text>
+                </View>
+                <View
+                    style={{
+                        flexDirection:"row",
+                        alignItems:"center",
+                        marginVertical:20
+                    }}
+                >
+                    <Text
+                        style={{
+                            color:"#000",
+                            fontWeight:"500"
+                        }}
+                    >State :</Text>
+                    <Text
+                        style={{
+                            color:"gray",
+                            fontWeight:"500",
+                            marginHorizontal:10
+                        }}
+                    >{location.country}</Text>
+                </View>
+                <View style={{flexDirection:"row",alignItems:"center"}}>
+                    <TextInput 
+                        placeholder="service area"
+                        placeholderTextColor="gray"
+                        style={{
+                            borderRadius:5,
+                            color:"#000",
+                            width:150,
+                            textAlign:"center",
+                            backgroundColor:"#ffe4e1"
+                        }}
+                        value={area}
+                        onChangeText={(val)=>setArea(val)}
+                        keyboardType="numeric"
+                    />
+                    <Text style={{color:"#000",right:-20}}>(km)</Text>
+                </View>
+            </View>
+            <Text 
+                style={{
+                    color:'#000',
+                    fontSize:12,
+                    marginHorizontal:20,
+                    textAlign:"center",
+                    marginVertical:10
+                }}
+            >
+                service area will be calculated from above location
+            </Text>
+            {
+                indicator ? 
+                <View style={{marginVertical:20}}>
+                    <ActivityIndicator size={30} color="#ff1493" />
+                </View>
+                :
+                <View
+                style={{
+                    flexDirection:"row",
+                    alignItems:"center",
+                    marginHorizontal:40,
+                    marginVertical:20
+                }}
+                >
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor:"#ff1493",
+                            paddingHorizontal:8,
+                            paddingVertical:5,
+                            borderRadius:4
+                        }}
+                        onPress={toggle}
+                        activeOpacity={0.7}
+                    >
+                        <Text style={{color:"#fff",fontWeight:"500"}}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor:"green",
+                            paddingHorizontal:8,
+                            paddingVertical:5,
+                            borderRadius:4,
+                            marginLeft:30
+                        }}
+                        onPress={updateLocation}
+                        activeOpacity={0.7}
+                    >
+                        <Text style={{color:"#fff",fontWeight:"500"}}>Confirm</Text>
+                    </TouchableOpacity>
+                </View>
+            }
+            {
+                isUpdated && <Text style={{color:"green",fontSize:12}}>Successfully Updated</Text>
+            }
+        </View>
+    );
+
+    const ManualLocation=()=>(
+        <View style={[styles.card,{height:380}]}>
+            <View
+                style={{
+                    position:"absolute",
+                    right:20,
+                    top:10,
+                }}
+            >
+                <TouchableOpacity
+                    style={{
+                        backgroundColor:"#d95448",
+                        paddingVertical:5,
+                        paddingHorizontal:5,
+                        borderRadius:5
+                    }}
+                    activeOpacity={0.7}
+                    onPress={()=>setVisible2(false)}
+                >
+                    <Text style={{color:"#fff",fontWeight:"500",fontSize:11}}>Go Back</Text>
+                </TouchableOpacity>
+            </View>
+            <Text 
+                style={{
+                    color:"#000",
+                    fontWeight:"500",
+                    marginVertical:10
+                }}
+            >Add Location</Text>
+            <View 
+                style={{
+                    width:"80%",
+                    borderWidth: 0.5,
+                    marginBottom:5
+                }} 
+            />
+            <View style={{width:"80%",marginTop:40}}>
+                <TextInput 
+                    placeholder="service location..."
+                    placeholderTextColor="gray"
+                    style={{
+                        color:"#000",
+                        borderRadius:5,
+                        backgroundColor:"#ffe4e1",
+                        width:"100%",
+                        paddingLeft:10
+                    }}
+                />
+                <View style={{flexDirection:"row",alignItems:"center",marginTop:10}}>
+                    <TextInput 
+                        placeholder="service area..."
+                        placeholderTextColor="gray"
+                        style={{
+                            borderRadius:5,
+                            color:"#000",
+                            width:150,
+                            // textAlign:"center",
+                            backgroundColor:"#ffe4e1",
+                            paddingLeft:10
+                        }}
+                        value={area}
+                        onChangeText={(val)=>setArea(val)}
+                        keyboardType="numeric"
+                    />
+                    <Text style={{color:"#000",right:-20}}>(km)</Text>
+                </View>
+            </View>
+            <Text 
+                style={{
+                    color:'#000',
+                    fontSize:12,
+                    marginHorizontal:20,
+                    textAlign:"center",
+                    marginVertical:20
+                }}
+            >
+                service area will be calculated from above location
+            </Text>
+            {
+                indicator ? 
+                <View style={{marginVertical:20}}>
+                    <ActivityIndicator size={30} color="#ff1493" />
+                </View>
+                :
+                <View
+                style={{
+                    flexDirection:"row",
+                    alignItems:"center",
+                    marginHorizontal:40,
+                    marginVertical:20
+                }}
+                >
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor:"#ff1493",
+                            paddingHorizontal:8,
+                            paddingVertical:5,
+                            borderRadius:4
+                        }}
+                        onPress={toggle}
+                        activeOpacity={0.7}
+                    >
+                        <Text style={{color:"#fff",fontWeight:"500"}}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor:"green",
+                            paddingHorizontal:8,
+                            paddingVertical:5,
+                            borderRadius:4,
+                            marginLeft:30
+                        }}
+                        onPress={updateLocation}
+                        activeOpacity={0.7}
+                    >
+                        <Text style={{color:"#fff",fontWeight:"500"}}>Confirm</Text>
+                    </TouchableOpacity>
+                </View>
+            }
+            {
+                isUpdated && <Text style={{color:"green",fontSize:12}}>Successfully Updated</Text>
+            }
+        </View>
+    )
 
     return(
         <View style={styles.container}>
@@ -260,156 +559,9 @@ export default function ProfileScreen({navigation}){
                 onBackButtonPress={toggle}
                 onBackdropPress={toggle}
             >
-                <View style={styles.card}>
-                    <Text 
-                        style={{
-                            color:"#000",
-                            fontWeight:"500",
-                            marginVertical:10
-                        }}
-                    >My Location</Text>
-                    <View 
-                        style={{
-                            width:"80%",
-                            borderWidth: 0.5,
-                            marginBottom:5
-                        }} 
-                    />
-                    <Text 
-                        style={{color:"gray",fontSize:12}}
-                    >
-                        *** this will automatically fetch your current location***
-                    </Text>
-                    <View style={{right:-10}}>
-                        <View
-                            style={{flexDirection:"row",alignItems:"center",marginVertical:20}}
-                        >
-                            <Text
-                                style={{
-                                    color:"#000",
-                                    fontWeight:"500"
-                                }}
-                            >City :</Text>
-                            <Text
-                                style={{
-                                    color:"gray",
-                                    fontWeight:"500",
-                                    marginHorizontal:10
-                                }}
-                            >{location.city}</Text>
-                        </View>
-                        <View
-                            style={{flexDirection:"row",alignItems:"center"}}
-                        >
-                            <Text
-                                style={{
-                                    color:"#000",
-                                    fontWeight:"500"
-                                }}
-                            >District :</Text>
-                            <Text
-                                style={{
-                                    color:"gray",
-                                    fontWeight:"500",
-                                    marginHorizontal:10
-                                }}
-                            >{location.state}</Text>
-                        </View>
-                        <View
-                            style={{
-                                flexDirection:"row",
-                                alignItems:"center",
-                                marginVertical:20
-                            }}
-                        >
-                            <Text
-                                style={{
-                                    color:"#000",
-                                    fontWeight:"500"
-                                }}
-                            >State :</Text>
-                            <Text
-                                style={{
-                                    color:"gray",
-                                    fontWeight:"500",
-                                    marginHorizontal:10
-                                }}
-                            >{location.country}</Text>
-                        </View>
-                        <View style={{flexDirection:"row",alignItems:"center"}}>
-                            <TextInput 
-                                placeholder="service area"
-                                placeholderTextColor="gray"
-                                style={{
-                                    borderRadius:5,
-                                    color:"#000",
-                                    width:150,
-                                    textAlign:"center",
-                                    backgroundColor:"#ffe4e1"
-                                }}
-                                value={area}
-                                onChangeText={(val)=>setArea(val)}
-                                keyboardType="numeric"
-                            />
-                            <Text style={{color:"#000",right:-20}}>(km)</Text>
-                        </View>
-                    </View>
-                    <Text 
-                        style={{
-                            color:'#000',
-                            fontSize:12,
-                            marginHorizontal:20,
-                            textAlign:"center",
-                            marginVertical:10
-                        }}
-                    >
-                        service area have to be calculated from above location
-                    </Text>
-                    {
-                        indicator ? 
-                        <View style={{marginVertical:20}}>
-                            <ActivityIndicator size={30} color="#ff1493" />
-                        </View>
-                        :
-                        <View
-                        style={{
-                            flexDirection:"row",
-                            alignItems:"center",
-                            marginHorizontal:40,
-                            marginVertical:20
-                        }}
-                        >
-                            <TouchableOpacity
-                            style={{
-                                backgroundColor:"#ff1493",
-                                paddingHorizontal:8,
-                                paddingVertical:5,
-                                borderRadius:4
-                            }}
-                            onPress={toggle}
-                            activeOpacity={0.7}
-                            >
-                                <Text style={{color:"#fff",fontWeight:"500"}}>Cancel</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                            style={{
-                                backgroundColor:"green",
-                                paddingHorizontal:8,
-                                paddingVertical:5,
-                                borderRadius:4,
-                                marginLeft:30
-                            }}
-                            onPress={updateLocation}
-                            activeOpacity={0.7}
-                            >
-                                <Text style={{color:"#fff",fontWeight:"500"}}>Confirm</Text>
-                            </TouchableOpacity>
-                        </View>
-                    }
-                    {
-                        isUpdated && <Text style={{color:"green",fontSize:12}}>Successfully Updated</Text>
-                    }
-                </View>
+                {
+                    visible2 ? <ManualLocation /> : <AutoLocation />
+                }
             </BottomSheet>
         </View>
     );
@@ -478,7 +630,7 @@ const styles = StyleSheet.create({
     },
     card: {
         backgroundColor: "#fff",
-        // height: 400,
+        // height: 380,
         borderTopLeftRadius:10,
         borderTopRightRadius:10,
         alignItems:"center"

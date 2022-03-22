@@ -151,9 +151,9 @@ export default function MyProduct() {
                       }}>
                       {item.title}
                     </Text>
-                    <Text style={{fontSize: 11, color: '#000'}}>
+                    {/* <Text style={{fontSize: 11, color: '#000'}}>
                       {item.content}
-                    </Text>
+                    </Text> */}
                     <View
                       style={{
                         flexDirection: 'row',
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   box: {
-    minHeight: clickBoxHeight,
+    paddingBottom:10,
     width: '48%',
     borderRadius: 10,
     marginBottom: 10,
