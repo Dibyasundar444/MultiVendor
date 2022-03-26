@@ -86,8 +86,8 @@ export default function Services() {
                       key={item._id}
                       activeOpacity={0.7}
                       style={{borderBottomWidth: 1}}
-                      onPress={()=>navigation.navigate("VendorProducts",item)}
-                      disabled={true}
+                      onPress={()=>navigation.navigate("editService",{item:item,edit:false})}
+                      // disabled={true}
                     >
                       <View style={styles.subView}>
                         <View style={{alignItems: 'center', flexDirection: 'row'}}>
@@ -106,7 +106,7 @@ export default function Services() {
                             {item.title}
                           </Text>
                         </View>
-                        {/* <AntDesign name="right" size={16} color="#000" /> */}
+                        <AntDesign name="right" size={16} color="#000" />
                       </View>
                     </TouchableOpacity>
                 ))

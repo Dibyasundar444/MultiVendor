@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, View, Text, StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import HomeScreen from '../HomeScreen';
@@ -9,9 +8,9 @@ import ProfileScreen from '../ProfileScreen';
 import EditProfile from '../EditProfileScreen';
 import MyProduct from '../utils/MyProducts.';
 import AddProduct from '../AddProduct';
-import Services from '../ServiceScreen';
-import ProductScreen from '../ProductScreen';
 import EditService from '../EditService';
+import EditProduct from '../EditProduct';
+import ProductDetailsVendor from '../ProductDetails';
 
 
 
@@ -30,7 +29,8 @@ export default function HomeStack(){
             <Stack.Screen name='VendorProducts' component={MyProduct} />
             <Stack.Screen name='addProductScreen' component={AddProduct} />
             <Stack.Screen name='editService' component={EditService} />
-            {/* <Stack.Screen name='ProductScreen' component={ProductScreen} /> */}
+            <Stack.Screen name='EditProduct' component={EditProduct} />
+            <Stack.Screen name='ProductDetailsVendor' component={ProductDetailsVendor} />
         </Stack.Navigator>
     </View>
   );

@@ -8,12 +8,13 @@ import AlertScreen from '../AlertScreen';
 import ProfileScreen from '../ProfileScreen';
 import EditProfile from '../EditProfileScreen';
 import ProductScreen from '../ProductScreen';
+import EditProduct from '../EditProduct';
+import ProductDetailsVendor from '../ProductDetails';
 
 
 
 export default function ProductStack(){
 
-  
   const Stack = createNativeStackNavigator();
 
   return (
@@ -24,6 +25,8 @@ export default function ProductStack(){
             <Stack.Screen name='AlertScreen' component={AlertScreen} />
             <Stack.Screen name='ProfileScreen' component={ProfileScreen} />
             <Stack.Screen name='EditProfile' component={EditProfile} />
+            <Stack.Screen name='EditProduct' component={EditProduct} />
+            <Stack.Screen name='ProductDetailsVendor' component={ProductDetailsVendor} />
         </Stack.Navigator>
     </View>
   );

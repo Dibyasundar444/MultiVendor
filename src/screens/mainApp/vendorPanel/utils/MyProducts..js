@@ -133,7 +133,7 @@ export default function MyProduct() {
               renderItem={({item}) => (
                 <TouchableOpacity key={item._id} style={styles.box}
                     activeOpacity={0.6}
-                    onPress={()=>navigation.navigate("ProductDetailsVendor",item)}
+                    onPress={()=>navigation.navigate("ProductDetailsVendor",{item:item,edit:true})}
                 >
                   <View style={styles.boxSubView}>
                     <Image

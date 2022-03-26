@@ -134,10 +134,10 @@ const App = () => {
         <Stack.Screen name="ChatRoom" component={ChatRoom} />
         <Stack.Screen name="Services" component={Services} />
         <Stack.Screen name="ProductDetails" component={ProductDetails} />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="ProductDetailsVendor"
           component={ProductDetailsVendor}
-        />
+        /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

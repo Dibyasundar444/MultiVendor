@@ -11,6 +11,7 @@ import MyProduct from '../utils/MyProducts.';
 import AddProduct from '../AddProduct';
 import Services from '../ServiceScreen';
 import AddService from '../AddService';
+import EditService from '../EditService';
 
 
 
@@ -30,6 +31,7 @@ export default function ServiceStack(){
             <Stack.Screen name='EditProfile' component={EditProfile} />
             <Stack.Screen name='ServiceScreen' component={Services} />
             <Stack.Screen name='addServiceScreen' component={AddService} />
+            <Stack.Screen name='editService' component={EditService} />
         </Stack.Navigator>
     </View>
   );

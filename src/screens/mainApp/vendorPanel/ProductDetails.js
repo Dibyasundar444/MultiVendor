@@ -18,7 +18,7 @@ import { ImageSlider } from '../userPanel/utils/img-slider';
 export default function ProductDetailsVendor({route, navigation}) {
   const preData = route.params;
   const IMAGES = [];
-  preData.images.forEach(elemet=>{
+  preData.item.images.forEach(elemet=>{
     var innerObj = {img: elemet};
     IMAGES.push(innerObj);
   });
@@ -39,7 +39,7 @@ export default function ProductDetailsVendor({route, navigation}) {
         }
     };
     axios
-      .get(`${API}/commentofprod/${preData._id}`,axiosConfig)
+      .get(`${API}/commentofprod/${preData.item._id}`,axiosConfig)
       .then(resp => {
         setCommentList(resp.data);
       })
@@ -90,7 +90,7 @@ export default function ProductDetailsVendor({route, navigation}) {
           <Header
             isBack={true}
             back={() => navigation.goBack()}
-            title={preData.title}
+            title={preData.item.title}
             notify={() => navigation.navigate('AlertScreen')}
             profile={() => navigation.navigate('ProfileScreen')}
             bellColor="#000"
@@ -108,9 +108,9 @@ export default function ProductDetailsVendor({route, navigation}) {
         </View>
         <View style={styles.body}>
           <View style={styles.titleView}>
-            <Text style={styles.title}>{preData.title}</Text>
+            <Text style={styles.title}>{preData.item.title}</Text>
             {
-              preData.availstatus === true ? 
+              preData.item.availstatus === true ? 
               <Text style={{color: 'green', fontSize: 10,marginRight:10}}>Available</Text>
               :
               <Text style={{color: 'red', fontSize: 10}}>Not available</Text>
@@ -121,10 +121,10 @@ export default function ProductDetailsVendor({route, navigation}) {
               {preData.content}
             </Text> */}
             <Text style={{color: '#000', fontSize: 11, flexWrap: 'wrap'}}>
-              {preData.description}
+              {preData.item.description}
             </Text>
           </View>
-          <View style={{alignItems: 'flex-start', marginTop: 10}}>
+          <View style={{flexDirection:"row", marginTop: 10,alignItems:"center",justifyContent:"space-between"}}>
             <TouchableOpacity
               style={{flexDirection: 'row', alignItems: 'center'}}
               activeOpacity={0.7}
@@ -138,6 +138,24 @@ export default function ProductDetailsVendor({route, navigation}) {
                 size={18}
               />
             </TouchableOpacity>
+            {
+              preData.edit && 
+              <TouchableOpacity
+                style={{
+                  backgroundColor:"#d95448",
+                  paddingHorizontal:20,
+                  paddingVertical:2,
+                  borderRadius:5,
+                  elevation:5,
+                  alignItems:"center",
+                  justifyContent:"center"
+                }}
+                activeOpacity={0.7}
+                onPress={()=>navigation.navigate('EditProduct',preData.item)}
+              >
+                <Text style={{color:"#fff",fontSize:12,fontWeight:"600"}}>Edit</Text>
+              </TouchableOpacity>
+            }
           </View>
           {isVisible2 && <>{showComment()}</>}
         </View>
@@ -155,7 +173,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 160,
     borderRadius: 10,
-    backgroundColor: '#f7984f',
+    backgroundColor: '#d95448',
     marginTop: -10,
     overflow: 'hidden',
   },

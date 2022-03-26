@@ -239,7 +239,7 @@ export default function HomeScreen({navigation}) {
                   key={item._id}
                   activeOpacity={0.6}
                   style={styles.box}
-                  onPress={()=>navigation.navigate("ProductDetailsVendor",item)} 
+                  onPress={()=>navigation.navigate("ProductDetailsVendor",{item:item,edit:true})} 
                 >
                   <View style={styles.boxSubView}>
                     <Image
@@ -286,8 +286,8 @@ export default function HomeScreen({navigation}) {
                   key={item._id}
                   activeOpacity={0.7}
                   style={{borderBottomWidth: 1}}
-                  onPress={()=>navigation.navigate("VendorProducts",item)}
-                  disabled={true}
+                  onPress={()=>navigation.navigate("editService",{item:item,edit:true})}
+                  // disabled={true}
                 >
                   <View style={styles.subView}>
                     <View style={{alignItems: 'center', flexDirection: 'row'}}>
@@ -306,20 +306,7 @@ export default function HomeScreen({navigation}) {
                         {item.title}
                       </Text>
                     </View>
-                    {/* <MaterialCommunityIcons name="dots-vertical" size={24} color="#000" /> */}
-                    <TouchableOpacity
-                      style={{
-                        elevation:5,
-                        backgroundColor:"#d95448",
-                        paddingHorizontal:10,
-                        paddingVertical:2,
-                        borderRadius:4
-                      }}
-                      activeOpacity={0.7}
-                      onPress={()=>navigation.navigate("editService",item)}
-                    >
-                      <Text style={{color:"#fff",fontSize:12}}>Edit</Text>
-                    </TouchableOpacity>
+                    <AntDesign name="right" size={16} color="#000" />
                   </View>
                 </TouchableOpacity>
             ))

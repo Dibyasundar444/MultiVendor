@@ -25,17 +25,17 @@ import Header from './utils/header';
 export default function EditService({navigation,route}) {
 
   const preData = route.params;
-  const priceString = preData.price.toString();
+  const priceString = preData.item.price.toString();
 
-  const [addNewService, setAddNewService] = useState(preData.title);
+  const [addNewService, setAddNewService] = useState(preData.item.title);
   const [process, setProcess] = useState('');
-  const [url, setUrl] = useState(preData.images);
+  const [url, setUrl] = useState(preData.item.images);
   const [loading3, setloading3] = useState(false);
   const [serviceAdded, setServiceAdded] = useState(false);
   const [categoriesData, setCategoriesData] = useState([]);
   const [selectedCategory_ID, setSelectedCategory_ID] = useState('');
   const [selectedCategory_name, setSelectedCategory_name] = useState('');
-  const [desc, setDesc] = useState(preData.description);
+  const [desc, setDesc] = useState(preData.item.description);
   const [cost, setCost] = useState(priceString);
   const [loading1, setLoading1] = useState(false);
   const [isVisible2, setIsVisible2] = useState(false);
@@ -110,9 +110,10 @@ export default function EditService({navigation,route}) {
       });
   };
 
-  const createService=async()=>{
+  const updateService=async()=>{
     const json_Val = await AsyncStorage.getItem("jwt");
     const parsed = JSON.parse(json_Val);
+    console.log(parsed.token);
     let axiosConfig = {
         headers:{
             Authorization: parsed.token
@@ -131,35 +132,16 @@ export default function EditService({navigation,route}) {
           category: selectedCategory_ID,
         };
         // console.log(postData);
-        axios.get(`${API_VENDOR}/vendordetail`,axiosConfig)
-        .then(resp=>{
-            if(resp.data.services.length > 0){
-                setloading3(false);
-                Alert.alert("You cann't add more than One Service");
-              }
-              else{
-                axios.patch(`${API}/service`,postData,axiosConfig)
-                .then(res=>{
-                    setloading3(false);
-                    setServiceAdded(true);
-                    setAddNewService('');
-                    setUrl('');
-                    setSelectedCategory_name('');
-                    setSelectedCategory_ID('');
-                    setAddNewService('');
-                    setDesc('');
-                    setCost('');    
-                    console.log(res.data);               
-                })
-                .catch(err=>{
-                    console.log("err add Service: ",err);
-                    setloading3(false);
-                })
-            }
-        })
-        .catch(err=>{
-            console.log("err",err);
-        })
+        axios.put(`${API}/service/${preData.item._id}`,postData,axiosConfig)
+          .then(res=>{
+              setloading3(false);
+              setServiceAdded(true);  
+              console.log(res.data);               
+          })
+          .catch(err=>{
+              console.log("err updating Service: ",err);
+              setloading3(false);
+          })
     }
     else{
       null;
@@ -227,116 +209,204 @@ export default function EditService({navigation,route}) {
     </View>
   );
 
+  const EditSericeContainer=()=>(
+    <ScrollView style={{flex:1}} 
+      contentContainerStyle={{paddingBottom:200,paddingTop:20}}
+      showsVerticalScrollIndicator={false}
+    >
+        <Text 
+            style={{
+                color:"gray",
+                fontSize:12,
+                textAlign:"center",
+            }}
+          > Edit Your Service - ({preData.item.title})
+          </Text>
+        <View
+          style={{marginTop:20,alignItems:"center"}}
+        >
+          <TouchableOpacity
+          style={styles.input1}
+          activeOpacity={0.6}
+          onPress={() => setIsVisible2(true)}>
+          <View style={styles.cat}>
+            <Text style={{color: 'gray', textTransform: 'capitalize'}}>
+              {!selectedCategory_name ? 'Category' : selectedCategory_name}
+            </Text>
+            <AntDesign name="down" size={18} color="#000" />
+          </View>
+        </TouchableOpacity>
+        <TextInput 
+            style={styles.serviceInput}
+            placeholder={preData.item.title}
+            placeholderTextColor="gray"
+            value={addNewService}
+            onChangeText={(val)=>setAddNewService(val)}
+        />
+        <View style={styles.desc}>
+          <TextInput
+            style={[
+              styles.Name,
+              {
+                height: '100%',
+                textAlignVertical: 'top',
+              },
+            ]}
+            placeholder={preData.item.description? desc : "Description..."}
+            placeholderTextColor="gray"
+            multiline={true}
+            value={desc}
+            onChangeText={val => setDesc(val)}
+          />
+        </View>
+        <TouchableOpacity
+            style={[styles.textInput1, styles.image]}
+            activeOpacity={0.8}
+            onPress={openLibrary}>
+            <View style={{flexDirection:"row",alignItems:"center"}}>
+                <View style={{height:30,width:30,borderRadius:20,overflow:"hidden",borderWidth:0.2}}>
+                    <Image 
+                        source={{uri:url}}
+                        style={{height:"100%",width:"100%"}}
+                        resizeMode="contain"
+                    />
+                </View>
+                <Text style={{color: 'gray',marginLeft:10}}>Image</Text>
+            </View>
+            {
+                !process ? <Feather name="upload" color="#000" size={18} /> : 
+                process == "100%" ? <MaterialIcons name='done' color="green" size={20} /> :
+                <Text style={{color:"gray",fontSize:12}}>{process}</Text>
+            }
+        </TouchableOpacity>
+        <View style={styles.textInput1}>
+          <TextInput
+            style={styles.Name}
+            placeholder={cost}
+            placeholderTextColor="gray"
+            value={cost}
+            onChangeText={val => setCost(val)}
+            keyboardType="numeric"
+          />
+        </View>
+        </View>
+        {
+        loading3 ? 
+        <View style={{marginVertical:25}}>
+            <ActivityIndicator size={30} />
+        </View>
+        :
+        <View style={styles.btnView}>
+            <TouchableOpacity style={styles.serviceBtn}
+                activeOpacity={0.6}
+                onPress={updateService}
+                disabled={loading3 ? true : false}
+            >
+                <Text style={{color:"#fff",fontWeight:"600"}}>Update Service</Text>
+            </TouchableOpacity>
+        </View>
+        }
+        {
+        serviceAdded ? <Text style={{color:"green",textAlign:"center",marginBottom:10,fontSize:12}}>service updated</Text> : null
+        }
+    </ScrollView>
+  );
+
+  const ShowServiceDetailsContainer=()=>(
+    <ScrollView style={{flex:1}} 
+      contentContainerStyle={{paddingBottom:200,paddingTop:20}}
+      showsVerticalScrollIndicator={false}
+    >
+        <View
+          style={{marginTop:20,alignItems:"center"}}
+        >
+          <TouchableOpacity
+          style={styles.input1}
+          activeOpacity={0.6}
+          disabled={true}
+          onPress={() => setIsVisible2(true)}>
+          <View style={styles.cat}>
+            <Text style={{color: 'gray', textTransform: 'capitalize'}}>
+              {!selectedCategory_name ? 'Category' : selectedCategory_name}
+            </Text>
+            {/* <AntDesign name="down" size={18} color="#000" /> */}
+          </View>
+        </TouchableOpacity>
+        <TextInput 
+            style={styles.serviceInput}
+            placeholder={preData.item.title}
+            placeholderTextColor="gray"
+            value={addNewService}
+            onChangeText={(val)=>setAddNewService(val)}
+            editable={false}
+        />
+        <View style={styles.desc}>
+          <TextInput
+            style={[
+              styles.Name,
+              {
+                height: '100%',
+                textAlignVertical: 'top',
+              },
+            ]}
+            placeholder={preData.item.description? desc : "Description..."}
+            placeholderTextColor="gray"
+            multiline={true}
+            value={desc}
+            onChangeText={val => setDesc(val)}
+            editable={false}
+          />
+        </View>
+        <TouchableOpacity
+            style={[styles.textInput1, styles.image]}
+            activeOpacity={0.8}
+            disabled={true}
+            onPress={openLibrary}>
+            <View style={{flexDirection:"row",alignItems:"center"}}>
+                <View style={{height:30,width:30,borderRadius:20,overflow:"hidden",borderWidth:0.2}}>
+                    <Image 
+                        source={{uri:url}}
+                        style={{height:"100%",width:"100%"}}
+                        resizeMode="contain"
+                    />
+                </View>
+                <Text style={{color: 'gray',marginLeft:10}}>Image</Text>
+            </View>
+            {
+                !process ? <Feather name="upload" color="#000" size={18} /> : 
+                process == "100%" ? <MaterialIcons name='done' color="green" size={20} /> :
+                <Text style={{color:"gray",fontSize:12}}>{process}</Text>
+            }
+        </TouchableOpacity>
+        <View style={styles.textInput1}>
+          <TextInput
+            style={styles.Name}
+            placeholder={cost}
+            placeholderTextColor="gray"
+            value={cost}
+            onChangeText={val => setCost(val)}
+            keyboardType="numeric"
+            editable={false}
+          />
+        </View>
+        </View>
+    </ScrollView>
+  );
+
   return (
     <>
       <View style={styles.container}>
         <Header
           isBack={true}
           back={() => navigation.goBack()}
-          title="Edit Service"
+          title={preData.item.title}
           notify={() => navigation.navigate('AlertScreen')}
           profile={() => navigation.navigate('ProfileScreen')}
           bellColor="#000"
         />
-        <ScrollView style={{flex:1}} 
-          contentContainerStyle={{paddingBottom:200,paddingTop:20}}
-          showsVerticalScrollIndicator={false}
-        >
-            <Text 
-            style={{
-                color:"gray",
-                fontSize:12,
-                textAlign:"center",
-            }}
-            >Edit Your Service - ({preData.title})</Text>
-            <View
-            style={{marginTop:20,alignItems:"center"}}
-            >
-              <TouchableOpacity
-              style={styles.input1}
-              activeOpacity={0.6}
-              onPress={() => setIsVisible2(true)}>
-              <View style={styles.cat}>
-                <Text style={{color: 'gray', textTransform: 'capitalize'}}>
-                  {!selectedCategory_name ? 'Category' : selectedCategory_name}
-                </Text>
-                <AntDesign name="down" size={18} color="#000" />
-              </View>
-            </TouchableOpacity>
-            <TextInput 
-                style={styles.serviceInput}
-                placeholder={preData.title}
-                placeholderTextColor="gray"
-                value={addNewService}
-                onChangeText={(val)=>setAddNewService(val)}
-            />
-            <View style={styles.desc}>
-              <TextInput
-                style={[
-                  styles.Name,
-                  {
-                    height: '100%',
-                    textAlignVertical: 'top',
-                  },
-                ]}
-                placeholder={preData.description? desc : "Description..."}
-                placeholderTextColor="gray"
-                multiline={true}
-                value={desc}
-                onChangeText={val => setDesc(val)}
-              />
-            </View>
-            <TouchableOpacity
-                style={[styles.textInput1, styles.image]}
-                activeOpacity={0.8}
-                onPress={openLibrary}>
-                <View style={{flexDirection:"row",alignItems:"center"}}>
-                    <View style={{height:30,width:30,borderRadius:20,overflow:"hidden",borderWidth:0.2}}>
-                        <Image 
-                            source={{uri:url}}
-                            style={{height:"100%",width:"100%"}}
-                            resizeMode="contain"
-                        />
-                    </View>
-                    <Text style={{color: 'gray',marginLeft:10}}>Image</Text>
-                </View>
-                {
-                    !process ? <Feather name="upload" color="#000" size={18} /> : 
-                    process == "100%" ? <MaterialIcons name='done' color="green" size={20} /> :
-                    <Text style={{color:"gray",fontSize:12}}>{process}</Text>
-                }
-            </TouchableOpacity>
-            <View style={styles.textInput1}>
-              <TextInput
-                style={styles.Name}
-                placeholder={cost}
-                placeholderTextColor="gray"
-                value={cost}
-                onChangeText={val => setCost(val)}
-                keyboardType="numeric"
-              />
-            </View>
-            </View>
-            {
-            loading3 ? 
-            <View style={{marginVertical:25}}>
-                <ActivityIndicator size={30} />
-            </View>
-            :
-            <View style={styles.btnView}>
-                <TouchableOpacity style={styles.serviceBtn}
-                    activeOpacity={0.6}
-                    onPress={createService}
-                    disabled={loading3 ? true : false}
-                >
-                    <Text style={{color:"#fff",fontWeight:"600"}}>Update Service</Text>
-                </TouchableOpacity>
-            </View>
-            }
-            {
-            serviceAdded ? <Text style={{color:"green",textAlign:"center",marginBottom:10,fontSize:12}}>service updated</Text> : null
-            }
-        </ScrollView>
+        {
+          preData.edit ? <EditSericeContainer /> : <ShowServiceDetailsContainer />
+        }
       </View>
       {isVisible2 && showModalToSelect()}
     </>
