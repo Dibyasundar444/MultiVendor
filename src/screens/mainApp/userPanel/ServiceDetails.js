@@ -26,35 +26,29 @@ import Rating from './utils/Rating';
 import { ImageSlider } from './utils/img-slider';
 
 
-export default function ProductDetails({route, navigation}) {
+export default function ServiceDetails({route, navigation}) {
+
   const preData = route.params;
-  const IMAGES = [];
-  preData.images.forEach(elemet=>{
-    var innerObj = {img: elemet};
-    IMAGES.push(innerObj);
-  });
-  const [isVisible2, setIsvisible2] = useState(false);
+
+  const [oneVendor, setOneVendor] = useState({});
+  const [visible, setVisible] = useState(false);
+  const [indicator2, setIndicator2] = useState(false);
+  const [rating, setRating] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [getRating, setGetRating] = useState(Number);
   const [comment, setComment] = useState('');
   const [commentSent, setCommentSent] = useState(false);
   const [indicator, setIndicator] = useState(false);
-  const [oneVendor, setOneVendor] = useState({});
-  const [heartPressed, setHeartPressed] = useState(false);
-  const [wishlist, setWishlist] = useState([]);
+  const [isVisible2, setIsvisible2] = useState(false);
   const [commentList, setCommentList] = useState([]);
-  const [visible, setVisible] = useState(false);
-  const [indicator2, setIndicator2] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [getRating, setGetRating] = useState(Number);
   const [defaultRating, setDefaultRating] = useState(0);
-  
+
+  console.log("comment", commentList);
   
   useEffect(() => {
-    views();
     getOneVendor();
-    getWishlist();
     getCommentList();
   }, []);
-
 
   const openDialer = () => {
     let number = oneVendor.phoneNo;
@@ -63,29 +57,6 @@ export default function ProductDetails({route, navigation}) {
     } else number = `tel:${number}`;
     Linking.openURL(number);
   };
-
-  const views = async() => {
-    const json_Val = await AsyncStorage.getItem("jwt");
-    const parsed = JSON.parse(json_Val);
-    let axiosConfig = {
-        headers:{
-          Authorization: parsed.token
-        }
-    };
-    console.log(axiosConfig);
-    setTimeout(()=>{
-      axios
-      .patch(`${API_USER}/products/views/${preData._id}`,{},axiosConfig)
-      .then(resp => {
-        console.log('New view added: ',resp.data.products.views);
-      })
-      .catch(err => {
-        console.log('Server error: ', err);
-      });
-    },2000)
-  };
-
-  // console.log(preData);
 
   const _sendMsg = async() => {
     const json_Val = await AsyncStorage.getItem("jwt");
@@ -112,13 +83,28 @@ export default function ProductDetails({route, navigation}) {
       });
   };
 
-  let COMMENT = {
-    comment: comment,
-    productId: preData._id,
-    vendorId: preData.vendor,
+  const getOneVendor = () => {
+    axios
+      .get(`${API_VENDOR}/onevendordetail/${preData.vendor}`)
+      .then(resp => {
+        setLoading(false);
+        setOneVendor(resp.data);
+        setGetRating(resp.data.ratings);
+        let f_id = resp.data._id.split('',2);
+        global.f_id = f_id;
+      })
+      .catch(err => {
+        console.log('OneVendor Error: ', err);
+        setLoading(false);
+      });
   };
-  const _sendComment = async() => {
-    setIndicator(true);
+
+  const toggle=()=>{
+    setVisible((visible) => !visible)
+  };
+
+  const _submitRating=async()=>{
+    setIndicator2(true);
     const json_Val = await AsyncStorage.getItem("jwt");
     const parsed = JSON.parse(json_Val);
     let axiosConfig = {
@@ -126,8 +112,39 @@ export default function ProductDetails({route, navigation}) {
             Authorization: parsed.token
         }
     };
+    let ratingData={
+      rating: defaultRating,
+      vendorId: oneVendor._id
+    };
+    axios.patch(`${API_USER}/vendorreview`,ratingData,axiosConfig)
+    .then(resp=>{
+      setIndicator2(false);
+      setVisible(false);
+      getOneVendor();
+    })
+    .catch(err=>{
+      setIndicator2(false);
+      console.log("err",err);
+      alert('Error from server. Please try again later');
+    })
+  };
+
+  let COMMENT = {
+    comment: comment,
+    serviceId: preData._id,
+    vendorId: preData.vendor,
+  };
+  const _sendComment = async() => {
+    setIndicator(true);
+    const json_Val = await AsyncStorage.getItem("jwt");
+    const parsed = JSON.parse(json_Val);
+    let axiosConfig = {
+      headers:{
+        Authorization: parsed.token
+      }
+    };
     axios
-      .post(`${API}/comment`,COMMENT,axiosConfig)
+      .post(`${API}/commentService`,COMMENT,axiosConfig)
       .then(resp => {
         setIndicator(false);
         setCommentSent(true);
@@ -151,51 +168,6 @@ export default function ProductDetails({route, navigation}) {
     );
   };
 
-  const getOneVendor = () => {
-    axios
-      .get(`${API_VENDOR}/onevendordetail/${preData.vendor}`)
-      .then(resp => {
-        setLoading(false);
-        setOneVendor(resp.data);
-        setGetRating(resp.data.ratings);
-        let f_id = resp.data._id.split('',2);
-        global.f_id = f_id;
-      })
-      .catch(err => {
-        console.log('OneVendor Error: ', err);
-        setLoading(false);
-      });
-  };
-
-  const addWishList = async () => {
-    setHeartPressed(!heartPressed);
-    if (!heartPressed) {
-      wishlist.push(preData);
-      await AsyncStorage.setItem('MyWishList', JSON.stringify(wishlist));
-    } else if (heartPressed) {
-      const filterItem = wishlist.filter(item => item._id !== preData._id);
-      await AsyncStorage.setItem('MyWishList', JSON.stringify(filterItem));
-    }
-  };
-
-  const getWishlist = async () => {
-    try {
-      const listJSON = await AsyncStorage.getItem('MyWishList');
-      const listParsed = JSON.parse(listJSON);
-      if (listParsed !== null) {
-        setWishlist(listParsed);
-        var __FOUND = listParsed.find(function (item, index) {
-          if (item._id == preData._id) return true;
-        });
-        __FOUND !== undefined ? setHeartPressed(true) : setHeartPressed(false);
-      } else {
-        setWishlist([]);
-        setHeartPressed(false);
-      }
-    } catch (err) {
-      console.log('error of getting wishlist', err);
-    }
-  };
 
   const getCommentList = async() => {
     const json_Val = await AsyncStorage.getItem("jwt");
@@ -206,15 +178,16 @@ export default function ProductDetails({route, navigation}) {
       }
     };
     axios
-      .get(`${API}/commentofprod/${preData._id}`,axiosConfig)
+      .get(`${API}/commentofservice/${preData._id}`,axiosConfig)
       .then(resp => {
         setCommentList(resp.data);
-        console.log('ok');
+        console.log(resp.data);
       })
       .catch(err => {
         console.log('server err: ', err);
       });
   };
+
   const showComment = () => (
     commentList.map(item=>{
       return(
@@ -247,39 +220,9 @@ export default function ProductDetails({route, navigation}) {
           </View>
         </View>
       </View>
-    );
-  }
-));
-
-  const toggle=()=>{
-    setVisible((visible) => !visible)
-  };
-
-  const _submitRating=async()=>{
-    setIndicator2(true);
-    const json_Val = await AsyncStorage.getItem("jwt");
-    const parsed = JSON.parse(json_Val);
-    let axiosConfig = {
-        headers:{
-            Authorization: parsed.token
-        }
-    };
-    let ratingData={
-      rating: defaultRating,
-      vendorId: oneVendor._id
-    };
-    console.log(ratingData);
-    axios.patch(`${API_USER}/vendorreview`,ratingData,axiosConfig)
-    .then(resp=>{
-      setIndicator2(false);
-      setVisible(false);
-      getOneVendor();
-    })
-    .catch(err=>{
-      console.log("err",err);
-      alert('Error from server. Please try again later');
-    })
-  };
+      );
+    }
+  ));
 
   return (
     <View style={styles.container}>
@@ -293,7 +236,7 @@ export default function ProductDetails({route, navigation}) {
         </View>
         <View style={styles.banner}>
           <ImageSlider 
-            data={IMAGES}
+            data={[{img:preData.images}]}
             autoPlay={true}
             closeIconColor="#fff"
             showIndicator={false}
@@ -305,16 +248,6 @@ export default function ProductDetails({route, navigation}) {
             loading ? <ActivityIndicator style={{marginTop:50}} size={40} />
             :
             <>
-              <TouchableOpacity
-                style={styles.absWishlist}
-                onPress={addWishList}
-                activeOpacity={1}>
-                <AntDesign
-                  name={heartPressed ? 'heart' : 'hearto'}
-                  color={heartPressed ? '#ff1493' : '#000'}
-                  size={18}
-                />
-              </TouchableOpacity>
               <View style={styles.titleView}>
                 <Text style={styles.title}>{preData.title}</Text>
                 {
@@ -324,13 +257,9 @@ export default function ProductDetails({route, navigation}) {
                   <Text style={{color: 'red', fontSize: 10}}>Not available</Text>
                 }
               </View>
-              {/* <Text style={{color: '#000', fontSize: 12}}>{preData.content}</Text> */}
               <View style={{marginBottom: 20}}>
                 <Text style={{color: '#000', fontSize: 13, marginVertical: 10}}>
                   {preData.description}
-                </Text>
-                <Text style={{color: '#000', fontSize: 11, flexWrap: 'wrap'}}>
-                  {preData.des}
                 </Text>
               </View>
               <Text style={{color: '#000'}}>Vendor Details</Text>
@@ -392,29 +321,6 @@ export default function ProductDetails({route, navigation}) {
                   <Text style={{color: '#000', fontSize: 12}}>Chat</Text>
                 </View>
               </View>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <TextInput
-                  style={styles.cmntInput}
-                  placeholder="Write your comment..."
-                  placeholderTextColor="gray"
-                  value={comment}
-                  onChangeText={val => setComment(val)}
-                />
-                {indicator ? (
-                  <ActivityIndicator style={{marginLeft: 10}} size={24} />
-                ) : (
-                  <TouchableOpacity
-                    onPress={_sendComment}
-                    disabled={comment !== '' ? false : true}>
-                    <MaterialCommunityIcons
-                      name="send-circle"
-                      color="#ff1493"
-                      size={44}
-                    />
-                  </TouchableOpacity>
-                )}
-              </View>
-              {commentSent && commentMsg()}
               <View style={{alignItems: 'flex-start', marginTop: 10}}>
                 <TouchableOpacity
                   style={{flexDirection: 'row', alignItems: 'center'}}
@@ -448,6 +354,32 @@ export default function ProductDetails({route, navigation}) {
           setDefaultRating={setDefaultRating}
         />
       </ScrollView>
+      <View style={{alignItems:"center",marginBottom:10}}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <TextInput
+            style={styles.cmntInput}
+            placeholder="Write your comment..."
+            placeholderTextColor="gray"
+            value={comment}
+            onChangeText={val => setComment(val)}
+          />
+          {indicator ? (
+            <ActivityIndicator style={{marginLeft: 5}} size={24} />
+          ) : (
+            <TouchableOpacity
+              onPress={_sendComment}
+              disabled={comment !== '' ? false : true}
+            >
+              <MaterialCommunityIcons
+                name="send-circle"
+                color="#ff1493"
+                size={44}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+        {commentSent && commentMsg()}
+      </View>
     </View>
   );
 }
@@ -465,7 +397,6 @@ const styles = StyleSheet.create({
     marginTop: -10,
     overflow: 'hidden',
     borderBottomWidth:0.2,
-    // elevation:5
   },
   body: {
     marginHorizontal: 20,
@@ -495,7 +426,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cmntInput: {
-    width: '85%',
+    width: '80%',
     marginRight: 5,
     borderRadius: 35,
     paddingLeft: 15,
@@ -529,12 +460,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginVertical: 5,
-  },
-  card: {
-    backgroundColor: "#fff",
-    minHeight: 160,
-    alignItems: "center",
-    borderTopLeftRadius:10,
-    borderTopRightRadius:10
   },
 });

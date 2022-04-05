@@ -14,7 +14,7 @@ import {useIsFocused} from '@react-navigation/native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API } from '../../../../config';
+import { API, API_VENDOR } from '../../../../config';
 import Header from './utils/header';
 
 
@@ -28,22 +28,41 @@ export default function Services() {
 
   useEffect(() => {
     if (isFocused) {
-        getServices();
+      getVendor_Service();
     }
   }, [isFocused]);
 
-  const getServices = () => {
-    axios
-      .get(`${API}/service`)
-      .then(resp => {
-        setServiceData(resp.data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.log('server error: ', err);
-        setLoading(false);
-      });
+  const getVendor_Service=async()=>{
+    const json_Val = await AsyncStorage.getItem("jwt");
+    const parsed = JSON.parse(json_Val);
+    let axiosConfig = {
+        headers:{
+            Authorization: parsed.token
+        }
+    };
+    axios.get(`${API_VENDOR}/vendordetail`,axiosConfig)
+    .then(async res=>{
+      setServiceData(res.data.services);
+      setLoading(false);
+    })
+    .catch(err=>{
+      console.log(err);
+      setLoading(false);
+    })
   };
+
+  // const getServices = () => {
+  //   axios
+  //     .get(`${API}/service`)
+  //     .then(resp => {
+  //       setServiceData(resp.data);
+  //       setLoading(false);
+  //     })
+  //     .catch(err => {
+  //       console.log('server error: ', err);
+  //       setLoading(false);
+  //     });
+  // };
 
   return (
     <View style={styles.container}>
@@ -61,7 +80,7 @@ export default function Services() {
           :
           <View style={styles.bodyTitle}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={styles.subTitle}>All Services</Text>
+              <Text style={styles.subTitle}>My Services</Text>
               <AntDesign name="down" size={16} color="#000" />
             </View>
               <TouchableOpacity
@@ -86,7 +105,7 @@ export default function Services() {
                       key={item._id}
                       activeOpacity={0.7}
                       style={{borderBottomWidth: 1}}
-                      onPress={()=>navigation.navigate("editService",{item:item,edit:false})}
+                      onPress={()=>navigation.navigate("editService",item)}
                       // disabled={true}
                     >
                       <View style={styles.subView}>

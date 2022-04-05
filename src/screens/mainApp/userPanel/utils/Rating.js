@@ -5,26 +5,17 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  Image
 } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import { BottomSheet } from "react-native-btr";
-const RATING=[{id:0},{id:1},{id:2},{id:3},{id:4}];
+
+const MAX_RATING=[1,2,3,4,5];
+const starImageFilled = require('../../../../assets/Rating_Star/star_filled.png');
+const starImageCorner = require('../../../../assets/Rating_Star/star_corner.png');
 
 export default function Rating({
-    visible,indicator,vendorName,submitRating,toggle,ratingArr,setRatingArr
+    visible,indicator,vendorName,submitRating,toggle,setDefaultRating,defaultRating
 }) {
-
-  const click=(item)=>{
-    !ratingArr.includes(`${item.id}`)
-    ?
-    setRatingArr([...ratingArr,`${item.id}`])
-    :
-    setRatingArr(
-      ratingArr.filter(
-          data => data !== `${item.id}`
-      )
-    )
-  };
 
   return (
     <View>
@@ -41,14 +32,20 @@ export default function Rating({
                 alignItems:"center"
             }}>
               {
-                RATING.map((item)=>(
-                  <AntDesign name={ratingArr.includes(`${item.id}`) ? "star" : 'staro'}
-                    color={ratingArr.includes(`${item.id}`) ? "#fc9d28" : '#000'}
-                    size={30} 
-                    key={item.id} 
-                    style={{marginHorizontal:10}}
-                    onPress={()=>click(item)} 
-                  />
+                MAX_RATING.map((item)=>(
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    key={item}
+                    onPress={() => setDefaultRating(item)}>
+                    <Image
+                      style={{width: 30,height: 30,resizeMode: 'cover',marginHorizontal:5}}
+                      source={
+                        item <= defaultRating
+                          ? starImageFilled
+                          : starImageCorner
+                      }
+                    />
+                  </TouchableOpacity>
                 ))
               }
             </View>

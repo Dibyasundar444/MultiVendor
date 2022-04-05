@@ -13,7 +13,7 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {launchImageLibrary} from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import axios from 'axios';
 import storage from '@react-native-firebase/storage';
@@ -50,11 +50,10 @@ export default function AddService({navigation,route}) {
 
   const openLibrary = async () => {
     const options = {
-      storageOptions: {
-        path: 'images',
-        mediaType: 'photo',
-      },
       includeBase64: true,
+      quality: 0.2,
+      path: 'images',
+      mediaType: 'photo',
     };
     launchImageLibrary(options, resp => {
       if (resp.didCancel) {

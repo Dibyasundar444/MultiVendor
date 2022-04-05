@@ -17,6 +17,7 @@ import Services from './src/screens/mainApp/userPanel/ServiceScreen';
 import ProductDetails from './src/screens/mainApp/userPanel/ProductDetails';
 import SplashScreen from './src/screens/SplashScreen';
 import ProductDetailsVendor from './src/screens/mainApp/vendorPanel/ProductDetails';
+import ServiceDetails from './src/screens/mainApp/userPanel/ServiceDetails';
 
 const App = () => {
   
@@ -31,10 +32,12 @@ const App = () => {
   Geolocation.getCurrentPosition(info => {
     Geocoder.from(info.coords.latitude, info.coords.longitude)
       .then(json => {
+        // console.log(json.results[3].formatted_address);
         let LOCATION = {
-          city: json.results[0].address_components[1].long_name,
-          state: json.results[0].address_components[3].long_name,
-          country: json.results[0].address_components[4].short_name,
+          // city: json.results[0].address_components[1].long_name,
+          // state: json.results[0].address_components[3].long_name,
+          // country: json.results[0].address_components[4].short_name,
+          location:json.results[3].formatted_address,
           lat: info.coords.latitude,
           long: info.coords.longitude
         };
@@ -134,6 +137,7 @@ const App = () => {
         <Stack.Screen name="ChatRoom" component={ChatRoom} />
         <Stack.Screen name="Services" component={Services} />
         <Stack.Screen name="ProductDetails" component={ProductDetails} />
+        <Stack.Screen name="ServiceDetails" component={ServiceDetails} />
         {/* <Stack.Screen
           name="ProductDetailsVendor"
           component={ProductDetailsVendor}

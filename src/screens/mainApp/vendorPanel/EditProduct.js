@@ -28,34 +28,23 @@ export default function EditProduct({navigation,route}) {
   const [name, setName] = useState(preData.title);
   const [desc, setDesc] = useState(preData.description);
   const [cost, setCost] = useState(newCostString);
-  const [content, setContent] = useState('');
-  const [isVisible1, setIsVisible1] = useState(false);
 
   const [isVisible2, setIsVisible2] = useState(false);
   const [categoriesData, setCategoriesData] = useState([]);
-  const [selectedCategory_ID, setSelectedCategory_ID] = useState('');
-  const [selectedCategory_name, setSelectedCategory_name] = useState('');
+  const [selectedCategory_ID, setSelectedCategory_ID] = useState(preData.category._id);
+  const [selectedCategory_name, setSelectedCategory_name] = useState(preData.category.name);
   const [loading1, setLoading1] = useState(false);
 
-  const [isVisible3, setIsVisible3] = useState(false);
-  const [serviceData, setServiceData] = useState([]);
-  const [selectedService_ID, setSelectedService_ID] = useState('');
-  const [selectedService_name, setSelectedService_name] = useState('');
-  const [loading2, setLoading2] = useState(false);
 
   const [imgURL, setImgURL] = useState(preData.images);
-  // const [downloadURL, setDownladURL] = useState([]);
   const [process, setProcess] = useState('');
   const [indicator1, setIndicator1] = useState(false);
   const [productAdded, setProductAdded] = useState(false);
   const [error1, setError1] = useState(false);
   const [error2, setError2] = useState(false);
 
-  console.log(imgURL);
-
   useEffect(() => {
     getCategories();
-    getServices();
   }, []);
 
   const openLibrary=async()=>{
@@ -96,7 +85,6 @@ export default function EditProduct({navigation,route}) {
         } catch (e) {
           console.log(e);
         }
-        setIsVisible1(false);
       })
     })
   };
@@ -113,18 +101,6 @@ export default function EditProduct({navigation,route}) {
       });
   };
 
-  const getServices = () => {
-    axios
-      .get(`${API}/service`)
-      .then(resp => {
-        setServiceData(resp.data);
-        setLoading2(false);
-      })
-      .catch(err => {
-        console.log('server error: ', err);
-      });
-  };
-
   const showModalToSelect = () => (
     <View style={styles.absCat}>
       <View style={styles.catContainer}>
@@ -134,7 +110,7 @@ export default function EditProduct({navigation,route}) {
             textAlign: 'center',
             marginVertical: 10,
             fontWeight: '700',
-          }}>{`Select ${isVisible2 ? 'Category' : 'Service'}`}</Text>
+          }}>Select Category</Text>
         <View
           style={{
             width: '80%',
@@ -146,46 +122,20 @@ export default function EditProduct({navigation,route}) {
         <ScrollView
           style={{marginTop: 20}}
           showsVerticalScrollIndicator={false}>
-          {isVisible2 ? (
+          {isVisible2 &&
             loading1 ? (
               <ActivityIndicator size={30} style={{marginTop: 40}} />
-            ) : (
-              categoriesData.map((item, index) => {
-                let SL_NO = index + 1;
-                return (
-                  <TouchableOpacity
-                    style={styles.catContents}
-                    key={item._id}
-                    onPress={() => {
-                      setSelectedCategory_ID(item._id);
-                      setSelectedCategory_name(item.name);
-                      setIsVisible2(false);
-                    }}>
-                    <Text
-                      style={{
-                        color: '#000',
-                        textTransform: 'capitalize',
-                        marginVertical: 10,
-                      }}>
-                      {SL_NO}. {item.name}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })
-            )
-          ) : loading2 ? (
-            <ActivityIndicator size={30} style={{marginTop: 40}} />
-          ) : (
-            serviceData.map((item, index) => {
+            ) : 
+            categoriesData.map((item, index) => {
               let SL_NO = index + 1;
               return (
                 <TouchableOpacity
                   style={styles.catContents}
                   key={item._id}
                   onPress={() => {
-                    setSelectedService_ID(item._id);
-                    setSelectedService_name(item.name);
-                    setIsVisible3(false);
+                    setSelectedCategory_ID(item._id);
+                    setSelectedCategory_name(item.name);
+                    setIsVisible2(false);
                   }}>
                   <Text
                     style={{
@@ -197,15 +147,14 @@ export default function EditProduct({navigation,route}) {
                   </Text>
                 </TouchableOpacity>
               );
-            })
-          )}
+            })        
+        }
         </ScrollView>
         <Button
           title="Cancel"
           color="#dc494e"
           onPress={() => {
             setIsVisible2(false);
-            setIsVisible3(false);
           }}
         />
       </View>
@@ -216,10 +165,8 @@ export default function EditProduct({navigation,route}) {
     title: name,
     price: Number(cost),
     description: desc,
-    // content: content,
     images: imgURL,
     category: selectedCategory_ID,
-    // service: selectedService_ID,
   };
 
   const createProduct = async() => {
@@ -232,7 +179,7 @@ export default function EditProduct({navigation,route}) {
         }
     };
     if(
-      name === ""|| cost === "" ||
+      name === ""||
       imgURL.length === 0 || 
       selectedCategory_ID === ""
       ){
@@ -247,6 +194,7 @@ export default function EditProduct({navigation,route}) {
             setIndicator1(false);
             setProductAdded(true);
             console.log(resp.data);
+            setSelectedCategory_name(selectedCategory_name);
           })
           .catch(err => {
             console.log('server error: ', err);
@@ -324,7 +272,6 @@ export default function EditProduct({navigation,route}) {
           <TouchableOpacity
             style={[styles.textInput1, styles.image]}
             activeOpacity={0.8}
-            // onPress={() => setIsVisible1(true)}
             onPress={openLibrary}
           >
             <View style={{flexDirection:"row",alignItems:"center"}}>
@@ -378,9 +325,7 @@ export default function EditProduct({navigation,route}) {
           </View>
         </ScrollView>
       </View>
-      {/* {isVisible1 && upload()} */}
       {isVisible2 && showModalToSelect()}
-      {isVisible3 && showModalToSelect()}
     </>
   );
 }

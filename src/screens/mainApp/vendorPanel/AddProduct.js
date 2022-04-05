@@ -42,7 +42,6 @@ export default function AddProduct({navigation,route}) {
   const [loading2, setLoading2] = useState(false);
 
   const [imgURL, setImgURL] = useState([]);
-  // const [downloadURL, setDownladURL] = useState([]);
   const [process, setProcess] = useState('');
   const [indicator1, setIndicator1] = useState(false);
   const [productAdded, setProductAdded] = useState(false);
@@ -54,222 +53,53 @@ export default function AddProduct({navigation,route}) {
     getServices();
   }, []);
 
-  // console.log("Path: ", file.uri);
-  // // console.log("Base64: ", file.base64);
-  // console.log("Name: ", file.fileName);
-  // console.log("Type: ", file.type);
-
-  // const requestCameraPermission=async()=>{
-  //     if(Platform.OS === 'android'){
-  //         try{
-  //             const granted = await PermissionsAndroid.request(
-  //                 PermissionsAndroid.PERMISSIONS.CAMERA,{
-  //                     title: "Camera Permission",
-  //                     message: "App needs camera permission"
-  //                 }
-  //             );
-  //             return granted === PermissionsAndroid.RESULTS.GRANTED;
-  //         }
-  //         catch(err){
-  //             console.log(err);
-  //             return false;
-  //         }
-  //     }
-  //     else return true;
-  // };
-
-  // const requestLibraryPermission=async()=>{
-  //     if(Platform.OS === 'android'){
-  //         try{
-  //             const granted = await PermissionsAndroid.request(
-  //                 PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,{
-  //                     title: "Files Permission",
-  //                     message: "App needs storage permission"
-  //                 }
-  //             );
-  //             return granted === PermissionsAndroid.RESULTS.GRANTED;
-  //         }
-  //         catch(err){
-  //             console.log(err);
-  //             alert("Storage permission error", err)
-  //         }
-  //         return false;
-  //     }
-  //     else return true;
-  // };
-
-  // const openCamera = async () => {
-  //   const options = {
-  //     storageOptions: {
-  //       path: 'images',
-  //       mediaType: 'photo',
-  //     },
-  //     includeBase64: true,
-  //   };
-  //   // let isCameraPermitted = await requestCameraPermission();
-  //   // let isStoragePermitted = await requestLibraryPermission();
-
-  //   // if(isCameraPermitted && isStoragePermitted){
-  //   launchCamera(options, resp => {
-  //     if (resp.didCancel) {
-  //       console.log('Canceled');
-  //       setIsVisible1(false);
-  //     } else if (resp.error) {
-  //       console.log('Error: ', resp.error);
-  //       setIsVisible1(false);
-  //     } else {
-  //       const imgData = resp.assets[0];
-  //       try {
-  //         const task = storage()
-  //           .ref('VENDOR/product/img' + imgData.fileName)
-  //           .putString(imgData.base64, 'base64');
-  //         task.on(
-  //           'state_changed',
-  //           function (snapshot) {
-  //             const rate = Math.floor(
-  //               (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
-  //             );
-  //             setProcess(`${rate}%`);
-  //             console.log(rate);
-  //           },
-  //           function (err) {
-  //             console.log(err);
-  //           },
-  //           function () {
-  //             task.snapshot.ref.getDownloadURL().then(function (url) {
-  //               setImgURL(url);
-  //             });
-  //           },
-  //         );
-  //         task.then(() => {
-  //           console.log('PDF uploaded to the bucket!');
-  //         });
-  //       } catch (e) {
-  //         console.log(e);
-  //       }
-  //       setIsVisible1(false);
-  //     }
-  //   });
-  //   // }
-  // };
-  // const openLibrary = async () => {
-  //   const options = {
-  //     storageOptions: {
-  //       path: 'images',
-  //       mediaType: 'photo',
-  //     },
-  //     includeBase64: true,
-  //   };
-  //   launchImageLibrary(options, resp => {
-  //     if (resp.didCancel) {
-  //       console.log('Canceled');
-  //       setIsVisible1(false);
-  //     } else if (resp.error) {
-  //       console.log('Error: ', resp.error);
-  //       setIsVisible1(false);
-  //     } else {
-  //       const imgData = resp.assets[0];
-  //       try {
-  //         const task = storage()
-  //           .ref('VENDOR/product/img' + imgData.fileName)
-  //           .putString(imgData.base64, 'base64');
-  //         task.on(
-  //           'state_changed',
-  //           function (snapshot) {
-  //             const rate = Math.floor(
-  //               (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
-  //             );
-  //             setProcess(`${rate}%`);
-  //             console.log(rate);
-  //           },
-  //           function (err) {
-  //             console.log(err);
-  //           },
-  //           function () {
-  //             task.snapshot.ref.getDownloadURL().then(function (url) {
-  //               setImgURL(url);
-  //             });
-  //           },
-  //         );
-  //         task.then(() => {
-  //           console.log('PDF uploaded to the bucket!');
-  //         });
-  //       } catch (e) {
-  //         console.log(e);
-  //       }
-  //       setIsVisible1(false);
-  //     }
-  //   });
-  // };
-
   const openLibrary=async()=>{
     ImagePicker.openPicker({
       multiple: true,
       includeBase64: true,
-      mediaType: 'photo'
+      mediaType: 'photo',
+      compressImageQuality: 0.2
     })
     .then(images=>{
-      images.forEach(x=>{
-        let fileName = x.path.substring(x.path.lastIndexOf('/') + 1);
-        try {
-          const task = storage()
-            .ref('VENDOR/product/img' + fileName)
-            .putString(x.data, 'base64');
-          task.on(
-            'state_changed',
-            function (snapshot) {
-              const rate = Math.floor(
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
-              );
-              setProcess(`${rate}%`);
-              console.log(rate);
-            },
-            function (err) {
-              console.log(err);
-            },
-            function () {
-              task.snapshot.ref.getDownloadURL().then(function (url) {
-                setImgURL((prev) => [...prev, url])
-              });
-            },
-          );
-          task.then(() => {
-            console.log('PDF uploaded to the bucket!');
-          });
-        } catch (e) {
-          console.log(e);
-        }
-        setIsVisible1(false);
-      })
+      if(images.length > 3){
+        Alert.alert("Cann't add more than 3 images");
+      }
+      else{
+        images.forEach(x=>{
+          let fileName = x.path.substring(x.path.lastIndexOf('/') + 1);
+          try {
+            const task = storage()
+              .ref('VENDOR/product/img' + fileName)
+              .putString(x.data, 'base64');
+            task.on(
+              'state_changed',
+              function (snapshot) {
+                const rate = Math.floor(
+                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+                );
+                setProcess(`${rate}%`);
+                console.log(rate);
+              },
+              function (err) {
+                console.log(err);
+              },
+              function () {
+                task.snapshot.ref.getDownloadURL().then(function (url) {
+                  setImgURL((prev) => [...prev, url])
+                });
+              },
+            );
+            task.then(() => {
+              console.log('PDF uploaded to the bucket!');
+            });
+          } catch (e) {
+            console.log(e);
+          }
+          setIsVisible1(false);
+        })
+      }
     })
   };
-
-  // const upload = () => (
-  //   <View style={styles.absAlert}>
-  //     <View style={styles.alertBox}>
-  //       <Text style={styles.select}>Select Photo...</Text>
-  //       <View style={styles.line} />
-  //       <View style={{alignItems: 'center', marginTop: 20}}>
-  //         <TouchableOpacity style={styles.content} onPress={openCamera}>
-  //           <Text style={{color: '#fff'}}>launch camera</Text>
-  //         </TouchableOpacity>
-  //       </View>
-  //       <View style={{marginVertical: 8}} />
-  //       <View style={{alignItems: 'center'}}>
-  //         <TouchableOpacity style={styles.content} onPress={openLibrary}>
-  //           <Text style={{color: '#fff'}}>select from storage</Text>
-  //         </TouchableOpacity>
-  //       </View>
-  //       <View style={styles.lastView}>
-  //         <TouchableOpacity
-  //           style={styles.cancel}
-  //           onPress={() => setIsVisible1(false)}>
-  //           <Text style={{color: '#fff'}}>cancel</Text>
-  //         </TouchableOpacity>
-  //       </View>
-  //     </View>
-  //   </View>
-  // );
 
   const getCategories = () => {
     axios
@@ -386,10 +216,8 @@ export default function AddProduct({navigation,route}) {
     title: name,
     price: Number(cost),
     description: desc,
-    // content: content,
     images: imgURL,
     category: selectedCategory_ID,
-    // service: selectedService_ID,
   };
 
   const createProduct = async() => {
@@ -402,7 +230,7 @@ export default function AddProduct({navigation,route}) {
         }
     };
     if(
-      name === ""|| cost === "" ||
+      name === ""|| 
       imgURL.length === 0 || 
       selectedCategory_ID === ""
       ){
@@ -416,7 +244,6 @@ export default function AddProduct({navigation,route}) {
         if(resp.data.length >= 10){
           setIndicator1(false);
           Alert.alert("You cann't add more than 10 Products");
-          console.log(postData);
         }
         else{
           axios.post(`${API}/products`, postData,axiosConfig)
@@ -487,17 +314,6 @@ export default function AddProduct({navigation,route}) {
               <AntDesign name="down" size={18} color="#000" />
             </View>
           </TouchableOpacity>
-          {/* <TouchableOpacity
-            style={[styles.input1]}
-            activeOpacity={0.6}
-            onPress={() => setIsVisible3(true)}>
-            <View style={styles.cat}>
-              <Text style={{color: 'gray', textTransform: 'capitalize'}}>
-                {!selectedService_name ? 'service' : selectedService_name}
-              </Text>
-              <AntDesign name="down" size={18} color="#000" />
-            </View>
-          </TouchableOpacity> */}
           <View style={[styles.textInput1]}>
             <TextInput
               style={styles.Name}
@@ -507,22 +323,6 @@ export default function AddProduct({navigation,route}) {
               onChangeText={val => setName(val)}
             />
           </View>
-          {/* <View style={styles.Content}>
-            <TextInput
-              style={[
-                styles.Name,
-                {
-                  height: '100%',
-                  textAlignVertical: 'top',
-                },
-              ]}
-              placeholder="Content (upto 22 letters)"
-              placeholderTextColor="gray"
-              value={content}
-              onChangeText={val => setContent(val)}
-              maxLength={22}
-            />
-          </View> */}
           <View style={styles.desc}>
             <TextInput
               style={[
@@ -542,7 +342,6 @@ export default function AddProduct({navigation,route}) {
           <TouchableOpacity
             style={[styles.textInput1, styles.image]}
             activeOpacity={0.8}
-            // onPress={() => setIsVisible1(true)}
             onPress={openLibrary}
           >
             <Text style={{color: 'gray'}}>Images</Text>
@@ -587,7 +386,6 @@ export default function AddProduct({navigation,route}) {
           </View>
         </ScrollView>
       </View>
-      {/* {isVisible1 && upload()} */}
       {isVisible2 && showModalToSelect()}
       {isVisible3 && showModalToSelect()}
     </>

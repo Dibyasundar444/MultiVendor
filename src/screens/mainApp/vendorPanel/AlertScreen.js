@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useIsFocused } from '@react-navigation/native';
 import Header from "./utils/header";
 import axios from "axios";
 import { API_VENDOR } from "../../../../config";
@@ -21,11 +22,24 @@ export default function AlertScreen({navigation}){
 
     const [indicator, setIndicator] = useState(false);
     const [data, setData] = useState([]);
+    const [productReq, setProductReq] = useState([]);
+
+    const isFocused = useIsFocused();
+    console.log(productReq);
     
 
     useEffect(()=>{
-        getVendor();
-    },[]);
+        if(isFocused){
+            getVendor();
+            getProductReq();
+        }
+    },[isFocused]);
+
+    const getProductReq=async()=>{
+        const dataObj = await AsyncStorage.getItem("PRODUCT_REQ");
+        const dataJSON = JSON.parse(dataObj);
+        dataJSON ? setProductReq(dataJSON) : setProductReq([]);
+    };
 
     const getVendor=async()=>{
         setIndicator(true);
@@ -76,7 +90,7 @@ export default function AlertScreen({navigation}){
     return(
         <View style={styles.container}>
             <Header
-                title={`Alerts(${data.length})`}
+                title={`Alerts(${data.length+productReq.length})`}
                 activeStyle={styles.bell}
                 bellColor="#fff"
                 profile={()=>navigation.navigate("ProfileScreen")}
@@ -89,38 +103,102 @@ export default function AlertScreen({navigation}){
                     {
                         indicator ? <ActivityIndicator size={30} style={{marginTop:50}} />
                         :
-                        data.map(item=>(
-                            <View key={item._id} style={styles.mainView}>
-                                <View style={styles.subView}>
-                                    {
-                                        item.user.profileImg ? 
-                                        <Image style={styles.bgCircle} source={{uri:item.user.profileImg}} />
-                                        :
-                                        <View style={styles.bgCircle} />
-                                    }                        
-                                    <View style={styles.texts}>
-                                        {
-                                            item.user.name ? 
-                                            <Text style={styles.name}>{item.user.name}</Text>
-                                            :
-                                            <Text style={styles.name}>{item.user._id.split('',6)}***</Text>
-                                        }
-                                        <View style={{flexDirection:"row",alignItems:"center",top:2}}>
-                                            <Text style={styles.msg}>Service Rating {item.rating}/5</Text>
-                                            {
-                                                rating_given(item.rating)
-                                            }
-                                            {
-                                                rating_remain(item.rating)
-                                            }
+                        data.length === 0 && productReq.length === 0 ? 
+                        <Text style={{color:"gray",fontWeight:"600",textAlign:"center",marginTop:30}}>You Have No Alert</Text>
+                        :
+                        <>
+                            <View style={{alignItems:"center"}}>
+                                <Text style={{color:"gray",fontWeight:"600",marginVertical:5}}>Product Requests</Text>
+                                <View style={{borderWidth:0.5,width:"50%",marginBottom:5}} />
+                            </View>
+                            {
+                                productReq.length === 0 ?
+                                <Text style={{color:"#aaa",textAlign:"center",fontWeight:"500",marginVertical:50}}>No Request</Text>
+                                :
+                                productReq.map((item,index)=>(
+                                    <View 
+                                        key={index}
+                                        style={{marginLeft:20,borderBottomWidth:0.3}}
+                                    >
+                                        <View style={{marginVertical:5}}>
+                                            <View
+                                                style={{
+                                                    flexDirection:"row",
+                                                    alignItems:"flex-end"
+                                                }}
+                                            >
+                                                <Text style={{color:"#000",fontWeight:"500",fontSize:13}}>Requested Category: </Text>
+                                                <Text style={{color:"gray",textTransform:"capitalize",fontWeight:"500",fontSize:13}}>{item.category}</Text>
+                                            </View>
+                                            <View
+                                                style={{
+                                                    flexDirection:"row",
+                                                    alignItems:"flex-end"
+                                                }}
+                                            >
+                                                <Text style={{color:"#000",fontWeight:"500",fontSize:13}}>Requested Product: </Text>
+                                                <Text style={{color:"gray",textTransform:"capitalize",fontWeight:"500",fontSize:13}}>{item.title}</Text>
+                                            </View>
+                                            <View
+                                                style={{
+                                                    flexDirection:"row",
+                                                    alignItems:"flex-end",
+                                                    flexWrap:"wrap"
+                                                }}
+                                            >
+                                                <Text style={{color:"#000",fontWeight:"500",fontSize:13}}>Description: </Text>
+                                                <Text style={{color:"#000",fontSize:12}}>{item.description}</Text>
+                                            </View>
                                         </View>
                                     </View>
-                                    <View style={styles.time}>
-                                        <Text style={styles.timetxt}>{global.fDate}</Text>
-                                    </View>
-                                </View>
+                                ))
+                            }
+                            <View style={{alignItems:"center"}}>
+                                <Text style={{color:"gray",fontWeight:"600",marginVertical:5}}>Ratings</Text>
+                                <View style={{borderWidth:0.5,width:"50%",marginBottom:5}} />
                             </View>
-                        ))
+                            {
+                                data.length === 0 ?
+                                <Text style={{color:"#aaa",textAlign:"center",fontWeight:"500",marginTop:50}}>No Rating</Text>
+                                :
+                                data.map(item=>(
+                                    <View key={item._id} style={styles.mainView}>
+                                        <View style={styles.subView}>
+                                            {
+                                                item.user.profileImg ? 
+                                                <Image style={styles.bgCircle} source={{uri:item.user.profileImg}} />
+                                                :
+                                                <View style={styles.bgCircle} />
+                                            }                        
+                                            <View style={styles.texts}>
+                                                {
+                                                    item.user.name ? 
+                                                    <Text style={styles.name}>{item.user.name}</Text>
+                                                    :
+                                                    <Text style={styles.name}>{item.user._id.split('',6)}***</Text>
+                                                }
+                                                <View style={{flexDirection:"row",alignItems:"center",top:2}}>
+                                                    <Text style={styles.msg}>Service Rating {item.rating}/5</Text>
+                                                    {
+                                                        rating_given(item.rating)
+                                                    }
+                                                    {
+                                                        rating_remain(item.rating)
+                                                    }
+                                                </View>
+                                            </View>
+                                            <View style={styles.time}>
+                                                <Text 
+                                                    style={styles.timetxt}
+                                                >
+                                                    {`${new Date(item.user.createdAt).getFullYear()}-${('0' + (new Date(item.user.createdAt).getMonth()+1)).slice(-2)}-${('0' + (new Date(item.user.createdAt).getDate()+1)).slice(-2)}`}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    </View>
+                                ))
+                            }
+                        </>
                     }
                 </ScrollView>
             </View>
@@ -152,6 +230,7 @@ const styles = StyleSheet.create({
     },
     mainView: {
         borderBottomWidth:1,
+        marginLeft:20
     },
     bgCircle: {
         // borderWidth: 1,
@@ -189,7 +268,7 @@ const styles = StyleSheet.create({
     subView: {
         flexDirection:"row",
         alignItems:"center",
-        marginHorizontal:20,
+        marginRight:20,
         marginVertical:10
     },
     msg: {

@@ -11,6 +11,7 @@ import {
     TextInput
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
@@ -40,11 +41,12 @@ export default function ProfileScreen({navigation}){
     const [area, setArea] = useState('');
     const [address, setAddress] = useState('');
     const [lat_long, setLat_long] = useState({});
+    const [locationIndex, setLocationIndex] = useState('0');
 
     
     // const link = "link/will/be/here";
-    console.log(address);
-    console.log(lat_long);
+    // console.log(address);
+    // console.log(lat_long);
 
     useEffect(()=>{
         if(isFocused){
@@ -151,7 +153,7 @@ export default function ProfileScreen({navigation}){
         try{
             const JSON_OBJ = await AsyncStorage.getItem('location');
             const Parsed = JSON.parse(JSON_OBJ);
-            // console.log(Parsed);
+            console.log(Parsed);
             Parsed !== null ? setLocation(Parsed) : setLocation({});
         }
         catch(err){
@@ -170,12 +172,13 @@ export default function ProfileScreen({navigation}){
     };
 
     let updateData={
-        locality: location.city,
-        state: location.state,
-        country: location.country,
+        // locality: location.city,
+        // state: location.state,
+        // country: location.country,
         latitude: !visible2 ? location.lat : lat_long.lat,
         longitude: !visible2 ? location.long : lat_long.long,
-        serviceArea: Number(area)
+        serviceArea: Number(area),
+        location: !visible2 ? location.location : address
     };
 
     const updateLocation=async()=>{
@@ -270,26 +273,7 @@ export default function ProfileScreen({navigation}){
                 {
                     !visible2 ? 
                     <View style={styles.card}>
-                    <View
-                        style={{
-                            position:"absolute",
-                            right:15,
-                            top:10,
-                        }}
-                    >
-                        <TouchableOpacity
-                            style={{
-                                backgroundColor:"#d95448",
-                                paddingVertical:5,
-                                paddingHorizontal:5,
-                                borderRadius:5
-                            }}
-                            activeOpacity={0.7}
-                            onPress={()=>setVisible2(true)}
-                        >
-                            <Text style={{color:"#fff",fontWeight:"500",fontSize:10}}>Update Manually</Text>
-                        </TouchableOpacity>
-                    </View>
+                    
                     <Text 
                         style={{
                             color:"#000",
@@ -304,67 +288,35 @@ export default function ProfileScreen({navigation}){
                             marginBottom:5
                         }} 
                     />
-                    <Text 
-                        style={{color:"gray",fontSize:12}}
-                    >
-                        *** this will automatically fetch your current location***
-                    </Text>
+                    
                     <View style={{right:-10}}>
-                        <View
-                            style={{flexDirection:"row",alignItems:"center",marginVertical:20}}
-                        >
-                            <Text
-                                style={{
-                                    color:"#000",
-                                    fontWeight:"500"
-                                }}
-                            >City :</Text>
-                            <Text
-                                style={{
-                                    color:"gray",
-                                    fontWeight:"500",
-                                    marginHorizontal:10
-                                }}
-                            >{location.city}</Text>
-                        </View>
-                        <View
-                            style={{flexDirection:"row",alignItems:"center"}}
-                        >
-                            <Text
-                                style={{
-                                    color:"#000",
-                                    fontWeight:"500"
-                                }}
-                            >District :</Text>
-                            <Text
-                                style={{
-                                    color:"gray",
-                                    fontWeight:"500",
-                                    marginHorizontal:10
-                                }}
-                            >{location.state}</Text>
-                        </View>
-                        <View
+                        <TouchableOpacity
                             style={{
                                 flexDirection:"row",
                                 alignItems:"center",
-                                marginVertical:20
+                                left:-10,
+                                marginTop:10
+                            }}
+                            onPress={()=>setLocationIndex("0")}
+                        >
+                            <Feather name={locationIndex==='0'?"check-circle":"circle"} color="#000" size={18} />
+                            <Text style={{color:"#000",left:10}}>Use My Current Location</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{
+                                flexDirection:"row",
+                                alignItems:"center",
+                                left:-10,
+                                marginVertical:10
+                            }}
+                            onPress={()=>{
+                                setLocationIndex("1");
+                                setVisible2(true);
                             }}
                         >
-                            <Text
-                                style={{
-                                    color:"#000",
-                                    fontWeight:"500"
-                                }}
-                            >State :</Text>
-                            <Text
-                                style={{
-                                    color:"gray",
-                                    fontWeight:"500",
-                                    marginHorizontal:10
-                                }}
-                            >{location.country}</Text>
-                        </View>
+                            <Feather name={locationIndex==='1'?"check-circle":"circle"} color="#000" size={18} />
+                            <Text style={{color:"#000",left:10}}>Update Manually</Text>
+                        </TouchableOpacity>
                         <View style={{flexDirection:"row",alignItems:"center"}}>
                             <TextInput 
                                 placeholder="service area"
@@ -374,7 +326,8 @@ export default function ProfileScreen({navigation}){
                                     color:"#000",
                                     width:150,
                                     textAlign:"center",
-                                    backgroundColor:"#ffe4e1"
+                                    backgroundColor:"#ffe4e1",
+                                    left:-10
                                 }}
                                 value={area}
                                 onChangeText={(val)=>setArea(val)}
@@ -456,7 +409,10 @@ export default function ProfileScreen({navigation}){
                                 borderRadius:5
                             }}
                             activeOpacity={0.7}
-                            onPress={()=>setVisible2(false)}
+                            onPress={()=>{
+                                setLocationIndex("0");
+                                setVisible2(false);
+                            }}
                         >
                             <Text style={{color:"#fff",fontWeight:"500",fontSize:11}}>Go Back</Text>
                         </TouchableOpacity>

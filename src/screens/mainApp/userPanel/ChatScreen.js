@@ -25,7 +25,6 @@ export default function ChatScreen({navigation}){
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const isFocused = useIsFocused();
-    // const [latestMsg, setLatestMsg] = useState('');
 
     useEffect(()=>{
         if(isFocused){
@@ -182,7 +181,7 @@ const styles = StyleSheet.create({
         height: 50,
         width: 50,
         borderRadius: 50/2,
-        // backgroundColor: "#aaa"
+        backgroundColor: "#aaa"
     },
     smCircle: {
         borderWidth: 1,

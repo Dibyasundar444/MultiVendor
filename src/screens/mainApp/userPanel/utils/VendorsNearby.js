@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     height: 80,
     width: 80,
     borderRadius: 80 / 2,
+    backgroundColor:"#aaa"
   },
   name: {
     color: '#000',

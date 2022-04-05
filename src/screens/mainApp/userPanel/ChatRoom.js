@@ -28,6 +28,7 @@ export default function ChatRoom({route, navigation}) {
   const [isPopUp, setIsPopUP] = useState(false);
   const [visible, setVisible] = useState(false);
   const [indicator, setIndicator] = useState(false);
+  const [defaultRating, setDefaultRating] = useState(0);
   const Firestore = firestore();
   Firestore.settings({ ignoreUndefinedProperties: true });
 
@@ -179,10 +180,9 @@ export default function ChatRoom({route, navigation}) {
 
 
   let ratingData={
-    rating: rating.length,
+    rating: defaultRating,
     vendorId: preData.vendorData._id
   };
-  // console.log(ratingData);
 
   const _submitRating=async()=>{
     setIndicator(true);
@@ -234,14 +234,14 @@ export default function ChatRoom({route, navigation}) {
       </View>
       {isPopUp && pop_up()}
       <Rating 
-        visible={visible}
-        toggle={toggle}
-        vendorName={preData.vendorData.name}
-        indicator={indicator}
-        submitRating={_submitRating}
-        ratingArr={rating}
-        setRatingArr={setRating}
-      />
+          visible={visible}
+          toggle={toggle}
+          vendorName={preData.vendorData.name}
+          indicator={indicator}
+          submitRating={_submitRating}
+          defaultRating={defaultRating}
+          setDefaultRating={setDefaultRating}
+        />
     </View>
   );
 }

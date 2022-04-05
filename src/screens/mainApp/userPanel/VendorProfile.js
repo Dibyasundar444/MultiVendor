@@ -69,7 +69,7 @@ export default function VendorProfile({navigation, route}) {
     axios
       .post(`${API}/contactvendors`,MESSAGE,axiosConfig)
       .then(resp => {
-        console.log(resp.data);
+        // console.log(resp.data);
         navigation.navigate('Chat');
       })
       .catch(err => {
@@ -144,7 +144,7 @@ export default function VendorProfile({navigation, route}) {
                 }
                 {
                   item.locality ? 
-                  <Text style={{fontSize: 12,color:"#fff"}}>{item.locality}, {item.state} ({item.country})</Text>
+                  <Text style={{fontSize: 12,color:"#fff"}}>{item.location}</Text>
                   :
                   null
                 }
@@ -211,9 +211,6 @@ export default function VendorProfile({navigation, route}) {
                       }}>
                       {item.title}
                     </Text>
-                    {/* <Text style={{color: '#000', fontSize: 12}}>
-                      {item.content}
-                    </Text> */}
                   </View>
                   <View
                     style={{

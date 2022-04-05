@@ -59,23 +59,10 @@ export default function HomeScreen({navigation}) {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    // getLatestProductList();
-    // getLocation();
     if (isFocused) {
       getVendor_and_Products();
     }
   }, [isFocused]);
-
-//   const getLocation=async()=>{
-//     try{
-//         const JSON_OBJ = await AsyncStorage.getItem('location');
-//         const Parsed = JSON.parse(JSON_OBJ);
-//         Parsed !== null ? setLocation(Parsed) : setLocation({});
-//     }
-//     catch(err){
-//         console.log("err",err);
-//     }
-// };
 
   const getVendor_and_Products=async()=>{
     const json_Val = await AsyncStorage.getItem("jwt");
@@ -147,7 +134,7 @@ export default function HomeScreen({navigation}) {
   };
 
   const _openWhatsapp=(item)=>{
-    Linking.openURL('http://api.whatsapp.com/send?phone=91'+"1234567890")
+    Linking.openURL('http://api.whatsapp.com/send?phone=91'+"9748552374")
   };
   
   return (
@@ -164,25 +151,6 @@ export default function HomeScreen({navigation}) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom:150,paddingTop:10}}
       >
-        {/* <View style={{
-          flexDirection:"row",
-          alignItems:"center",
-          justifyContent:"space-between",
-          marginHorizontal:20
-        }}>
-          <TouchableOpacity
-            style={[styles.user,{width:"48%"}]}
-            onPress={()=>navigation.navigate("MyProduct")}
-          >
-            <Text style={{color:"#fff",fontWeight:"500"}}>Products</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.user,{width:'48%'}]}
-            onPress={()=>navigation.navigate("MyService")}
-          >
-            <Text style={{color:"#fff",fontWeight:"500"}}>Services</Text>
-          </TouchableOpacity>
-        </View> */}
         <TouchableOpacity 
             style={[styles.user,{width:'44%',marginLeft:20}]}
             onPress={switchUser}
@@ -208,24 +176,10 @@ export default function HomeScreen({navigation}) {
           <Text style={{color: '#000', fontSize: 16, fontWeight: '600'}}>
             My Products
           </Text>
-          {/* <TouchableOpacity 
-            style={[styles.user,{width:'48%'}]}
-            onPress={switchUser}
-          >
-              <View style={{flexDirection:"row",alignItems:"flex-end"}}>
-                <MaterialCommunityIcons name='account-switch-outline' color="#fff" size={18} />
-                {
-                  loading5 ? <ActivityIndicator color="#fff" size={20} style={{marginHorizontal:5,marginVertical:2}} />
-                  :
-                  <Text style={{fontWeight:"500",color:"#fff",marginLeft:5}}>Switch to user</Text>
-                }
-              </View>
-          </TouchableOpacity> */}
         </View>
         <ScrollView 
           contentContainerStyle={{paddingHorizontal:20}}
           horizontal={true}
-          // style={{marginRight:20}}
           showsHorizontalScrollIndicator={false}
         >
           <View style={{flexDirection:"row",}}>
@@ -252,9 +206,6 @@ export default function HomeScreen({navigation}) {
                     <Text style={{fontSize: 12, color: '#000'}}>
                       {item.title}
                     </Text>
-                    {/* <Text style={{fontSize: 11, color: '#000'}}>
-                      {item.content}
-                    </Text> */}
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                       <Entypo
                         name="eye"
@@ -286,8 +237,7 @@ export default function HomeScreen({navigation}) {
                   key={item._id}
                   activeOpacity={0.7}
                   style={{borderBottomWidth: 1}}
-                  onPress={()=>navigation.navigate("editService",{item:item,edit:true})}
-                  // disabled={true}
+                  onPress={()=>navigation.navigate("editService",item)}
                 >
                   <View style={styles.subView}>
                     <View style={{alignItems: 'center', flexDirection: 'row'}}>

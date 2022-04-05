@@ -8,13 +8,15 @@ import {
     ActivityIndicator,
     TextInput,
     Image,
-    Button
+    Button,
+    Platform
 } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BottomSheet } from "react-native-btr";
 import axios from "axios";
+import PushNotification from "react-native-push-notification";
 
 import SearchHeader from "./utils/searchHeader";
 import { API, API_USER, API_VENDOR } from "../../../../config";
@@ -47,7 +49,8 @@ export default function SearchScreen({navigation}){
     const [selectedCategory_ID, setSelectedCategory_ID] = useState('');
     const [productsData, setProductsData] = useState([]);
     const [filterProductsData, setFilterProductsData] = useState([]);
-
+    const [filterCatData, setFilterCatData] = useState([]);
+    const [filterServiceData, setFilterServiceData] = useState([]);
 
 
     useEffect(()=>{
@@ -91,7 +94,7 @@ export default function SearchScreen({navigation}){
         axios.get(`${API}/category`)
         .then(resp=>{
             setCatData(resp.data);
-            // setFilterData(resp.data);
+            setFilterCatData(resp.data);
             setIndicator1(false);
         })
         .catch(e=>{
@@ -102,6 +105,7 @@ export default function SearchScreen({navigation}){
         axios.get(`${API}/service`)
         .then(resp=>{
             setServiceData(resp.data);
+            setFilterServiceData(resp.data);
             setIndicator2(false);
         })
         .catch(e=>{
@@ -151,9 +155,14 @@ export default function SearchScreen({navigation}){
     );
 
     const Categories=()=>(
-        <View style={styles.boxContainer}>
+        <>
+        {
+            filterCatData.length === 0 ? 
+            <Text style={{color:"gray",fontWeight:"500",textAlign:"center"}}>No Product found</Text>
+            :
+            <View style={styles.boxContainer}>
             {
-                catData.map(item=>(
+                filterCatData.map(item=>(
                     <TouchableOpacity
                         style={styles.cat} 
                         key={item._id}
@@ -171,21 +180,22 @@ export default function SearchScreen({navigation}){
                     </TouchableOpacity>
                 ))
             }
-        </View>
+            </View>
+        }
+        </>
     );
     const Services=()=>(
         <>
         {
-            serviceData.length === 0 ?
+            filterServiceData.length === 0 ?
             <Text style={{color:"gray",fontWeight:"500",textAlign:"center",marginTop:40}}>No Service found</Text>
             :
             <View style={styles.boxContainer}>
             {
-                serviceData.map(item=>(
+                filterServiceData.map(item=>(
                     <TouchableOpacity 
                         style={styles.cat} key={item._id}
-                        onPress={()=>navigation.navigate("Services",{"title": item.name,"id": item._id})}
-                        disabled
+                        onPress={()=>navigation.navigate("ServiceDetails",item)}
                     >
                         <View style={styles.subView}>
                         {
@@ -206,26 +216,49 @@ export default function SearchScreen({navigation}){
 
     const searchFilter=(val)=>{
         if(val){
-            const newData =  productsData.filter((item)=>{
+            const newData1 =  productsData.filter((item)=>{
                 const itemData = item.title ? item.title.toUpperCase() : ''.toUpperCase();
                 const textData  = val.toUpperCase();
                 return itemData.indexOf(textData) > -1;
             })
-            setFilterProductsData(newData);
+            setFilterProductsData(newData1);
+            const newData2 =  catData.filter((item)=>{
+                const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
+                const textData  = val.toUpperCase();
+                return itemData.indexOf(textData) > -1;
+            })
+            setFilterCatData(newData2);
+            const newData3 =  serviceData.filter((item)=>{
+                const itemData = item.title ? item.title.toUpperCase() : ''.toUpperCase();
+                const textData  = val.toUpperCase();
+                return itemData.indexOf(textData) > -1;
+            })
+            setFilterServiceData(newData3);
             setText(val);
         }
         else{
             setFilterProductsData(productsData);
+            setFilterCatData(catData);
+            setFilterServiceData(serviceData);
             setText(val);
         }
     };
 
     const toggle=()=>{
-        setIsVisible(visble => !visble)
+        setIsVisible(visble => !visble);
+    };
+
+    const handleNotification=()=>{
+        PushNotification.localNotification({
+            channelId:"custom_product",
+            title: `New Request`,
+            message: `You Have A Product Request of - ${title}`,
+            bigText: `You Have A Product Request of - ${title}. ${description}`
+        })
+        // PushNotification.getDeliveredNotifications((item)=>console.log(item));
     };
 
     const sendRequest=async()=>{
-        setIndicator3(true);
         const json_Val = await AsyncStorage.getItem("jwt");
         const parsed = JSON.parse(json_Val);
         let axiosConfig = {
@@ -234,69 +267,53 @@ export default function SearchScreen({navigation}){
             }
         };
         let postData = {
-            title:title,
+            title: title,
             category: selectedCategory_ID,
-            description:description
+            description: description
         };
-        axios.post(`${API}/customorder`,postData,axiosConfig)
-        .then(resp=>{
-            console.log(resp.data);
-            setIndicator3(false);
-            setSuccess(true);
-            setSelectedCategory_name('');
-            setSelectedCategory_ID('');
-            setTitle('');
-            setDescription('');
-        })
-        .catch(err=>{
-            console.log(err);
-            setSuccess(false);
-        })
+        let value = {
+            title: title,
+            category: selectedCategory_name,
+            description: description,
+            createdAt: new Date()
+        };
+        if(title === "" || selectedCategory_ID === ""){
+            alert("Please enter the details!");
+        }else{
+            setIndicator3(true);
+            axios.post(`${API}/customorder`,postData,axiosConfig)
+            .then(async resp=>{
+                handleNotification();
+                const preReqDataOBJ = await AsyncStorage.getItem("PRODUCT_REQ");
+                const preReqData = JSON.parse(preReqDataOBJ);
+                if (preReqData){
+                    const dataArr = preReqData;
+                    dataArr.push(value);
+                    await AsyncStorage.setItem("PRODUCT_REQ",JSON.stringify(dataArr));
+                }
+                else{
+                    const newDataArr = [value];
+                    await AsyncStorage.setItem("PRODUCT_REQ",JSON.stringify(newDataArr));
+                }
+                console.log(resp.data);
+                setIndicator3(false);
+                setSuccess(true);
+                setSelectedCategory_name('');
+                setSelectedCategory_ID('');
+                setTitle('');
+                setDescription('');
+            })
+            .catch(err=>{
+                console.log(err);
+                setSuccess(false);
+            })
+        }
     };
 
     if(success){
         setTimeout(()=>{
             setSuccess(false);
         },3000)
-    };
-    
-    const userLogin=async()=>{
-        setLoading(true);
-        const json_Val = await AsyncStorage.getItem("jwt");
-        const parsed = JSON.parse(json_Val);
-        let axiosConfig = {
-          headers:{
-            Authorization: parsed.token
-          }
-        };
-        axios.get(`${API_USER}/logout`,axiosConfig)
-        .then(resp=>{
-            console.log(resp.data);
-            axios.post(`${API_VENDOR}/switch/register`,{phoneNo:userData.phoneNo},axiosConfig)
-            .then( async resp => {
-                try{
-                    const jsonValue = JSON.stringify(resp.data);
-                    await AsyncStorage.setItem("jwt",jsonValue);
-                    await AsyncStorage.setItem("userRole","1");
-                    setLoading(false);
-                    navigation.dispatch(
-                        StackActions.replace("VendorPanel")
-                    )
-                }
-                catch(e){
-                    console.log(e);
-                    setLoading(false);
-                }
-            })
-            .catch(err=>{
-                console.log("error switching user: ",err);
-                setLoading(false);
-            })
-        })
-        .catch(err=>{
-            console.log("error logging out: ",err);
-            setLoading(false);
-        })
     };
 
     const showModalToSelect = () => {
@@ -359,8 +376,6 @@ export default function SearchScreen({navigation}){
         )
     };
     
-
-
     return(
         <>
         <ScrollView 
@@ -381,19 +396,14 @@ export default function SearchScreen({navigation}){
             />
             <View style={styles.textInputDiv}>
                 <TextInput 
-                    style={styles.textInput}
-                    placeholder="Find your products..."
+                    style={[styles.textInput,{fontSize:text ? 14: 12}]}
+                    placeholder="Find your products, categories, services..."
                     placeholderTextColor="gray"
                     value={text}
                     onChangeText={(val)=>searchFilter(val)}
                 />
-                <Feather name="search" size={22} style={{color:"#000",right:-10}} />
+                <Feather name="search" size={22} style={{color:"#000",left:-10}} />
             </View>
-            {/* <VendorsNearby 
-                vendorProfile={(item)=>navigation.navigate("VendorProfile",item)}
-                login={userLogin}
-                isLoading={loading}
-            /> */}
             <View style={{marginHorizontal:20}}>
                 <View style={{marginBottom:10}}>
                     <Text style={styles.subHeader}>Browse Products</Text>
@@ -455,7 +465,6 @@ export default function SearchScreen({navigation}){
                         style={styles.input1}
                         activeOpacity={0.6}
                         onPress={() => {
-                            // setIsVisible(false);
                             setIsVisible2(true);
                         }}
                     >
@@ -533,8 +542,8 @@ export default function SearchScreen({navigation}){
             </BottomSheet>
         </ScrollView>
     </>
-    )
-};
+    );
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -607,10 +616,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     textInput: {
-        height: 40,
+        // height: 40,
         color: "#000",
-        paddingLeft: 15,
-        width: "85%"
+        paddingLeft: 10,
+        width: "90%"
     },
     sheet: {
         height:"55%",

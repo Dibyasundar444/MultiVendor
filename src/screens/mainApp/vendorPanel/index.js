@@ -12,6 +12,7 @@ import Foundation from "react-native-vector-icons/Foundation";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+import PushNotification from "react-native-push-notification";
 
 import HomeStack from "./stackNavigator/HomeStack";
 import ProductStack from "./stackNavigator/ProductStack";
@@ -23,6 +24,17 @@ import ServiceStack from "./stackNavigator/ServiceStack";
 const Tab = createBottomTabNavigator();
 
 export default function VendorPanel({navigation}){
+
+    useEffect(()=>{
+        createChannels();
+    },[]);
+
+    const createChannels=()=>{
+        PushNotification.createChannel({
+            channelId: "custom_product",
+            channelName: "Custom Product"
+        })
+    };
 
     const getTabBarVisibility=(route)=>{
         const routeName = getFocusedRouteNameFromRoute(route);

@@ -25,12 +25,14 @@ export default function Menu({navigation}){
 
     const [data, setData] = useState([]);
     const [indicator, setIndicator] = useState(true);
+    const [indicator1, setIndicator1] = useState(true);
     const [location, setLocation] = useState({});
     const [bannerImg, setBannerImg] = useState([]);
     const [userData, setUserData] = useState({});
     const [isExpand, setIsExpand] = useState(false);
     const [isHeaderReady, setIsHeaderReady] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [serviceData, setServiceData] = useState([]);
 
     const IMAGES = [];    
 
@@ -40,6 +42,7 @@ export default function Menu({navigation}){
         getProducts();
         getLocation();
         getBanner();
+        getServices();
         if(isFocused){
             getUser();
         }
@@ -63,12 +66,26 @@ export default function Menu({navigation}){
     const getProducts=()=>{
         axios.get(`${API}/allproducts`)
         .then(resp=>{
+            // console.log(resp.data);
             setData(resp.data);
             setIndicator(false);
         })
         .catch(e=>{
             console.log("server error: ",e);
         })
+    };
+
+    const getServices = () => {
+        axios.get(`${API}/service`)
+        .then(resp => {
+        setServiceData(resp.data);
+        console.log(resp.data);
+        setIndicator1(false);
+        })
+        .catch(err => {
+        console.log('server error: ', err);
+        setIndicator1(false);
+        });
     };
 
     const getLocation=async()=>{
@@ -187,10 +204,9 @@ export default function Menu({navigation}){
                     {
                         indicator ? <ActivityIndicator style={{left: -10,marginTop: 20}} size={30} />
                         :
-                        <View style={{
-                            flexDirection:"row",
-                            flexWrap:"wrap"
-                        }}>
+                        <ScrollView
+                            horizontal={true}
+                        >
                             {
                                 data.map(item=>(
                                     <TouchableOpacity
@@ -204,16 +220,54 @@ export default function Menu({navigation}){
                                         />
                                         <View style={{marginLeft:10,marginTop:5}}>
                                             <Text style={styles.title}>{item.title}</Text>
-                                            {/* <Text style={{color:"#000",fontSize:12}}>{item.content}</Text> */}
                                         </View>
                                         <View style={styles.enquire}>
                                             <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
                                             <EvilIcons name="arrow-right" color="#000" size={22} />
                                         </View>
                                     </TouchableOpacity>
-                                ))
+                                )).reverse()
                             }
-                        </View>
+                        </ScrollView>
+                    }
+                </View>
+                <View style={{marginLeft:20}}>
+                    <Text style={styles.products}>Latest Services</Text>
+                    {
+                        indicator1 ? <ActivityIndicator style={{left: -10,marginTop: 20}} size={30} />
+                        :
+                        <ScrollView
+                            horizontal={true}
+                        >
+                            {
+                                serviceData.map(item=>(
+                                    <TouchableOpacity
+                                        key={item._id} 
+                                        style={styles.box}
+                                        activeOpacity={0.7}
+                                        onPress={()=>navigation.navigate("ServiceDetails", item)}
+                                    >
+                                        {
+                                            item.images ?
+                                            <Image style={styles.img}
+                                                source={{uri: item.images}}
+                                            />
+                                            :
+                                            <View style={[styles.img,{alignItems:"center",justifyContent:"center"}]}>
+                                                <Text style={{fontSize:11}}>No image available</Text>
+                                            </View>
+                                        }
+                                        <View style={{marginLeft:10,marginTop:5}}>
+                                            <Text style={styles.title}>{item.title}</Text>
+                                        </View>
+                                        <View style={styles.enquire}>
+                                            <Text style={{color:"#000",fontSize:10}}>Enquire</Text>
+                                            <EvilIcons name="arrow-right" color="#000" size={22} />
+                                        </View>
+                                    </TouchableOpacity>
+                                )).reverse()
+                            }
+                        </ScrollView>
                     }
                 </View>
             </ScrollView>
@@ -238,8 +292,9 @@ const styles = StyleSheet.create({
     products: {
         color:"#000",
         fontWeight:"bold",
-        marginBottom:20,
-        fontSize:16
+        marginBottom:10,
+        fontSize:16,
+        marginLeft:5
     },
     img: {
         height: width/3.5,
